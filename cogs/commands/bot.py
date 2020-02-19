@@ -1,5 +1,6 @@
 import discord
-from datetime import datetime
+from datetime import datetime, timezone
+from pytz import timezone as pytzTz
 import psutil
 import os
 import json
@@ -73,7 +74,7 @@ class BotCmds(commands.Cog, name='Bot'):
         embed.set_author(name=f"{self.bot.user.name} | Info", icon_url=ctx.me.avatar_url)
         embed.add_field(name="Estou na versão", value=f'`{self.bot.__version__}`')
         embed.add_field(name=f'Estou online por:', value=f'`{"".join(self.bot.formatTime(self.bot.uptime))}`', inline=False)
-        embed.add_field(name=f'Fui criado em:', value=f'`{ctx.me.created_at.strftime("%d/%m/%Y as %H:%M")}`\n`({"".join(self.bot.getTime(ctx.me.created_at))})`', inline=False)
+        embed.add_field(name=f'Fui criado em:', value=f'`{ctx.me.created_at.strftime("%d/%m/%Y ás %H:%M")}`\n`({"".join(self.bot.getTime(ctx.me.created_at))})`', inline=False)
         embed.add_field(name=f'Fui criado por:', value=f'`Kaigo#0833`\nEm: `discord.py {discord.__version__}`')
         
         mem = psutil.virtual_memory()
@@ -104,8 +105,12 @@ class BotCmds(commands.Cog, name='Bot'):
         embed = self.bot.embed(ctx)
         embed.title = 'Sora | Versão'
         embed.description = 'Algumas informações sobre minha versão, e o commit atual.'
-        embed.add_field(name='Versão:', value=self.bot.__version__, inline=False)
-        embed.add_field(name='Notas desta versão:', value=self.bot.__commit__["commit"]["message"])
+        embed.add_field(name='Versão:', value=f'[{self.bot.__version__}]({self.bot.__commit__["html_url"]})', inline=False)
+        embed.add_field(name='Commit feito por:', value=f'[{self.bot.__commit__["author"]["login"]}]({self.bot.__commit__["author"]["html_url"]})', inline=False)
+        hour = datetime.strptime(self.bot.__commit__["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ')
+        hour = self.bot.utc_to_timezone(hour, self.bot.timezone)
+        embed.add_field(name='Dia:', value=hour.strftime('%d/%m/%Y as %H:%M'), inline=False)
+        embed.add_field(name='Notas desta versão:', value=self.bot.__commit__["commit"]["message"], inline=False)
         await ctx.send(embed=embed)
 
 def setup(bot): 

@@ -22,7 +22,7 @@ class ServerAdmin(commands.Cog, name='Moderação'):
     @commands.command(usage='{}purge (membro) (2-500)', description='Limpa `x` mensagens de um canal ou de um membro. [Gerenciar Mensagens]', aliases=['prune'])
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def purge(self, ctx, membro:typing.Optional[discord.Member], quantidade:typing.Optional[int]=100):
+    async def purge(self, ctx, membro:discord.Member, quantidade:typing.Optional[int]=100):
         check = None
         if quantidade not in range(2, 501):
             npos = "alto" if quantidade > 500 else "baixo"
@@ -55,16 +55,16 @@ class ServerAdmin(commands.Cog, name='Moderação'):
             if logged:
                 file = BytesIO(msgsp.encode('UTF-8'))
                 file.seek(0)
-                msg = await vizualizer.send(file=discord.File(file, filename='deleted.txt'))
+                msg = await vizualizer.send(file=discord.File(file, filename='deleted.txt'), delete_after=15)
                 ath = msg.attachments[0].url
                 ath = ath.replace('https://', '')
                 ath = f'https://txt.discord.website/?txt={"/".join(ath.split("/")[2:])}'.replace('.txt', '')
 
-        ath = f'Clique [aqui]({ath}) para ver as mensagens deletadas.' if ath else ""
+        ath = f'Clique [aqui]({ath}) para ver as mensagens deletadas.\n`(clique em até 15 segundos)`' if ath else ""
         embed = self.bot.embed(ctx)
         embed.title = '🧹 | Purge'
         embed.description = f'Foram deletadas {len(prg)} mensagens{" de " if membro else ""}{membro.mention if membro else ""}.\n{ath}'
-        await ctx.send(embed=embed)
+        await ctx.send(embed=embed, delete_after=15)
         
     @commands.command(usage='{}ban [membro] (motivo)', description='Bane um membro que está no servidor (ou não). [Banir Membros]', aliases=['banir'])
     @commands.has_permissions(ban_members=True)

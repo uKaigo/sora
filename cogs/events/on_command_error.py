@@ -69,17 +69,16 @@ class CommandError(commands.Cog):
 
         elif isinstance(error, commands.CheckFailure):
             return
-        
-        if hasattr(error, 'original'):
-            if isinstance(error.original, discord.Forbidden):
-                embed = self.bot.erEmbed(ctx, 'Sem permissão.')
-                embed.description = f'Desculpe te mandar mensagem no dm, também não gosto disso!\n'
-                if ctx.author.permissions_in(ctx.channel).manage_channels:
-                    embed.description += f'Mas parece que você não me deu permissão pra falar no {ctx.channel.mention}.\n'
-                    embed.description += 'Por favor, me dê essa permissão ou tente usar em outro canal.'
-                else:
-                    embed.description += f'Mas eu não tenho permissão pra falar no canal do comando, peça a algum superior para me deixar falar no {ctx.channel.mention}! (ou apenas use outro canal)'
-                return await ctx.author.send(embed=embed)
+    
+        if isinstance(error.original, discord.Forbidden):
+            embed = self.bot.erEmbed(ctx, 'Sem permissão.')
+            embed.description = f'Desculpe te mandar mensagem no dm, também não gosto disso!\n'
+            if ctx.author.permissions_in(ctx.channel).manage_channels:
+                embed.description += f'Mas parece que você não me deu permissão pra falar no {ctx.channel.mention}.\n'
+                embed.description += 'Por favor, me dê essa permissão ou tente usar em outro canal.'
+            else:
+                embed.description += f'Mas eu não tenho permissão pra falar no canal do comando, peça a algum superior para me deixar falar no {ctx.channel.mention}! (ou apenas use outro canal)'
+            return await ctx.author.send(embed=embed)
 
         else:
             lines = traceback.format_exception(type(error), error, error.__traceback__, 2)
@@ -88,7 +87,7 @@ class CommandError(commands.Cog):
             embed = discord.Embed(title=f':x: | Erro', 
             description=f'Ocorreu um erro.\n\nServidor: {ctx.guild.name} ({ctx.guild.id})\nMensagem: `{ctx.message.content}`\nAutor: {ctx.author}',
             color=self.bot.ecolor)
-            embed.add_field(name='Erro:', value=trace_txt)
+            embed.add_field(name='Erro:', value=trace_txt[:1024])
             await ch.send(embed=embed)
             embed = discord.Embed(title=":x: | Erro",
             description=f'Ocorreu um erro desconhecido durante a execução do comando.', color=self.bot.ecolor)

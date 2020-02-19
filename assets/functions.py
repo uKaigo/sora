@@ -1,4 +1,8 @@
 from datetime import datetime
+from pytz import utc
+
+def utc_to_timezone(date, timezone):
+    return utc.localize(date, is_dst=None).astimezone(timezone)
 
 def sec2hours(secs):
     anos = secs // 32140800

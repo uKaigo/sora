@@ -3,6 +3,7 @@ import assets.database as database
 import assets.functions as functions
 import asyncio
 import aiohttp
+from pytz import timezone
 from datetime import datetime
 from os import getenv, listdir
 import json
@@ -38,6 +39,7 @@ class Sora(commands.AutoShardedBot):
         self.__started_in__ = None
         self.lang = 'pt-br'
         self.__commit__ = ''
+        self.timezone = timezone("America/Sao_Paulo")
         #self.db = database.Database(getenv('mongo_uri'), 'Sora')
         self.emotes = dict()
         self.nfimg = 'https://i.imgur.com/byuoWoJ.png'
@@ -48,6 +50,7 @@ class Sora(commands.AutoShardedBot):
         self.sec2time = functions.sec2time
         self.getTime = functions.getTime
         self.paginator = functions.paginator
+        self.utc_to_timezone = functions.utc_to_timezone
 
         # Versão do bot
         with open("assets/config.json") as cnf:

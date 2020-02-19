@@ -243,7 +243,8 @@ class Utils(commands.Cog, name='Utilitários'):
             embed.add_field(name=f'Email:', value=user["email"])
 
         created = datetime.strptime(user["created_at"], "%Y-%m-%dT%H:%M:%SZ")
-        embed.add_field(name='Conta criada em:', value=f'{created.strftime("%d/%m/%Y as %H:%M")} ({"".join(self.bot.getTime(created)[0].replace(", ", "").replace("e ", ""))} atrás)')
+        created_tz = self.bot.utc_to_timezone(created, self.bot.timezone)
+        embed.add_field(name='Conta criada em:', value=f'{created_tz.strftime("%d/%m/%Y as %H:%M")} ({"".join(self.bot.getTime(created)[0].replace(", ", "").replace("e ", ""))} atrás)')
 
         m = await ctx.send(embed=embed)
 
