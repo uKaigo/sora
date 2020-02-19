@@ -1,0 +1,6 @@
+discord
+pyfiglet
+psutil
+validators
+motor
+dnspython
