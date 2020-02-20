@@ -30,7 +30,7 @@ class Disco(commands.Cog, name='Discord'):
         embed.add_field(name='Id:', value=str(ctx.author.id), inline=False)
         statuses = {"online": "Online", "dnd": "Não perturbar", "idle": "Ausente", "offline": "Offline"}
         embed.add_field(name='Status:', value=str(self.bot.emotes[f"sora_{str(membro.status)}"]) + f" {':iphone:' if membro.is_on_mobile() else ''} {statuses[str(membro.status)]}", inline=False)
-        embed.add_field(name='Criado em:', value=f'{membro.joined_at.strftime("%d/%m/%Y %H:%M")} ({self.bot.getTime(membro.created_at)[0].replace(", ", "").replace("e ", "")} atrás)', inline=False)
+        embed.add_field(name='Criado em:', value=f'{membro.created_at.strftime("%d/%m/%Y %H:%M")} ({self.bot.getTime(membro.created_at)[0].replace(", ", "").replace("e ", "")} atrás)', inline=False)
         embed.add_field(name='Entrou em:', value=f'{membro.joined_at.strftime("%d/%m/%Y %H:%M")} ({self.bot.getTime(membro.joined_at)[0].replace(", ", "").replace("e ", "")} atrás)', inline=False)
         await ctx.send(embed=embed)
 
