@@ -36,7 +36,7 @@ class CommandError(commands.Cog):
 
         elif isinstance(error, commands.MissingPermissions):
             lang = self.bot.lang
-            with open(f'translation/perms_{lang}.json') as lng:
+            with open(f'translation/perms_{lang}.json', encoding='utf-8') as lng:
                 prms = json.load(lng)
             perms = [prms[c].title() for c in error.missing_perms]
 
@@ -44,9 +44,9 @@ class CommandError(commands.Cog):
             embed.description=f'Você precisa da{"s" if len(perms) > 1 else ""} permiss{"ões" if len(perms) > 1 else "ão"} `{", ".join(perms)}` para executar esse comando'
             return await ctx.send(embed=embed)
 
-        elif isinstance(error, commands.MissingPermissions):
+        elif isinstance(error, commands.BotMissingPermissions):
             lang = self.bot.lang
-            with open(f'translation/perms_{lang}.json') as lng:
+            with open(f'translation/perms_{lang}.json', encoding='utf-8') as lng:
                 prms = json.load(lng)
             perms = [prms[c].title() for c in error.missing_perms]
 

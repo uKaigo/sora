@@ -10,13 +10,13 @@
     "view_audit_log": "view audit log",
     "view_channel": "view channel",
     "send_messages": "send messages",
-    "sends_tts_messages": "send tts messages",
+    "send_tts_messages": "send tts messages",
     "manage_messages": "manage messages",
     "embed_links": "embed links",
     "attach_files": "attach files",
     "read_message_history": "read message history",
     "mention_everyone": "mention everyone",
-    "use_external_emojis": "use external emojis",
+    "external_emojis": "use external emojis",
     "connect": "connect",
     "speak": "speak",
     "mute_members": "mute members",
@@ -29,6 +29,8 @@
     "manage_nicknames": "manage nicknames",
     "manage_roles": "manage roles",
     "manage_webhooks": "manage webhooks",
-    "manage_emojis": "manage emojis"
+    "manage_emojis": "manage emojis",
+    "read_messages": "read messages",
+    "view_guild_insights": "view server insights"
 }
 
