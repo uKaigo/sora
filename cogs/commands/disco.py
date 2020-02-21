@@ -47,16 +47,16 @@ class Disco(commands.Cog, name='Discord'):
         embed.add_field(name='Top Role:', value=f'{membro.top_role.mention} ({membro.top_role.id})\n**Cor:** {membro.top_role.color}\n**Permissões:** [{membro.top_role.permissions.value}](https://finitereality.github.io/permissions-calculator/?v={membro.top_role.permissions.value})', inline=False)
 
         roles = [c for c in membro.roles if not c.name == '@everyone']
-        roles.sort(key=lambda m: m.position, reverse=True)
+        roles = sorted(roles, key=lambda m: m.position, reverse=True)
         roles = [c.mention for c in roles]
         embed.add_field(name=f'Cargos: [{len(roles)}]', value=', '.join(roles), inline=False)
+        msg = await ctx.send(embed=embed)
 
         with open(f"translation/perms_{self.bot.lang}.json", encoding='utf-8') as f:
             prms = json.load(f)
         perms = [prms[c[0]].capitalize() for c in membro.permissions_in(ctx.channel) if c[1]]
 
         embed.add_field(name=f'Este membro tem a seguintes permissões:', value=', '.join(perms), inline=False)
-        await ctx.send(embed=embed)
-
+        await msg.edit(embed=embed)
 def setup(bot):
     bot.add_cog(Disco(bot))
