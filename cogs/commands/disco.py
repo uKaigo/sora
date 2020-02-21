@@ -35,7 +35,7 @@ class Disco(commands.Cog, name='Discord'):
         statuses = {"online": "Online", "dnd": "Não perturbar", "idle": "Ausente", "offline": "Offline"}
         status = str(self.bot.emotes[f"sora_{str(membro.status)}"]) + f" {':iphone:' if membro.is_on_mobile() else ''} **{statuses[str(membro.status)]}**"
         if membro.activity:
-            activity = ["Jogando:", "Transmitindo:", "Ouvindo:", "Assistindo:"]
+            activity = ["Jogando:", "Transmitindo:", "Ouvindo:", "Assistindo:", "Custom:"]
             if membro.activity.type.value == 1:
                 status += f'\n**{activity[membro.activity.type.value]}** [{membro.activity.name}]({membro.activity.url})'
             else:
