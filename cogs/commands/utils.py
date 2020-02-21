@@ -261,5 +261,28 @@ class Utils(commands.Cog, name='Utilitários'):
         embed.insert_field_at(1, name=f'Este usuário tem {user["public_repos"]} repositórios:', value='\n'.join(user_repos), inline=False)
         await m.edit(embed=embed)
 
+    @commands.command(usage='{}guild [id]', description='Exibe informações sobre uma guild (discord widget).')
+    async def guild(self, ctx, id):
+        widget = await self.bot.session.get(f"https://discordapp.com/api/guilds/{id}/widget.json")
+        widget = await widget.json()
+        embed = self.bot.embed(ctx, invisible=True)
+        embed.title = 'Carregando...'
+        msg = await ctx.send(embed=embed)
+        if widget.get("message"):
+            embed = self.bot.erEmbed(ctx, 'Não encontrado!')
+            embed.description = 'O servidor não foi encontrado.'
+            return await msg.edit(embed=embed)
+        if not widget.get("presence_count"):
+            embed = self.bot.erEmbed(ctx, 'Id inválido!')
+            embed.description = 'O id digitado não é snowflake!'
+            return await msg.edit(embed=embed)
+        embed = self.bot.embed(ctx)
+        embed.title = f'Informações sobre o servidor.'
+        embed.add_field(name=f'Nome do servidor:', value=f'{widget["name"]}', inline=False)
+        embed.add_field(name=f'Membros online:', value=f'{widget["presence_count"]}', inline=False)
+        if widget["instant_invite"]:
+            embed.add_field(name=f'Convite:', value=f'[Clique aqui]({widget["instant_invite"]})', inline=False)
+        await msg.edit(embed=embed)
+
 def setup(bot):
     bot.add_cog(Utils(bot))

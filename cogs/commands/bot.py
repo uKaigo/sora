@@ -109,7 +109,7 @@ class BotCmds(commands.Cog, name='Bot'):
         embed.add_field(name='Commit feito por:', value=f'[{self.bot.__commit__["author"]["login"]}]({self.bot.__commit__["author"]["html_url"]})', inline=False)
         hour = datetime.strptime(self.bot.__commit__["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ')
         hour = self.bot.utc_to_timezone(hour, self.bot.timezone)
-        embed.add_field(name='Horário:', value=hour.strftime('%d/%m/%Y as %H:%M'), inline=False)
+        embed.add_field(name='Horário:', value=hour.strftime('%d/%m/%Y as %H:%M GMT%z'), inline=False)
         embed.add_field(name='Notas desta versão:', value=self.bot.__commit__["commit"]["message"], inline=False)
         await ctx.send(embed=embed)
 
