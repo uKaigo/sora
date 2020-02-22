@@ -12,6 +12,12 @@ class OldMembersMenu(menus.Menu):
         self.index = 0
         self.pages = [c for c in pages if c]
         self.msg = msg
+        self.nopage = False
+
+    def should_add_reactions(self):
+        if self.nopage:
+            return 0
+        return len(self.buttons)
 
     async def send_initial_message(self, ctx, channel):
         msg = self.msg
@@ -19,9 +25,9 @@ class OldMembersMenu(menus.Menu):
         embed = self.bot.embed(self.ctx)
         embed.title = f'Old Members | Página {self.index+1}/{len(self.pages)}'
         embed.description = msg
-        await ctx.send(embed=embed)
         if len(self.pages) == 1:
-            return self.stop()
+            self.nopage = True
+        return await ctx.send(embed=embed)
 
     @menus.button('⬅️')
     async def voltar(self, payload):
