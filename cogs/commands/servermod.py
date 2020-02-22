@@ -1,7 +1,7 @@
 import discord
 import typing
 import time
-import json as jsn
+import json 
 import validators
 import asyncio
 import re
@@ -36,34 +36,9 @@ class ServerAdmin(commands.Cog, name='Moderação'):
         await ctx.message.delete()
 
         prg = await ctx.channel.purge(limit=quantidade, check=check)
-        vizualizer = self.bot.get_channel(673654457824837663)
-        ath = "" # ATacHment
-        if prg:
-            msgsp = f'**Purge --- {ctx.channel} ({ctx.guild.name}) --- By {ctx.author}**\n*{datetime.utcnow().strftime("%d/%m/%Y %H:%M:%S")}*\n-----------------------\n'
-            
-            logged = False
-            prg = prg[::-1]
-            
-            for x in prg:
-                if x.author.bot:
-                    continue
-                logged = True
-                msgsp += f'**{x.author}** *({x.author.id})*: \n\t{x.content}\n\n'
-
-            msgsp += '\n\n*__OBS__: Somente mensagens de membros são salvas.*'
-            
-            if logged:
-                file = BytesIO(msgsp.encode('UTF-8'))
-                file.seek(0)
-                msg = await vizualizer.send(file=discord.File(file, filename='deleted.txt'), delete_after=15)
-                ath = msg.attachments[0].url
-                ath = ath.replace('https://', '')
-                ath = f'https://txt.discord.website/?txt={"/".join(ath.split("/")[2:])}'.replace('.txt', '')
-
-        ath = f'Clique [aqui]({ath}) para ver as mensagens deletadas.\n`(clique em até 15 segundos)`' if ath else ""
         embed = self.bot.embed(ctx)
         embed.title = '🧹 | Purge'
-        embed.description = f'Foram deletadas {len(prg)} mensagens{" de " if membro else ""}{membro.mention if membro else ""}.\n{ath}'
+        embed.description = f'Foram deletadas {len(prg)} mensagens{" de " if membro else ""}{membro.mention if membro else ""}.'
         await ctx.send(embed=embed, delete_after=15)
         
     @commands.command(usage='{}ban [membro] (motivo)', description='Bane um membro que está no servidor (ou não). [Banir Membros]', aliases=['banir'])
@@ -240,19 +215,27 @@ class ServerAdmin(commands.Cog, name='Moderação'):
     # Nem veja esse comando, ele é muito mal programado / dificil de entender.
     @commands.command(usage='{}embed [json]', description='Envia um embed no servidor. [Gerenciar Mensagens]\nGere o json aqui: https://discord.club/embedg/\n\n__OBS__: Qualquer valor inválido será ignorado.')
     @commands.has_permissions(manage_messages=True)
-    async def embed(self, ctx, *, json):
+    async def embed(self, ctx, *, jsn=None):
+        # Caso seja maior que 2000 caracteres
+        if not jsn:
+            if ctx.message.attachments:
+                if ctx.message.attachments[0].url.endswith(".txt"):
+                    jsn = await self.bot.session.get(ctx.message.attachments[0].url)
+                    jsn = await jsn.read()
+                    jsn = jsn.decode('utf-8')
+
         empty = discord.Embed.Empty
         try:
-            json = jsn.loads(json)
+            jsn = json.loads(jsn)
         except:
             return await ctx.send('Tem algo de errado com o json, verifique se as virgulas estão corretas ou se não há aspas ou chaves sem fechar.')
-        msg = json.get('content', None)
+        msg = jsn.get('content', None)
         invalid = []
         class EmbError(Exception):
             pass
 
         try:
-            jsn_emb = json['embed']
+            jsn_emb = jsn['embed']
         except:
             error = discord.Embed(title=f':x: | Erro', description='Você não informou nenhum embed.', color=self.bot.ecolor)
             error.set_footer(text=f'Executado por {ctx.author.name}', icon_url=ctx.author.avatar_url)
