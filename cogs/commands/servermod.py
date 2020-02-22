@@ -153,7 +153,7 @@ class ServerAdmin(commands.Cog, name='Moderação'):
         if membro.top_role.position >= ctx.me.top_role.position:
             erro.description = f'Eu não tenho permissão para expulsar **{membro.name}** (cargo dele é maior ou igual que o meu)'
 
-        if not isinstance(erro, discord.Embed.Empty):
+        if not isinstance(erro.description, type(discord.Embed.Empty)):
             return await ctx.send(embed=erro)
 
         await membro.kick(reason=f'Por {ctx.author} || Motivo: {reason}')

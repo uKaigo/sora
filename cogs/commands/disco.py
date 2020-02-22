@@ -17,6 +17,7 @@ class Disco(commands.Cog, name='Discord'):
         embed.set_image(url=member.avatar_url)
         await ctx.send(embed=embed)
 
+    @commands.guild_only() # Guilds only pq não to com saco de adaptar pro privado.
     @commands.command(usage='{}userinfo (membro)', description='Exibe informações de um membro.')
     async def userinfo(self, ctx, *, membro:typing.Optional[discord.Member]):
         membro = membro or ctx.author
@@ -49,7 +50,8 @@ class Disco(commands.Cog, name='Discord'):
         roles = [c for c in membro.roles if not c.name == '@everyone']
         roles = sorted(roles, key=lambda m: m.position, reverse=True)
         roles = [c.mention for c in roles]
-        embed.add_field(name=f'Cargos: [{len(roles)}]', value=', '.join(roles), inline=False)
+        cargos = roles if roles else ["Nenhum."]
+        embed.add_field(name=f'Cargos: [{len(roles) if roles else "0"}]', value=', '.join(cargos), inline=False)
         with open(f"translation/perms_{self.bot.lang}.json", encoding='utf-8') as f:
             prms = json.load(f)
         perms = [prms[c[0]].capitalize() for c in membro.permissions_in(ctx.channel) if c[1]]

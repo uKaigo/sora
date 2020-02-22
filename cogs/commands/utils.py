@@ -11,7 +11,6 @@ class OldMembersMenu(menus.Menu):
         super().__init__(clear_reactions_after=True, timeout=30)
         self.index = 0
         self.pages = [c for c in pages if c]
-        self.stoped = False
         self.msg = msg
 
     async def send_initial_message(self, ctx, channel):
@@ -20,8 +19,9 @@ class OldMembersMenu(menus.Menu):
         embed = self.bot.embed(self.ctx)
         embed.title = f'Old Members | Página {self.index+1}/{len(self.pages)}'
         embed.description = msg
-
-        return await ctx.send(embed=embed)
+        await ctx.send(embed=embed)
+        if len(self.pages) == 1:
+            return self.stop()
 
     @menus.button('⬅️')
     async def voltar(self, payload):
@@ -51,16 +51,7 @@ class OldMembersMenu(menus.Menu):
         
     @menus.button('❌')
     async def parar(self, _):
-        self.stoped = True
         self.stop()
-
-    async def finalize(self):
-        embed = self.bot.embed(self.ctx, invisible=True)
-        if self.stoped:
-            embed.title = 'Old Members | Saindo.'
-        else:
-            embed.title = 'Old Members | Tempo Excedido!'
-        return await self.message.edit(embed=embed)
 
 class Utils(commands.Cog, name='Utilitários'):
     def __init__(self, bot):
