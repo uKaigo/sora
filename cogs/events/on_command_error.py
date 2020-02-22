@@ -61,7 +61,8 @@ class CommandError(commands.Cog):
                 embed = self.bot.erEmbed(ctx, 'Membro inválido.')
                 embed.description = f'O membro `{member}` não foi encontrado.\nVerifique ortografia ou se o membro está no servidor.'
                 return await ctx.send(embed=embed)
-        
+            return await ctx.send(f'Argumento inválido.\n{error.args[0]}')
+    
         elif isinstance(error, commands.NoPrivateMessage):
             embed = self.bot.erEmbed(ctx, "Canal errado!")
             embed.description = "Este comando não pode ser usado em DM's."
@@ -70,15 +71,16 @@ class CommandError(commands.Cog):
         elif isinstance(error, commands.CheckFailure):
             return
     
-        if isinstance(error.original, discord.Forbidden):
-            embed = self.bot.erEmbed(ctx, 'Sem permissão.')
-            embed.description = f'Desculpe te mandar mensagem no dm, também não gosto disso!\n'
-            if ctx.author.permissions_in(ctx.channel).manage_channels:
-                embed.description += f'Mas parece que você não me deu permissão pra falar no {ctx.channel.mention}.\n'
-                embed.description += 'Por favor, me dê essa permissão ou tente usar em outro canal.'
-            else:
-                embed.description += f'Mas eu não tenho permissão pra falar no canal do comando, peça a algum superior para me deixar falar no {ctx.channel.mention}! (ou apenas use outro canal)'
-            return await ctx.author.send(embed=embed)
+        if hasattr(error, 'original'):
+            if isinstance(error.original, discord.Forbidden):
+                embed = self.bot.erEmbed(ctx, 'Sem permissão.')
+                embed.description = f'Desculpe te mandar mensagem no dm, também não gosto disso!\n'
+                if ctx.author.permissions_in(ctx.channel).manage_channels:
+                    embed.description += f'Mas parece que você não me deu permissão pra falar no {ctx.channel.mention}.\n'
+                    embed.description += 'Por favor, me dê essa permissão ou tente usar em outro canal.'
+                else:
+                    embed.description += f'Mas eu não tenho permissão pra falar no canal do comando, peça a algum superior para me deixar falar no {ctx.channel.mention}! (ou apenas use outro canal)'
+                return await ctx.author.send(embed=embed)
 
         else:
             lines = traceback.format_exception(type(error), error, error.__traceback__, 2)

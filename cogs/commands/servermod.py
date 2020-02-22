@@ -79,7 +79,7 @@ class ServerAdmin(commands.Cog, name='Moderação'):
             if membro == ctx.me:
                 erro.description = 'Não posso me banir...'
 
-            if membro.top_role.position >= ctx.author.top_role.position:
+            if membro.top_role.position >= ctx.author.top_role.position or membro == ctx.guild.owner:
                 erro.description = f'Você não tem permissão para banir **{membro.name}** (seu cargo é menor ou igual que o dele)'
 
             if membro.top_role.position >= ctx.me.top_role.position:

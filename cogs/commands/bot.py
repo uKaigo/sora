@@ -1,6 +1,7 @@
 import discord
-from datetime import datetime, timezone
+from datetime import datetime
 from pytz import timezone as pytzTz
+import inspect
 import psutil
 import os
 import json
@@ -99,7 +100,7 @@ class BotCmds(commands.Cog, name='Bot'):
         embed = self.bot.embed(ctx)
         embed.title = f'Atualmente com `{len(self.bot.users)}` usuários, `{len(self.bot.guilds)}` servidores, `{len(self.bot.emojis)}` emojis e `{len([c for c in self.bot.get_all_channels()])}` canais.'
         await ctx.send(embed=embed)
-    
+
     @commands.command(usage='{}version', description='Mostra as informações da versão atual do bot atual.')
     async def version(self, ctx):
         embed = self.bot.embed(ctx)
@@ -111,6 +112,33 @@ class BotCmds(commands.Cog, name='Bot'):
         hour = self.bot.utc_to_timezone(hour, self.bot.timezone)
         embed.add_field(name='Horário:', value=hour.strftime('%d/%m/%Y as %H:%M GMT%z'), inline=False)
         embed.add_field(name='Notas desta versão:', value=self.bot.__commit__["commit"]["message"], inline=False)
+        await ctx.send(embed=embed)
+
+    @commands.command(usage='{}source [comando]', description='Mostra o código de um comando.')
+    async def source(self, ctx, *, comando=None):
+        github = 'https://github.com/uKaigo/Sora-Bot' # Coloque o source do seu bot
+        embed = self.bot.embed(ctx)
+        embed.title = 'Aqui está meu source:' if not comando else f'Aqui está o source do comando {comando.replace(" ", ".")}:'
+        if not comando:
+            embed.description = github
+            return await ctx.send(embed=embed)
+
+        cmd = self.bot.get_command(comando)
+        if not cmd:
+            embed = self.bot.erEmbed(ctx, "Comando inválido!")
+            embed.description = 'O comando que você digitou, não existe.\nVerifique ortografia ou se o (sub)comando existe.'
+            return await ctx.send(embed=embed)
+
+        cmd_func = cmd.callback
+        cmd_mod = cmd_func.__module__
+
+        code, linha1 = inspect.getsourcelines(cmd_func.__code__)
+        linha2 = linha1+(len(code)-1)
+
+        loc = cmd_mod.replace('.', '/') + '.py'
+        branch = 'master'
+        source = f'{github}/blob/{branch}/{loc}#L{linha1}-L{linha2}'
+        embed.description = f'[{branch}/{loc}#L{linha1}]({source})'
         await ctx.send(embed=embed)
 
 def setup(bot): 

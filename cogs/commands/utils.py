@@ -284,5 +284,21 @@ class Utils(commands.Cog, name='Utilitários'):
             embed.add_field(name=f'Convite:', value=f'[Clique aqui]({widget["instant_invite"]})', inline=False)
         await msg.edit(embed=embed)
 
+    @commands.command(usage='{}addbot [bot (no server)] (permissões)', description='Pega o convite de um bot.')
+    async def addbot(self, ctx, bot:discord.Member, permissions='8'):
+        if not bot.bot: # Estranho esse bot.bot kkkkk
+            embed = self.bot.erEmbed(ctx, 'Membro inválido!')
+            embed.description = 'Este membro não é um bot!'
+            return await ctx.send(embed=embed)
+        invalid = False
+        if not permissions.isdigit():
+            invalid = True
+            permissions = '8'
+        base_url = 'https://discordapp.com/oauth2/authorize?scope=bot&client_id={}&permissions={}'        
+        embed = self.bot.embed(ctx)
+        embed.title = f'Aqui está o convite do bot {bot.name}'
+        embed.description = f'{base_url.format(bot.id, permissions)}\n\n{"A permissão que você digitou estava inválida, 8 no lugar." if invalid else ""}'
+        await ctx.send(embed=embed)
+
 def setup(bot):
     bot.add_cog(Utils(bot))
