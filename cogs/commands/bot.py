@@ -110,8 +110,12 @@ class BotCmds(commands.Cog, name='Bot'):
         embed.add_field(name='Commit feito por:', value=f'[{self.bot.__commit__["author"]["login"]}]({self.bot.__commit__["author"]["html_url"]})', inline=False)
         hour = datetime.strptime(self.bot.__commit__["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ')
         hour = self.bot.utc_to_timezone(hour, self.bot.timezone)
-        embed.add_field(name='Horário:', value=hour.strftime('%d/%m/%Y as %H:%M GMT%z'), inline=False)
+        with open("assets/config.json") as jsn:
+            message_id = json.load(jsn)["changelog_id"]
+        embed.add_field(name='Mensagem da changelog:', value=f'[Clique aqui](https://discordapp.com/channels/675889958262931488/676520484820484096/{message_id})', inline=False)
         embed.add_field(name='Notas desta versão:', value=self.bot.__commit__["commit"]["message"], inline=False)
+        embed.set_footer(text=f'{ctx.author.name} • Commit feito', icon_url=ctx.author.avatar_url)
+        embed.timestamp = hour
         await ctx.send(embed=embed)
 
     @commands.command(usage='{}source [comando]', description='Mostra o código de um comando.')
