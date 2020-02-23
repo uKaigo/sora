@@ -23,6 +23,5 @@ class Tasks(commands.Cog):
         tp, name = next(self.presences)
         await self.bot.change_presence(activity=discord.Activity(name=name, type=tp, url='https://twitch.tv/ukaigo'))
 
-
 def setup(bot):
     bot.add_cog(Tasks(bot))

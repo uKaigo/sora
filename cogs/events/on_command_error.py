@@ -1,6 +1,7 @@
 import discord
 import traceback
 import json
+import re
 from discord.ext import commands
 
 class CommandError(commands.Cog):
@@ -12,14 +13,26 @@ class CommandError(commands.Cog):
 
         if isinstance(error, commands.CommandNotFound) or isinstance(error, commands.NotOwner):
             try:
-                return await ctx.message.add_reaction('❌')
+                await ctx.message.add_reaction('❌')
             except:
                 pass
-            #embed = discord.Embed(title=':x: | Comando não encontrado', 
-            #description=f'O comando que você digitou `({ctx.invoked_with})` não existe!', color=self.bot.ecolor)
-            #embed.set_footer(text=f'Executado por {ctx.author.name}', icon_url=ctx.author.avatar_url)
-            #embed.timestamp = ctx.message.created_at
-            #await ctx.send(embed=embed)
+            suggestions = []
+
+            pat = '.*?'.join(map(re.escape, ctx.invoked_with))
+            regex = re.compile(pat, flags=re.IGNORECASE)
+
+            for c in self.bot.all_commands:
+                r = regex.search(c)
+                if r:
+                    if c.startswith(ctx.invoked_with):
+                        suggestions.append(f'`{self.bot.formatPrefix(ctx)}{c}`')
+            embed = self.bot.erEmbed(ctx, "Comando não encontrado!")
+            if suggestions:
+                embed.description = 'Você quis dizer:\n'
+                embed.description += f'\n'.join(suggestions)
+                return await ctx.send(embed=embed)
+            else:
+                return
 
         elif isinstance(error, commands.MissingRequiredArgument):
             embed = self.bot.erEmbed(ctx, f'"{str(error.param).split(":")[0]}" não informado')

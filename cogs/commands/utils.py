@@ -1,63 +1,11 @@
 import discord
 import pyfiglet
+import validators
+from io import BytesIO
 from discord.ext import commands
 from aiohttp import BasicAuth 
 from os import getenv
 from datetime import datetime
-import assets.discordMenus as menus
-
-class OldMembersMenu(menus.Menu):
-    def __init__(self, pages, msg):
-        super().__init__(clear_reactions_after=True, timeout=30)
-        self.index = 0
-        self.pages = [c for c in pages if c]
-        self.msg = msg
-        self.nopage = False
-
-    def should_add_reactions(self):
-        if self.nopage:
-            return 0
-        return len(self.buttons)
-
-    async def send_initial_message(self, ctx, channel):
-        msg = self.msg
-        msg += self.pages[self.index]
-        embed = self.bot.embed(self.ctx)
-        embed.title = f'Old Members | Página {self.index+1}/{len(self.pages)}'
-        embed.description = msg
-        if len(self.pages) == 1:
-            self.nopage = True
-        return await ctx.send(embed=embed)
-
-    @menus.button('⬅️')
-    async def voltar(self, payload):
-        self.index -= 1
-        if self.index < 0:
-            self.index = len(self.pages)-1
-        msg = self.msg
-        msg += self.pages[self.index]
-        embed = self.bot.embed(self.ctx)
-        embed.title = f'Old Members | Página {self.index+1}/{len(self.pages)}'
-        embed.description = msg
-        await self.message.edit(embed=embed)    
-
-    @menus.button('➡️')
-    async def avancar(self, payload):
-        self.index += 1
-        msg = self.msg
-        try:
-            msg += self.pages[self.index]
-        except:
-            self.index = 0
-            msg += self.pages[self.index]
-        embed = self.bot.embed(self.ctx)
-        embed.title = f'Old Members | Página {self.index+1}/{len(self.pages)}'
-        embed.description = msg
-        await self.message.edit(embed=embed)
-        
-    @menus.button('❌')
-    async def parar(self, _):
-        self.stop()
 
 class Utils(commands.Cog, name='Utilitários'):
     def __init__(self, bot):
@@ -159,38 +107,6 @@ class Utils(commands.Cog, name='Utilitários'):
         embed.title = 'Código de Barras'
         embed.set_image(url=barcode.url)
         await ctx.send(embed=embed)
-
-    @commands.guild_only()
-    @commands.command(usage='{}oldmembers', description='Exibe os membros mais antigos do servidor.\nUse `-bots` depois do comando para não incluir bots.')
-    async def oldmembers(self, ctx, param=None):
-        nao = ""
-        if param == '-bots':
-            nao = " não"
-            membros = [(member, member.joined_at.timestamp()) for member in ctx.guild.members if not member.bot]
-        else:
-            membros = [(member, member.joined_at.timestamp()) for member in ctx.guild.members]
-        
-        membros.sort(key=lambda t: t[1])
-        membros = [c[0] for c in membros]
-        
-        pages = []
-        
-        text = ""
-        index = 0
-
-        for k, membro in enumerate(membros):
-            index += 1
-            text += f'{k+1}º `{membro}`\n'
-            if index == 10:
-                pages.append(text)
-                index = 0
-                text = ""
-            if k+1 == len(membros):
-                pages.append(text)
-
-        msg = f"Estes são os membros mais antigos do servidor.\nBots{nao} exibidos.\n\n"
-        menu = OldMembersMenu(pages, msg)
-        await menu.start(ctx)
 
     @commands.command(usage='{}mcbody [nick]', description='Exibe a skin de um jogador do minecraft. (original)')
     async def mcbody(self, ctx, nick):
