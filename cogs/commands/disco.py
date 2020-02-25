@@ -94,7 +94,7 @@ class Disco(commands.Cog, name='Discord'):
             if membro.activity.type.value == 1:
                 status += f'\n**{activity[membro.activity.type.value]}** [{membro.activity.name}]({membro.activity.url})'
             else:
-                status += f'\n**{activity[membro.activity.type.value]}** {membro.activity.name}'
+                status += f'\n**{activity[membro.activity.type.value]}** {str(membro.acitivity.emoji).replace("None", "")}{str(membro.activity.name).replace("None", "")}'
         embed.add_field(name='Status:', value=status, inline=False)
         
         embed.add_field(name='Data:', value=f'**Que criou a conta:** {membro.created_at.strftime("%d/%m/%Y %H:%M")} ({self.bot.getTime(membro.created_at)[0].replace(", ", "").replace("e ", "")} atrás)\n**Que entrou no server:** {membro.joined_at.strftime("%d/%m/%Y %H:%M")} ({self.bot.getTime(membro.joined_at)[0].replace(", ", "").replace("e ", "")} atrás)', inline=False)
