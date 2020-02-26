@@ -5,6 +5,7 @@ import json
 import validators
 import asyncio
 import re
+import inspect
 from datetime import datetime
 from io import BytesIO
 from discord.ext import commands
@@ -213,7 +214,7 @@ class ServerAdmin(commands.Cog, name='Moderação'):
         await ctx.send(embed=embed)
 
     # Nem veja esse comando, ele é muito mal programado / dificil de entender.
-    @commands.command(usage='{}embed [json]', description='Envia um embed no servidor. [Gerenciar Mensagens]\nGere o json aqui: https://discord.club/embedg/\n\n__OBS__: Qualquer valor inválido será ignorado.')
+    @commands.command(usage='{}embed <json/arquivo>', description='Envia um embed no servidor. [Gerenciar Mensagens]\nGere o json aqui: https://discord.club/embedg/\n\n__OBS__: Qualquer valor inválido será ignorado.')
     @commands.has_permissions(manage_messages=True)
     async def embed(self, ctx, *, jsn=None):
         # Caso seja maior que 2000 caracteres
@@ -223,7 +224,8 @@ class ServerAdmin(commands.Cog, name='Moderação'):
                     jsn = await self.bot.session.get(ctx.message.attachments[0].url)
                     jsn = await jsn.read()
                     jsn = jsn.decode('utf-8')
-
+            else:
+                raise commands.MissingRequiredArgument(inspect.Parameter(name="json", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD))
         empty = discord.Embed.Empty
         try:
             jsn = json.loads(jsn)

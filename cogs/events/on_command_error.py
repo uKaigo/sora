@@ -27,7 +27,7 @@ class CommandError(commands.Cog):
                     if c.startswith(ctx.invoked_with):
                         suggestions.append(f'`{self.bot.formatPrefix(ctx)}{c}`')
             embed = self.bot.erEmbed(ctx, "Comando não encontrado!")
-            if suggestions:
+            if suggestions and not isinstance(error, commands.NotOwner):
                 embed.description = 'Você quis dizer:\n'
                 embed.description += f'\n'.join(suggestions)
                 return await ctx.send(embed=embed)
