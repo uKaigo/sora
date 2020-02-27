@@ -224,14 +224,16 @@ class ServerAdmin(commands.Cog, name='Moderação'):
                     jsn = await self.bot.session.get(ctx.message.attachments[0].url)
                     jsn = await jsn.read()
                     jsn = jsn.decode('utf-8')
-            else:
+            else: # Caso não tenha nada
                 raise commands.MissingRequiredArgument(inspect.Parameter(name="json", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD))
-        empty = discord.Embed.Empty
+
         try:
             jsn = json.loads(jsn)
         except:
             return await ctx.send('Tem algo de errado com o json, verifique se as virgulas estão corretas ou se não há aspas ou chaves sem fechar.')
+        
         msg = jsn.get('content', None)
+
         invalid = []
         class EmbError(Exception):
             pass
@@ -239,88 +241,99 @@ class ServerAdmin(commands.Cog, name='Moderação'):
         try:
             jsn_emb = jsn['embed']
         except:
-            error = discord.Embed(title=f':x: | Erro', description='Você não informou nenhum embed.', color=self.bot.ecolor)
-            error.set_footer(text=f'Executado por {ctx.author.name}', icon_url=ctx.author.avatar_url)
-            error.timestamp = ctx.message.created_at
+            error = self.bot.erEmbed(ctx, "Erro!")
+            error.description = 'Você não informou nenhum embed!'
             return await ctx.send(embed=error)
     
+        # Daqui pra baixo, ele vai verificar tudo que é possivel no embed, e retirar do dicionario caso esteja errado
+        # Todos esses invalid.append é pra mostrar oq está errado
+
         if jsn_emb.get("color"):
             try:
                 jsn_emb["color"] = int(jsn_emb["color"])
             except ValueError:
                 del(jsn_emb["color"])
                 invalid.append("embed.color")
+
         if jsn_emb.get("title"):
             try:
                 jsn_emb["title"] = jsn_emb["title"][:256]
             except:
-                invalid.append("embed.title")
                 del(jsn_emb["title"])
+                invalid.append("embed.title")
+
         if jsn_emb.get("description"):
             try:
                 jsn_emb["description"] = jsn_emb["description"][:1024]
             except:
-                invalid.append("embed.description")
                 del(jsn_emb["description"])
+                invalid.append("embed.description")
 
-        embed = discord.Embed(title=jsn_emb.get("title", empty), description=jsn_emb.get("description", empty), color=jsn_emb.get("color", empty))
-        
         if jsn_emb.get('timestamp'):
             try:
-                embed.timestamp = datetime.strptime(jsn_emb["timestamp"][:-4], "%Y-%m-%dT%H:%M:%S")
+                datetime.strptime(jsn_emb["timestamp"][:-4], "%Y-%m-%dT%H:%M:%S")
             except:
+                del(jsn_emb["timestamp"])
                 invalid.append('embed.timestamp')
 
         if jsn_emb.get('footer'):
-            iurl = empty
             if jsn_emb['footer'].get('icon_url'):
                 if validators.url(jsn_emb['footer'].get('icon_url', 'G. A. G. A.')):
-                    iurl = jsn_emb['footer'].get('icon_url')
+                    pass
                 else:
+                    del(jsn_emb['footer']['icon_url'])
                     invalid.append('embed.footer.icon_url')
-            embed.set_footer(text=jsn_emb['footer'].get('text', empty), icon_url=iurl)
 
         if jsn_emb.get('thumbnail'):
             if validators.url(jsn_emb['thumbnail'].get('url', 'G. A. G. A.')):
-                embed.set_thumbnail(url=jsn_emb['thumbnail'].get('url'))
+                pass
             else:
+                del(jsn_emb["thumbnail"])
                 invalid.append('embed.thumbnail')
-        
+
         if jsn_emb.get('image'):
             if validators.url(jsn_emb['image'].get('url', 'G. A. G. A.')):
-                embed.set_image(url=jsn_emb['image'].get('url'))
+                pass
             else:
+                del(jsn_emb['image'])
                 invalid.append('embed.thumbnail')
-        
-        try:
+
+        try: # Author      
             if jsn_emb.get('author'):
-                aurl = empty 
-                iurl = empty
                 if not jsn_emb['author'].get('name'):
+                    del(jsn_emb['author'])
                     invalid.append('embed.author.name')
                     raise EmbError
+
                 if jsn_emb['author'].get('url'):
                     if not validators.url(jsn_emb['author']['url']):
+                        del(jsn_emb["author"]["url"])
                         invalid.append('embed.author.url')
                     else:
-                        aurl = jsn_emb['author']['url']
+                        pass
                 if jsn_emb['author'].get('icon_url'):
                     if not validators.url(jsn_emb['author']['icon_url']):
+                        del(jsn_emb["author"]["icon_url"])
                         invalid.append('embed.author.icon_url')
                     else:
-                        aiurl = jsn_emb['author']['icon_url']
-                embed.set_author(name=jsn_emb['author']['name'], url=aurl, icon_url=aiurl)
+                        pass
         except EmbError:
             pass
 
         for p, field in enumerate(jsn_emb.get('fields', [])):
             if not 'name' in field or not 'value' in field:
+                del(jsn_emb["fields"][p])
                 invalid.append(f'embed.fields[{p}]')
                 continue
-            embed.add_field(name=field['name'], value=field['value'], inline=field.get('inline', False))
-        await ctx.send(embed=embed, content=msg)
+
+        try:
+            await ctx.send(embed=discord.Embed.from_dict(jsn_emb), content=msg)
+        except Exception as e:
+            error = True # Isso pq alguns valores do field, não sei arrumar.
+            await ctx.send(f"Falha ao enviar o embed, algo pode estar errado nele!\n\nErro: `{e}`")
+        
         if invalid:
-            await ctx.send(f'Tudo que foi considerado inválido:\n{"; ".join(invalid)}\nCheque se algo não está faltando ou não é um valor correto, vá para o <https://embed.discord.website/> e verifique os erros', delete_after=10)
+            await ctx.send(f'Tudo que foi considerado inválido:\n{"; ".join(invalid)}\n{"`Os valores acima provavelmente foram as causas diretas para o embed não ser enviado.`" if error else ""}\nCheque se algo não está faltando ou não é um valor correto, vá para o <https://embed.discord.website/> e verifique os erros', delete_after=10)
 
     @commands.has_permissions(manage_messages=True)
     @commands.command(usage='{}vote (emoji-sim) (emoji-nao) [mensagem]', description='Faz uma votação no canal atual. [Gerenciar Mensagens]', aliases=['votacao'])
