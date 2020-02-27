@@ -90,7 +90,7 @@ class BotCmds(commands.Cog, name='Bot'):
             host = f'Local `({ping}ms)`'
         embed.add_field(name=f'Hospedagem:', value=host, inline=False)
 
-        embed.add_field(name=f'Links:', value='Convite: [Clique](https://bit.ly/SoraBot)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) \nServidor: [Entre](https://discord.gg/4YVfJMV)', inline=False)
+        embed.add_field(name=f'Links:', value='Convite: [Clique](https://bit.ly/SoraBot)\nServidor: [Entre](https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
         
         embed.set_footer(text=f'{ctx.author.name} • Digite `{self.bot.formatPrefix(ctx)}comandos`', icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)

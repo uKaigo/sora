@@ -114,9 +114,9 @@ class Sora(commands.AutoShardedBot):
         # Embaixo do uptime, pq isso não é necessário antes.
         git_name, git_token = getenv("git_token").split(":")
         auth = aiohttp.BasicAuth(git_name, git_token, 'utf-8')
-        aux = "Merge branch"
+        aux = "Merge"
         index = 0
-        while aux.startswith("Merge branch"):
+        while aux.split(" ")[0] in ["Merge", "setver"]:
             s = await self.session.get("https://api.github.com/repos/uKaigo/Sora-Bot/commits", auth=auth)
             j = await s.json()
             j = j[index]
