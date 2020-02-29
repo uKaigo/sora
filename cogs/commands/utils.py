@@ -1,7 +1,6 @@
 import discord
 import pyfiglet
 import validators
-from io import BytesIO
 from discord.ext import commands
 from aiohttp import BasicAuth 
 from os import getenv
@@ -176,26 +175,7 @@ class Utils(commands.Cog, name='Utilitários'):
 
     @commands.command(usage='{}guild [id]', description='Exibe informações sobre uma guild (discord widget).')
     async def guild(self, ctx, id):
-        widget = await self.bot.session.get(f"https://discordapp.com/api/guilds/{id}/widget.json")
-        widget = await widget.json()
-        embed = self.bot.embed(ctx, invisible=True)
-        embed.title = 'Carregando...'
-        msg = await ctx.send(embed=embed)
-        if widget.get("message"):
-            embed = self.bot.erEmbed(ctx, 'Não encontrado!')
-            embed.description = 'O servidor não foi encontrado.'
-            return await msg.edit(embed=embed)
-        if not widget.get("presence_count"):
-            embed = self.bot.erEmbed(ctx, 'Id inválido!')
-            embed.description = 'O id digitado não é snowflake!'
-            return await msg.edit(embed=embed)
-        embed = self.bot.embed(ctx)
-        embed.title = f'Informações sobre o servidor.'
-        embed.add_field(name=f'Nome do servidor:', value=f'{widget["name"]}', inline=False)
-        embed.add_field(name=f'Membros online:', value=f'{widget["presence_count"]}', inline=False)
-        if widget["instant_invite"]:
-            embed.add_field(name=f'Convite:', value=f'[Clique aqui]({widget["instant_invite"]})', inline=False)
-        await msg.edit(embed=embed)
+        pass
 
     @commands.command(usage='{}addbot [bot (no server)] (permissões)', description='Pega o convite de um bot.')
     async def addbot(self, ctx, bot:discord.Member, permissions='8'):

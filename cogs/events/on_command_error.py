@@ -38,6 +38,7 @@ class CommandError(commands.Cog):
             embed = self.bot.erEmbed(ctx, f'"{str(error.param).split(":")[0]}" não informado')
             embed.add_field(name='Uso:', value=ctx.command.usage.format(ctx.prefix), inline=False)
             embed.add_field(name='Descrição:', value=ctx.command.description)
+            embed.set_footer(text=f'{ctx.author.name} • [obrigatório] (opcional) <arquivo>', icon_url=ctx.author.avatar_url)
             return await ctx.send(embed=embed)
 
         elif isinstance(error, commands.ExpectedClosingQuoteError) or isinstance(error, commands.UnexpectedQuoteError):

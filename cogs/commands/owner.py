@@ -1,7 +1,5 @@
 import discord
 from os import listdir
-import io
-import typing
 import ast
 import json
 import inspect
@@ -69,7 +67,15 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
             if not cmd:
                 raise NameError("Comando não encontrado.")
             return inspect.getsource(cmd.callback)
-        
+        def fulldir(classe, all = False):
+            d = [c for c in dir(classe) if not c.startswith("__")]
+            if all:
+                d += [c for c in dir(classe) if c.startswith("__")]
+            final = {}
+            for attr in d:
+                final[attr] = getattr(classe, attr)
+            return final
+
         func = "_eval_expr"
         cmd = cmd.strip("` ")
         cmd = "\n".join(f"    {i}" for i in cmd.splitlines())
@@ -82,7 +88,8 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
             'commands': commands,
             'ctx': ctx,
             'imp': __import__,
-            'getcmd': getcmd
+            'getcmd': getcmd,
+            'fdir': fulldir
         }
 
         try:
@@ -105,8 +112,18 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
                 await ctx.message.add_reaction('✅')
             except:
                 pass
+        m = None
         for txt in self.bot.paginator(result, 1990):
-            await ctx.send(f"```py\n{txt}```")
+            m = await ctx.send(f"```py\n{txt}```")
+        if not m:
+            return await ctx.send("Nenhuma saida.")
+        await m.add_reaction('❌')
+        try:
+            await self.bot.wait_for('reaction_add', timeout=20, check=lambda r, u: u == ctx.author and r.emoji == '❌')
+        except Exception as e:
+            pass
+        await m.remove_reaction('❌', ctx.me)
+        await m.edit(content=f'```diff\n- Fechado -```')
 
     @commands.is_owner()
     @commands.command(usage='Sigiloso.', description='Sigiloso.')

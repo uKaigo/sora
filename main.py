@@ -1,14 +1,10 @@
 import discord
-import assets.database as database
 import assets.functions as functions
-import asyncio
-import aiohttp
 from pytz import timezone
-from datetime import datetime
 from os import getenv, listdir
 import json
 from pathlib import Path
-from discord.ext import commands, tasks
+from discord.ext import commands
 
     
 if not getenv("HEROKU"):
@@ -31,18 +27,14 @@ class Sora(commands.AutoShardedBot):
         self.color = 0xBA3C51
         self.ecolor = 0xDD2E44
         self.neutral = 0x36393F
-
-        # Requests
-        self.session = aiohttp.ClientSession(loop=self.loop)
         
         # Variáveis internas
         self.__started_in__ = None
-        self.lang = 'pt-br'
         self.__commit__ = ''
-        self.timezone = timezone("America/Sao_Paulo")
-        #self.db = database.Database(getenv('mongo_uri'), 'Sora')
+        self.lang = 'pt-br'
         self.emotes = dict()
-        self.nfimg = 'https://i.imgur.com/byuoWoJ.png'
+        self.timezone = timezone("America/Sao_Paulo")
+        self.nfimg = 'https://i.imgur.com/byuoWoJ.png' # Not Found Image
         
         # Funções
         self.sec2hours = functions.sec2hours
@@ -94,35 +86,6 @@ class Sora(commands.AutoShardedBot):
 
     async def on_message(self, message):
         return
-
-    async def on_ready(self):
-        print('---------- Bot Online -----------')
-        print(f'Nome: {self.user.name}')
-        print(f'Id: {self.user.id}')
-        print(f'Usuários: {len(self.users) - len([c for c in self.users if c.bot])}')
-        print(f'Bots: {len([c for c in self.users if c.bot])}')
-        print(f'Guilds: {len(self.guilds)}')
-        print('---------------------------------')
-        ############
-
-        # Servidor de emojis, verifique os emojis usados pelo bot para não dar erro. (Caso for usar)
-        for emoji in self.get_guild(675889958262931488).emojis:
-            self.emotes[emoji.name] = emoji
-        await self.change_presence(activity=discord.Activity(name='minha ajuda', type=1, url='https://twitch.tv/ukaigo'))
-        self.__started_in__ = datetime.utcnow()
-
-        # Embaixo do uptime, pq isso não é necessário antes.
-        git_name, git_token = getenv("git_token").split(":")
-        auth = aiohttp.BasicAuth(git_name, git_token, 'utf-8')
-        aux = "Merge"
-        index = 0
-        while aux.split(" ")[0] in ["Merge", "setver"]:
-            s = await self.session.get("https://api.github.com/repos/uKaigo/Sora-Bot/commits", auth=auth)
-            j = await s.json()
-            j = j[index]
-            aux = j["commit"]["message"]
-            index += 1
-        self.__commit__ = j
 
     pings = property(functions.__getpings__, functions.__cantset__, functions.__cantdel__)
     uptime = property(functions.__getuptime__, functions.__cantset__, functions.__cantdel__)

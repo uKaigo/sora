@@ -1,6 +1,6 @@
 import discord
-import typing
-import json
+from typing import Optional
+from json import load
 import assets.discordMenus as menus
 from discord.ext import commands 
 
@@ -62,7 +62,7 @@ class Disco(commands.Cog, name='Discord'):
         self.bot = bot
 
     @commands.command(usage='{}avatar (membro)', description='Retorna seu avatar ou de um membro.')
-    async def avatar(self, ctx, membro:typing.Optional[discord.Member]):
+    async def avatar(self, ctx, membro:Optional[discord.Member]):
         member = membro or ctx.author 
         embed = self.bot.embed(ctx)
         embed.title = f'Avatar de {member.name}:'
@@ -73,7 +73,7 @@ class Disco(commands.Cog, name='Discord'):
 
     @commands.guild_only() # Guild only pq não to com saco de adaptar pro privado.
     @commands.command(usage='{}userinfo (membro)', description='Exibe informações de um membro.')
-    async def userinfo(self, ctx, *, membro:typing.Optional[discord.Member]):
+    async def userinfo(self, ctx, *, membro:Optional[discord.Member]):
         membro = membro or ctx.author
         cor = membro.color if str(membro.color) != '#000000' else self.bot.color
 
@@ -107,7 +107,7 @@ class Disco(commands.Cog, name='Discord'):
         cargos = roles if roles else ["Nenhum."]
         embed.add_field(name=f'Cargos: [{len(roles) if roles else "0"}]', value=', '.join(cargos), inline=False)
         with open(f"translation/perms_{self.bot.lang}.json", encoding='utf-8') as f:
-            prms = json.load(f)
+            prms = load(f)
         perms = [prms[c[0]].capitalize() for c in membro.permissions_in(ctx.channel) if c[1]]
         embed.add_field(name=f'Este membro tem as seguintes permissões:', value=', '.join(perms), inline=False)
 

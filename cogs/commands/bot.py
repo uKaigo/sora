@@ -1,10 +1,9 @@
 import discord
 from datetime import datetime
-from pytz import timezone as pytzTz
 import inspect
 import psutil
-import os
-import json
+from os import getenv 
+from json import load 
 from discord.ext import commands
 
 class BotCmds(commands.Cog, name='Bot'):
@@ -51,7 +50,7 @@ class BotCmds(commands.Cog, name='Bot'):
 
             if cmd.parent:
                 embed.add_field(name='Comando pai:', value=comando.split(' ')[0], inline=False)
-
+            embed.set_footer(text=f'{ctx.author.name} • [obrigatório] (opcional) <arquivo>', icon_url=ctx.author.avatar_url)
             return await ctx.send(embed=embed)
 
         cogs = [self.bot.get_cog(c) for c in self.bot.cogs]
@@ -84,7 +83,7 @@ class BotCmds(commands.Cog, name='Bot'):
         inline=False)
 
         ping = f'{self.bot.latency*1000:.1f}'
-        if os.getenv("HEROKU"):
+        if getenv("HEROKU"):
             host = f'Heroku `({ping}ms)`'
         else:
             host = f'Local `({ping}ms)`'
@@ -111,7 +110,7 @@ class BotCmds(commands.Cog, name='Bot'):
         hour = datetime.strptime(self.bot.__commit__["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ')
         hour = self.bot.utc_to_timezone(hour, self.bot.timezone)
         with open("assets/config.json") as jsn:
-            message_id = json.load(jsn)["changelog_id"]
+            message_id = load(jsn)["changelog_id"]
         embed.add_field(name='Mensagem da changelog:', value=f'[Clique aqui](https://discordapp.com/channels/675889958262931488/676520484820484096/{message_id})', inline=False)
         embed.add_field(name='Notas desta versão:', value=self.bot.__commit__["commit"]["message"], inline=False)
         embed.set_footer(text=f'{ctx.author.name} • Commit feito', icon_url=ctx.author.avatar_url)
@@ -121,25 +120,34 @@ class BotCmds(commands.Cog, name='Bot'):
     @commands.command(usage='{}source [comando]', description='Mostra o código de um comando.')
     async def source(self, ctx, *, comando=None):
         github = 'https://github.com/uKaigo/Sora-Bot' # Coloque o source do seu bot
+
         embed = self.bot.embed(ctx)
         embed.title = 'Aqui está meu source:' if not comando else f'Aqui está o source do comando {comando.replace(" ", ".")}:'
         if not comando:
             embed.description = github
             return await ctx.send(embed=embed)
+    
+        listeners = dict()
+        for c in [self.bot.get_cog(c) for c in self.bot.cogs]:
+            for event in c.get_listeners():
+                listeners[event[0]] = event[1]
 
-        cmd = self.bot.get_command(comando)
-        if not cmd:
-            embed = self.bot.erEmbed(ctx, "Comando inválido!")
-            embed.description = 'O comando que você digitou, não existe.\nVerifique ortografia ou se o (sub)comando existe.'
-            return await ctx.send(embed=embed)
+        if not comando in list(listeners):
+            cmd = self.bot.get_command(comando)
+            if not cmd:
+                embed = self.bot.erEmbed(ctx, "Source inválido!")
+                embed.description = 'O comando ou evento que você digitou, não existe.\nVerifique ortografia ou se o que você está procurando existe.'
+                return await ctx.send(embed=embed)
+            cmd_func = cmd.callback
+        else:
+            cmd_func = listeners[comando]
 
-        cmd_func = cmd.callback
         cmd_mod = cmd_func.__module__
 
         code, linha1 = inspect.getsourcelines(cmd_func.__code__)
         linha2 = linha1+(len(code)-1)
 
-        loc = cmd_mod.replace('.', '/') + '.py'
+        loc = cmd_mod.replace('.', '/').replace('__main__', 'main') + '.py'
         branch = 'master'
         source = f'{github}/blob/{branch}/{loc}#L{linha1}-L{linha2}'
         embed.description = f'[{branch}/{loc}#L{linha1}]({source})'

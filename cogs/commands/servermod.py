@@ -1,13 +1,10 @@
 import discord
 import typing
-import time
-import json 
+from json import loads 
 import validators
-import asyncio
 import re
-import inspect
+from inspect import Parameter
 from datetime import datetime
-from io import BytesIO
 from discord.ext import commands
 
 class ServerAdmin(commands.Cog, name='Moderação'):
@@ -225,10 +222,10 @@ class ServerAdmin(commands.Cog, name='Moderação'):
                     jsn = await jsn.read()
                     jsn = jsn.decode('utf-8')
             else: # Caso não tenha nada
-                raise commands.MissingRequiredArgument(inspect.Parameter(name="json", kind=inspect.Parameter.POSITIONAL_OR_KEYWORD))
+                raise commands.MissingRequiredArgument(Parameter(name="json", kind=Parameter.POSITIONAL_OR_KEYWORD))
 
         try:
-            jsn = json.loads(jsn)
+            jsn = loads(jsn)
         except:
             return await ctx.send('Tem algo de errado com o json, verifique se as virgulas estão corretas ou se não há aspas ou chaves sem fechar.')
         
