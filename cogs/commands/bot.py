@@ -147,7 +147,7 @@ class BotCmds(commands.Cog, name='Bot'):
         code, linha1 = inspect.getsourcelines(cmd_func.__code__)
         linha2 = linha1+(len(code)-1)
 
-        loc = cmd_mod.replace('.', '/').replace('__main__', 'main') + '.py'
+        loc = cmd_mod.replace('.', '/') + '.py'
         branch = 'master'
         source = f'{github}/blob/{branch}/{loc}#L{linha1}-L{linha2}'
         embed.description = f'[{branch}/{loc}#L{linha1}]({source})'

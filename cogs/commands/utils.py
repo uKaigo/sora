@@ -174,8 +174,8 @@ class Utils(commands.Cog, name='Utilitários'):
         await m.edit(embed=embed)
 
     @commands.command(usage='{}guild [id]', description='Exibe informações sobre uma guild (discord widget).')
-    async def guild(self, ctx, id):
-        pass
+    async def guild(self, ctx):
+        raise NotImplementedError
 
     @commands.command(usage='{}addbot [bot (no server)] (permissões)', description='Pega o convite de um bot.')
     async def addbot(self, ctx, bot:discord.Member, permissions='8'):

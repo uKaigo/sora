@@ -96,6 +96,12 @@ class CommandError(commands.Cog):
                     else:
                         embed.description += f'Mas eu não tenho permissão pra falar no canal do comando, peça a algum superior para me deixar falar no {ctx.channel.mention}! (ou apenas use outro canal)'
                     return await ctx.author.send(embed=embed)
+            
+                if isinstance(error.original, NotImplementedError):
+                    embed = self.bot.erEmbed(ctx, "Comando em desenvolvimento!")
+                    embed.description = 'Este comando ainda não foi desenvolvido ou está em manutenção. Aguarde futuras atualizações.'
+                    return await ctx.send(embed=embed)
+
             lines = traceback.format_exception(type(error), error, error.__traceback__, 2)
             trace_txt = ''.join(lines)
             ch = self.bot.get_channel(678064736545406996)
