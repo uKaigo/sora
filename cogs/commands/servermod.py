@@ -20,7 +20,7 @@ class ServerAdmin(commands.Cog, name='Moderação'):
     @commands.command(usage='{}purge (membro) (2-500)', description='Limpa `x` mensagens de um canal ou de um membro. [Gerenciar Mensagens]', aliases=['prune'])
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def purge(self, ctx, membro:discord.Member, quantidade:typing.Optional[int]=100):
+    async def purge(self, ctx, membro:typing.Optional[discord.Member], quantidade:typing.Optional[int]=100):
         check = None
         if quantidade not in range(2, 501):
             npos = "alto" if quantidade > 500 else "baixo"
