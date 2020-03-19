@@ -360,8 +360,8 @@
             "desc_creation": "I was created in the language python and i'm born in Brazil! I've had several brothers too (all python), that, unfortunately, died :( \n***R.I.P Awme***\n\n",
             "desc_grow": "I pretend to be big someday ~~with at least 100 guilds~~.\nBut, i'll not let my owner get discouraged!\n\n",
             "desc_love": "I've a lot of lov to my {members} users! :blue_heart: (mainly you, that is reading this <3) \n\n",
-            "ch_lang": "Você pode alterar ela digitando:\n`{prefix}config lang [linguagem]`",
-            "desc_lang": "*Estou atualmente na linguagem {lang}. {change}*",
+            "ch_lang": " Você pode alterar ela digitando:\n`{prefix}config lang [linguagem]`",
+            "desc_lang": "*Estou atualmente na linguagem {lang}.{change}*",
             "desc_prefix": "My prefix in this server is: `{prefix}`\n\n"
         }
     },
