@@ -88,7 +88,7 @@ class BotEvents(commands.Cog):
         ctx = await self.bot.get_context(message, cls=SoraContext)
         if message.content.replace('!', '') == ctx.me.mention:
             ctx.prefix = ctx.me.mention
-            ctx.command = self.bot.get_command('botstats')
+            ctx.command = self.bot.get_command('botinfo')
             ctx.args = None
             ctx.author = message.author
         await self.bot.invoke(ctx)
