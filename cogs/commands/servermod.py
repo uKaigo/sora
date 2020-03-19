@@ -421,7 +421,11 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             langs = [f'`{c}`\n' for c in langs]
             embed.description = trn["invalid_desc"].format(langs='\n'.join(langs))
             return await ctx.send(embed=embed)
-
+        actual = await ctx.lang
+        if lang == actual:
+            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed.description = trn["actual_desc"]
+            return await ctx.send(embed=embed)
         g = await self.bot.db.update_guild({'_id': ctx.guild.id, 'lang': lang})
         if g:
             embed = await self.bot.embed(ctx)

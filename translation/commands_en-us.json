@@ -387,7 +387,8 @@
             "err_invalid": "Invalid language!",
             "invalid_desc": "The language that you tried isn't supported!\n\nAvailable languages:\n{langs}",
             "emb_success": "Language changed to {lang}",
-            "error": "Wasn't possible to change the language."
+            "error": "Wasn't possible to change the language.",
+            "actual_desc": "This language is already setted."
         }
     }
 
