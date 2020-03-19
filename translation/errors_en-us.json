@@ -1,0 +1,58 @@
+{
+    "CommandNotFound": {
+        "emb_title": "Command not found!",
+        "mean": "Did you mean:\n"
+    },
+
+    "MissingRequiredArgument": {
+        "emb_title": "Missing argument!",
+        "emb_use": "Usage:",
+        "emb_desc": "Description:",
+        "emb_footer": "{author_name} • [required] (optional) <file>"
+    },
+
+    "ExpectedClosingQuoteError": {
+        "emb_title": "Invalid parameter!",
+        "emb_desc": "Please, remove any `{quote}` of the parameters."
+    },
+
+    "MissingPermissions": {
+        "emb_title": "No permission!",
+        "emb_desc": "You need the `{perms}` permission{s} to run this command!"
+    },
+
+    "BotMissingPermissions": {
+        "emb_title": "No permission!",
+        "emb_desc": "I need the `{perms}` permission{s} to run this command!"
+    },
+
+    "BadArgument": {
+        "memberNotFound": {
+            "emb_title": "Invalid member!",
+            "emb_desc": "Member `{member}` wasn't found.\nCheck lowercase, uppercase or if you typed correctly!"
+        },
+
+        "invalid": "Invalid argument:\n`{arg}`"
+    },
+
+    "NoPrivateMessage": {
+        "emb_title": "Wrong channel!",
+        "emb_desc": "This command can't be used in DM's"
+    },
+
+    "noError": {
+        "Forbidden": {
+            "emb_title": "No permission!",
+            "emb_desc": "Sorry for sending messages in DM, I don't like it either!\n\n",
+            "desc_perm": "But seems like you didn't allowed me to speak in {channel_mention}.\nPlease, give me that perm or try me in another channel.",
+            "desc_noperm": "But i'm not allowed to speak in the channel, ask to a superior to allow me speaking in {channel_mention}! (or just use another channel)"
+        },
+
+        "NotImplementedError": {
+            "emb_title": "W.I.P!",
+            "emb_desc": "This command is still in developing or it's in maintenance. Wait future updates."
+        },
+
+        "emb_desc": "An error ocurred during the execution of this command!"
+    }
+}

@@ -1,0 +1,392 @@
+{
+    "_err_no_title": "Erro!",
+    "_executed_by": "Executado por {author_name}",
+    
+    "_time": {
+        "year": "ano",
+        "month": "mês",
+        "months": "meses",
+        "day": "dia",
+        "hour": "hora",
+        "minute": "minuto",
+        "second": "segundo",
+        "and": "e"
+    },
+
+    "_cogs": {
+        "_bot_cog": "Bot",
+        "_disco_cog": "Discord",
+        "_mod_cog": "Moderação",
+        "_utils_cog": "Utilitários"
+    },
+
+    "ping": {
+        "name": "ping",
+        "usage": "{}ping",
+        "description": "Envia a latência do bot.",
+        "texts": {
+            "emb_title": ":ping_pong: | Ping!",
+            "emb_desc": "Estou com `{ping:.1f}ms` de ping."
+        }
+    },
+
+    "ajuda": {
+        "name": "ajuda",
+        "usage": "{}ajuda (comando) (subcomando)",
+        "description": "Exibe a lista de comandos ou informações sobre um comando.",
+        "texts": {
+            "err_nf_title": "Comando não encontrado!",
+            "err_nf_desc": "O comando `{cmd}` não foi encontrado!\n Verifique ortografia, se você informou o comando pai ou se o comando realmente existe.",
+            "emb_title": "Ajuda | {cmd}",
+            "emb_fld_usage": "Uso:",
+            "emb_fld_aliases": "Abreviações:",
+            "emb_fld_desc": "Descrição:",
+            "emb_fld_subc": "Sub-comandos:",
+            "emb_fld_root": "Comando-pai:",
+            "emb_footer": "{author_name} • [obrigatório] (opcional) <arquivo>",
+            "cmds_emb_title": "Sora | Comandos",
+            "cmds_emb_desc": "Nota: Argumentos opcionais são pulados para o próximo argumento, por exemplo, se você digitar `{prefix}limpar @{author} 5`, com a menção ou não, deletará 5 mensagens.",
+            "cmds_emb_footer": "{author_name} • Digite `{prefix}ajuda [comando]`"
+        }
+    },
+
+    "botstats": {
+        "name": "botstats",
+        "usage": "{}botstats",
+        "description": "Exibe informações técnicas sobre o bot.",
+        "texts": {
+            "emb_title": "{bot_name} | Info",
+            "emb_desc": "Olá, {author_name}. Aqui está algumas informações sobre mim.",
+            "emb_version": "Estou na versão",
+            "emb_uptime": "Estou online por:",
+            "emb_created": "Fui criado em:",
+            "emb_techinfo": "Informações técnicas:",
+            "techinfo_cpu": "Porcentagem da CPU:",
+            "techinfo_ram": "Ram usada:",
+            "techinfo_hd": "Uso de disco:",
+            "emb_host": "Hospedagem:",
+            "links_inv": "Convite: [Clique]",
+            "links_server": "Servidor: [Entre]",
+            "emb_footer": "{author_name} • Digite `{prefix}ajuda`"
+        }
+    },
+
+    "version": {
+        "name": "version",
+        "usage": "{}version",
+        "description": "Mostra as informações da versão atual.",
+        "texts": {
+            "emb_title": "Sora | Versão",
+            "emb_desc": "Algumas informações sobre minha versão, e o commit atual.",
+            "emb_version": "Versão:",
+            "emb_commiter": "Commit feito por:",
+            "emb_changelog": "Mensagem do changelog:", 
+            "emb_notes": "Notas desta versão:",
+            "emb_footer": "{author_name} • Commit postado"
+        }
+    },
+
+    "source": {
+        "name": "source",
+        "usage": "{}source [cmd/evento]",
+        "description": "Mostra o código de um comando/evento.",
+        "texts": {
+            "emb_title": "Aqui está meu código:",
+            "emb_title_cmd": "Aqui está o código do {obj}",
+            "err_nf_title": "Não encontrado!",
+            "err_nf_desc": "O comando ou evento que você digitou, não existe.\nVerifique ortografia ou se o que você está procurando existe."
+        }
+    },
+
+    "avatar": {
+        "name": "avatar",
+        "usage": "{}avatar (membro)",
+        "description": "Retorna seu avatar ou de um membro.",
+        "texts": {
+            "emb_title": "Avatar de {member_name}",
+            "emb_author": "{author_mention}, aqui está seu avatar."
+        }
+    },
+
+    "userinfo": {
+        "name": "userinfo",
+        "usage": "{}userinfo (membro)",
+        "description": "Exibe as informações de um membro.",
+        "texts": {
+            "emb_title": "Aqui estão algumas informações sobre {member_name}.",
+            "nick": "**Apelido:**",
+            "emb_member": "Membro:",
+            "status_l": {"online": "Online", "dnd": "Não perturbar", "idle": "Ausente", "offline": "Offline"},
+            "activities_l": ["Jogando:", "Transmitindo:", "Ouvindo:", "Assistindo:", "Custom:"],
+            "emb_date": "Data:",
+            "date_value": "**Que criou a conta:** {created_at} ({rel_created})\n**Que entrou no server:** {joined_at} ({rel_joined})",
+            "topr_value": "{member.top_role.mention} ({member.top_role.id})\n**Cor:** {member.top_role.color}",
+            "emb_roles": "Cargos: [{roles}]",
+            "emb_perms": "Este membro tem as seguintes permissões:"
+        }
+    },
+
+    "oldmembers": {
+        "name": "oldmembers",
+        "usage": "{}oldmembers",
+        "description": "Mostra os membros mais antigos do servidor.",
+        "texts": {
+            "msg": "Estes são os membros mais antigos do servidor:\n\n",
+            "title": "Old Members | Página {page}/{pages}"
+        }
+    },
+
+    "limpar": {
+        "name": "limpar",
+        "usage": "{}limpar (membro) (2-500)",
+        "description": "Limpa `x` do canal ou de um membro. [Gerenciar Mensagens]",
+        "texts": {
+            "deleting": "Apagando...",
+            "high_low": ["alto", "baixo"],
+            "err_or_title": "Quantidade inválida!",
+            "err_or_desc": "Você digitou um número muito {high_low}, utilize números entre 2 e 500!",
+            "of": " de ",
+            "emb_title": ":broom: | Purge",
+            "emb_desc": "Foram deletadas {len_deleted} mensagens{of_member}."   
+        } 
+    },
+
+    "banir": {
+        "name": "banir",
+        "usage": "{}banir [membro] (motivo)",
+        "description": "Bane um membro, no servidor ou não. [Banir Membros]",
+        "texts": {
+            "_no_reason": "Não informado.",
+            "ban_reason": "Por {author} | {reason}",
+            "err_np_title": "Sem permissão.",
+            "np_selfban": "Você não pode se banir, bobinho!",
+            "np_botban": "Não posso me banir...",
+            "np_ath_lower": "Você não tem permissão para banir **{member_name}**! (Seu cargo é menor ou igual ao dele)",
+            "np_bot_lower": "Eu não tenho permissão para banir **{member_name}**! (Meu cargo é menor ou igual ao dele)",
+            "emb_title": "{emote} | Membro banido!",
+            "emb_user": "Usuário:",
+            "user_value": "Tag: {member}\nID: {member_id}",
+            "emb_staff": "Quem baniu:",
+            "staff_value": "Menção: {staff_mention}\nCargo: `{role}`",
+            "emb_reason": "Motivo:",
+            "emb_footer": "Banido: {member_name}",
+            "err_invalid": "Invalido!",
+            "invalid_desc": "O \"id\" que você digitou não é um número!",
+            "banning": "Banindo...",
+            "err_notfound": "Não encontrado!",
+            "notfound_value": "O id que você digitou ({id}) não pertence a um membro.\nVerifique erros de escrita.",
+            "member_banned": "Membro banido, carregando embed..."
+        }
+    },
+
+    "softban": {
+        "name": "softban",
+        "usage": "{}softban [membro] (motivo)",
+        "description": "Bane e desbane um membro, util para rapidamente limpar as mensagens do membro. [Banir Membros]",
+        "texts": {
+            "_comment": "Estou usando as mensagens do ban"
+        }
+    },
+
+    "kickar": {
+        "name": "kickar",
+        "usage": "{}kickar [membro] (motivo)",
+        "description": "Expulsa um membro do servidor. [Expulsar Membros]",
+        "texts": {
+            "_no_reason": "Não informado.",
+            "kick_reason": "Por {author} | {reason}",
+            "err_np_title": "Sem permissão.",
+            "np_selfkick": "Você não pode se expulsar, bobinho!",
+            "np_botkick": "Não posso me expulsar...",
+            "np_ath_lower": "Você não tem permissão para expulsar **{member_name}**! (Seu cargo é menor ou igual ao dele)",
+            "np_bot_lower": "Eu não tenho permissão para expulsar **{member_name}**! (Meu cargo é menor ou igual ao dele)",
+            "emb_title": "{emote} | Kick",
+            "emb_desc": "{member} foi banido por:\n`{reason}`"
+        }
+    },
+
+    "lock": {
+        "name": "lock",
+        "usage": "{}lock",
+        "description": "Bloqueia ou desbloqueia os membros de falarem no canal. [Gerenciar Canais]",
+        "texts": {
+            "_un": "des",
+            "reason": "Lock | Por: {author}",
+            "emb_title": ":lock: | Lock",
+            "emb_desc": "O canal foi {un}bloqueado para o cargo `{role}`."
+        }
+    },
+
+    "allow": {
+        "name": "allow",
+        "usage": "{}allow [membro]",
+        "description": "Permite um usuário ver ou desver um canal bloqueado. [Gerenciar Canais]", 
+        "texts": {
+            "_no": "não ",
+            "reason": "Allow | Por: {author}",
+            "err_perm": "Este membro tem permissão de `gerenciar canais`, ou o canal não está bloqueado.\nCaso nada disso se aplique quer dizer que ele tem um cargo com permissão.",
+            "emb_title": ":unlock: | Allow",
+            "emb_desc": "Agora {member_mention} {no}pode ver mensagens nesse canal."
+        }
+    },
+
+    "embed": {
+        "name": "embed",
+        "usage": "{}embed <json/arquivo>",
+        "description": "Envia um embed no servidor. [Gerenciar Mensagens]\nGere o json aqui: https://discord.club/embedg/\n\n__OBS__: Qualquer valor inválido será ignorado.",
+        "texts": {
+            "err_invalid": "Este json é inválido!",
+            "err_noemb": "Você não informou nenhum embed!",
+            "err_fail": "Falha ao enviar!\n\n{error}",
+            "invalid": "Tudo que foi desconsiderado:\n\n{invalids}"
+        }
+    },
+
+    "votar": {
+        "name": "votar",
+        "usage": "{}votar (canal) [mensagem]",
+        "description": "Faz uma enquete no canal. [Gerenciar Mensagens]",
+        "texts": {
+            "title": "Vote para a pergunta abaixo.",
+            "sended": "Mensagem enviada no canal {channel_mention}\n\n[Link]({msg_link})"
+        }
+    },
+
+    "ascii": {
+        "name": "ascii",
+        "usage": "{}ascii [fonte] [texto]",
+        "description": "Envia um texto ascii provido pelo figlet\nFontes encontradas em: http://www.figlet.org/examples.html",
+        "texts": {
+            "loading": "Carregando...",
+            "err_invalid": "Fonte inválida!",
+            "invalid_desc": "A fonte que você inseriu não existe.\nFontes encontradas em: http://www.figlet.org/examples.html",
+            "err_big": "Texto inválido.",
+            "big_desc": "O texto que você inseriu é muito grande para ser convertido para ascii."
+        }
+    },
+
+    "qrcode": {
+        "name": "qrcode",
+        "usage": "{}qrcode [texto] (#cor:hex)",
+        "description": "Gera um código QR\nSe o texto começar com `read`, coloque tudo entre aspas.",
+        "texts": {
+            "loading": "Carregando...",
+            "title": "QR Code"
+        }
+    },
+
+    "qrcode.read": {
+        "name": "qrcode read",
+        "usage": "{}qrcode read <url/imagem>",
+        "description": "Lê um código QR.",
+        "texts": {
+            "err_nofile": "Nenhum arquivo.",
+            "nofile_desc": "Você não informou nenhuma imagem.",
+            "loading": "Carregando...",
+            "err_invalid": "Imagem inválida!",
+            "invalid_desc": "Esta imagem não pode ser baixada ou lida.",
+            "title": "QR Code | Read",
+            "exit": "Saída:",
+            "type": "Tipo:"
+        }
+    },
+
+    "barcode": {
+        "name": "barcode",
+        "usage": "{}barcode [texto]",
+        "description": "Gera um código de barras.",
+        "texts": {
+            "error": "Algum erro ocorreu ao gerar a imagem, verifique o texto que você usou.",
+            "title": "Código de barras"
+        }
+    },
+
+    "skin": {
+        "name": "skin",
+        "usage": "{}skin [nick]",
+        "description": "Exibe a skin de um jogador do minecraft.",
+        "texts": {
+            "download": "Baixar skin",
+            "model": "Modelo 3d",
+            "emb_title": "Skin de {nick}:"
+        }
+    },
+
+    "github": {
+        "name": "github",
+        "usage": "{}github [usuario]",
+        "description": "Exibe informações sobre um usuário do github.",
+        "texts": {
+            "err_401": "O token do github está errado!\nContate um desenvolvedor.",
+            "err_403": "O bot está em ratelimit do github, contate um desenvolvedor e aguarde.",
+            "err_404": "Usuário não encontrado!",
+            "notfound_desc": "O usuário que você informou, não foi encontrado.\nVerifique se o nome informado corresponde ao usado no link.",
+            "emb_title": "Github de {name}",
+            "emb_uname": "Nome de usuário:",
+            "load_repo": "Carregando repositórios:",
+            "loading": "Carregando...",
+            "emb_follow": "Seguidores:",
+            "follow_desc": "Este usuário é seguido por {followers} usuários\nE segue {following} usuários.",
+            "emb_email": "Email:",
+            "emb_created": "Conta criada em:",
+            "created_desc": "{created} ({relative} atrás)",
+            "emb_repo": "Este usuário tem {repos} repositórios:",
+            "none": "Nenhum.",
+            "more": "E mais {repos} repositórios."
+        }
+    },
+
+    "addbot": {
+        "name": "addbot",
+        "usage": "{}addbot [id] (permissões)",
+        "description": "Envia o convite de um bot.",
+        "texts": {
+            "err_invalid": "Usuário inválido!",
+            "invalid_desc": "Este usuário não é um bot!",
+            "emb_title": "Aqui está o convite de {name}:",
+            "perm_inv": "A permissão que você digitou estava inválida, 8 no lugar."
+        }
+    },
+
+    "botinfo": {
+        "name": "botinfo",
+        "usage": "{}botinfo",
+        "description": "Exibe as informações do bot.",
+        "texts": {
+            "emb_title": "Informações sobre mim.",
+            "desc_intro": "Oi! Sou **Sora**, um bot feito para aprendizado, mas principalmente para ajudar outros membros do discord!\n\n",
+            "desc_creation": "Fui criado na linguagem python e nasci no Brasil! Já tive vários irmãos também (todos python), que, infelizmente, morreram :( \n***R.I.P Awme***\n\n",
+            "desc_grow": "Eu pretendo me tornar grande algum dia ~~com pelo menos 100 guilds~~.\nPorém, não vou deixar meu dono desanimar!\n\n",
+            "desc_love": "Tenho muito amor por meus {members} usuários! :blue_heart: (principalmente você que está lendo isso <3) \n\n",
+            "ch_lang": "You can change it typing:\n`{prefix}config lang [lang]`",
+            "desc_lang": "*I'm actually in the {lang} lang. {change}*",
+            "desc_prefix": "Minha prefixo nesse servidor é: `{prefix}`\n\n"
+        }
+    },
+
+    "config": {
+        "name": "config",
+        "usage": "{}config (subcomando)",
+        "description": "Muda as configurações do servidor.",
+        "texts": {
+            "emb_title": "Informações de {guild_name}",
+            "emb_lang": "Lang: {lang}",
+            "lang_value": "Muda a linguagem do servidor."
+        }
+    },
+
+    "config.lang": {
+        "name": "config lang",
+        "usage": "{}config lang (linguagem)",
+        "description": "Muda a linguagem do servidor.",
+        "texts": {
+            "emb_def_title": "Config | Lang",
+            "emb_def_desc": "Esta são as linguagens disponíveis:\n\n{langs}",
+            "err_invalid": "Linguagem inválida!",
+            "invalid_desc": "A linguagem que você tentou não é suportada!\n\nLinguagens disponíveis:\n{langs}",
+            "emb_success": "Linguagem alterada para {lang}",
+            "error": "Não foi possível alterar a linguagem."
+        }
+    }
+
+}

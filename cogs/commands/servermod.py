@@ -1,13 +1,14 @@
 import discord
 import typing
-from json import loads 
+from json import loads
 import validators
 import re
+from asyncio import sleep
 from inspect import Parameter
 from datetime import datetime
 from discord.ext import commands
 
-class ServerAdmin(commands.Cog, name='Moderação'):
+class ServerAdmin(commands.Cog, name='_mod_cog'):
     def __init__(self, bot):
         self.bot = bot
 
@@ -16,155 +17,175 @@ class ServerAdmin(commands.Cog, name='Moderação'):
             raise commands.NoPrivateMessage
         return True
 
-
-    @commands.command(usage='{}purge (membro) (2-500)', description='Limpa `x` mensagens de um canal ou de um membro. [Gerenciar Mensagens]', aliases=['prune'])
+    @commands.command(aliases=['clear'])
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def purge(self, ctx, membro:discord.Member, quantidade:typing.Optional[int]=100):
-        check = None
-        if quantidade not in range(2, 501):
-            npos = "alto" if quantidade > 500 else "baixo"
-            embed = self.bot.erEmbed(ctx, 'Quantidade inválida.')
-            embed.description = f'Você digitou um número muito {npos}, utilize apenas números entre 2 e 500'
+    async def limpar(self, ctx, membro:typing.Optional[discord.Member], quantidade:typing.Optional[int]=100):
+        trn = await ctx.trn
+        if quantidade not in range(2, 501): # Out Range (or)
+            high_low = trn["high_low"][quantidade<2]
+            embed = await self.bot.erEmbed(ctx, trn["err_or_title"])
+            embed.description = trn["err_or_desc"].format(high_low=high_low)
             return await ctx.send(embed=embed)
 
-        if membro:
-            check = lambda m: m.author == membro
+        loading = await self.bot.embed(ctx, invisible=True)
+        loading.title = trn['deleting']
+        msg = await ctx.send(embed=loading)
+        msg_ids = [msg.id, ctx.message.id]
+        check = lambda m: m.id not in msg_ids
 
+        if membro:
+            check = lambda m: m.author == membro and not m.id in msg_ids
+
+        prg = await ctx.channel.purge(limit=quantidade+2, check=check)
+        embed = await self.bot.embed(ctx)
+        embed.title = trn['emb_title']
+        embed.description = trn["emb_desc"].format(len_deleted=len(prg), of_member=f'{trn["of"] if membro else ""}{membro.mention if membro else ""}')
+        await msg.edit(embed=embed, delete_after=15)
+        await sleep(10)
+        try:
+            await msg.delete()
+        except:
+            pass
         await ctx.message.delete()
 
-        prg = await ctx.channel.purge(limit=quantidade, check=check)
-        embed = self.bot.embed(ctx)
-        embed.title = '🧹 | Purge'
-        embed.description = f'Foram deletadas {len(prg)} mensagens{" de " if membro else ""}{membro.mention if membro else ""}.'
-        await ctx.send(embed=embed, delete_after=15)
-        
-    @commands.command(usage='{}ban [membro] (motivo)', description='Bane um membro que está no servidor (ou não). [Banir Membros]', aliases=['banir'])
+    @commands.command(aliases=['ban'])
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def ban(self, ctx, membro:typing.Union[discord.Member, str], *, reason="Não informado."):
-        if type(membro) == discord.Member:
-            erro = self.bot.erEmbed(ctx, 'Sem permissão.')
+    async def banir(self, ctx, membro:typing.Union[discord.Member, str], *, reason="_no_reason"):
+        trn = await ctx.trn
+        reason = trn.get(reason, reason)
+        async def ban_embed(member):
+            embed = await self.bot.embed(ctx)
+            embed.title = trn["emb_title"].format(emote=self.bot.emotes["sora_ban"])
+            embed.add_field(name=trn["emb_user"], value=trn["user_value"].format(member=str(member), member_id=member.id), inline=False)
+            embed.add_field(name=trn["emb_staff"], value=trn["staff_value"].format(staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
+            embed.add_field(name=trn["emb_reason"], value=reason, inline=False)
+            embed.set_footer(text=trn["emb_footer"].format(member_name=member.name), icon_url=member.avatar_url)
+            return embed
+
+        if isinstance(membro, discord.Member):
+            erro = await self.bot.erEmbed(ctx, trn['err_np_title'])
 
             if membro == ctx.author:
-                erro.description = 'Você não pode se banir, bobinho!'
+                erro.description = trn['np_selfban'].format(member_name=membro.name)
 
-            if membro == ctx.me:
-                erro.description = 'Não posso me banir...'
+            elif membro == ctx.me:
+                erro.description = trn['np_botban'].format(member_name=membro.name)
 
-            if membro.top_role.position >= ctx.author.top_role.position or membro == ctx.guild.owner:
-                erro.description = f'Você não tem permissão para banir **{membro.name}** (seu cargo é menor ou igual que o dele)'
+            elif (membro.top_role.position >= ctx.author.top_role.position and not ctx.author == ctx.guild.owner) or membro == ctx.guild.owner:
+                erro.description = trn['np_ath_lower'].format(member_name=membro.name)
 
-            if membro.top_role.position >= ctx.me.top_role.position:
-                erro.description = f'Eu não tenho permissão para banir **{membro.name}** (cargo dele é maior ou igual que o meu)'
+            elif membro.top_role.position >= ctx.me.top_role.position:
+                erro.description = trn['np_bot_lower'].format(member_name=membro.name)
 
-            if type(erro.description) != discord.Embed.Empty: # isinstance não funcionaria
+            if not isinstance(erro.description, type(discord.Embed.Empty)):
                 return await ctx.send(embed=erro)
-            await membro.ban(reason=f'Por {ctx.author} || Motivo: {reason}')
 
-            # Não vou usar o self.bot.embed, já que esse embed sobescreve tudo.
-            embed = self.bot.embed(ctx)
-            embed.title = f'{self.bot.emotes["sora_ban"]} | Ban'
-            embed.description = 'Desrespeitou as regras, deu nisso aí.'
-            embed.add_field(name=f'Usuário:', value=f'Tag: `{membro}`\nId: `{membro.id}`', inline=False)
-            embed.add_field(name=f'Staffer:', value=f'Tag: `{ctx.author}`\nCargo: `{ctx.author.top_role.name}`', inline=False)
-            embed.add_field(name=f'Motivo:', value=reason, inline=False)
-            embed.set_footer(text=f'Banido: {membro.name}', icon_url=membro.avatar_url)
+            await membro.ban(reason=trn['ban_reason'].format(author=str(ctx.author), reason=reason))
+
+            embed = await ban_embed(membro)
+
             return await ctx.send(embed=embed)
 
         else:
-            try:
-                int(membro)
-            except ValueError:
-                embed = self.bot.erEmbed(ctx, 'Inválido')
-                embed.description = 'O "id" que você digitou não é um número!'
+            if not membro.isdigit():
+                embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+                embed.description = trn["invalid_desc"]
                 return await ctx.send(embed=embed)
 
             member = discord.Object(id=membro)
 
-            embed = self.bot.embed(ctx, invisible=True)
-            embed.description = 'Banindo...'
-            m = await ctx.send(embed=embed)
+            loading = await self.bot.embed(ctx, invisible=True)
+            loading.description = trn["banning"]
+            m = await ctx.send(embed=loading)
 
             try:
-                await ctx.guild.ban(member, reason=f'Por {ctx.author} || Motivo: {reason}')
+                await ctx.guild.ban(member, reason=trn['ban_reason'].format(author=str(ctx.author), reason=reason))
             except discord.NotFound:
-                embed = self.bot.erEmbed(ctx, 'Id inválido')
-                embed.description = f'O id que você digitou ({member.id}) não pertence à algum membro.\nVerifique erros de escrita.'
+                embed = await self.bot.erEmbed(ctx, trn["err_notfound"])
+                embed.description = trn["notfound_value"].format(id=member.id)
                 return await m.edit(embed=embed)
 
-            embed.description = 'Membro banido, carregando embed...'
-            await m.edit(embed=embed)
+            loading.description = trn["member_banned"]
+            await m.edit(embed=loading)
 
             member = await self.bot.fetch_user(member.id)
-            embed = self.bot.embed(ctx)
-            embed.title = f'{self.bot.emotes["sora_ban"]} | Ban'
-            embed.description = 'Desrespeitou as regras deu nisso ai.'
-            embed.add_field(name=f'Usuário:', value=f'Tag: `{member}`\nId: `{member.id}`', inline=False)
-            embed.add_field(name=f'Staffer:', value=f'Menção: {ctx.author.mention}\nCargo: `{ctx.author.top_role.name}`', inline=False)
-            embed.add_field(name=f'Motivo:', value=reason)
-            embed.set_footer(text=f'Banido: {member.name}', icon_url=member.avatar_url)
+            embed = await ban_embed(member)
 
             await m.edit(embed=embed)
 
-    @commands.command(usage='{}softban [membro] (motivo)', description='Bane e desbane um membro, util para limpar as mensagens rapidamente.')
+    @commands.command()
     @commands.has_permissions(ban_members=True)
     @commands.has_permissions(ban_members=True)
-    async def softban(self, ctx, membro:discord.Member, *, reason="Não informado."):
-        erro = self.bot.erEmbed(ctx, 'Sem permissão.')
+    async def softban(self, ctx, membro:discord.Member, *, reason="_no_reason"):
+        trn = await ctx.trn
+        ctx.command = self.bot.get_command('ban') # Perigoso, util para tradução
+        reason = trn.get(reason, reason)
+
+        erro = await self.bot.erEmbed(ctx, trn['err_np_title'])
 
         if membro == ctx.author:
-            erro.description = 'Você não pode se banir, bobinho!'
+            erro.description = trn['np_selfban']
 
         if membro == ctx.me:
-            erro.description = 'Não posso me banir...'
+            erro.description = trn['np_botban']
 
         if membro.top_role.position >= ctx.author.top_role.position:
-            erro.description = f'Você não tem permissão para banir **{membro.name}** (seu cargo é menor ou igual que o dele)'
+            erro.description = trn['np_ath_lower'].format(member_name=membro.name)
 
         if membro.top_role.position >= ctx.me.top_role.position:
-            erro.description=f'Eu não tenho permissão para banir **{membro.name}** (cargo dele é maior ou igual que o meu)'
-
-        if type(erro.description) != discord.Embed.Empty: # isinstance não funciona aqui
-            return await ctx.send(embed=erro)
-
-        await membro.ban(reason=f'Por {ctx.author} || Motivo: {reason}')
-        await membro.unban(reason=f'Por {ctx.author} || Motivo: {reason}')
-        
-        embed = self.bot.embed(ctx)
-        embed.title = f'{self.bot.emotes["sora_ban"]} | SoftBan'
-        embed.description = 'Desrespeitou as regras, deu nisso aí.'
-        embed.add_field(name=f'Usuário:', value=f'Tag: `{membro}`\nId: `{membro.id}`', inline=False)
-        embed.add_field(name=f'Staffer:', value=f'Tag: `{ctx.author}`\nCargo: `{ctx.author.top_role.name}`', inline=False)
-        embed.add_field(name=f'Motivo:', value=reason, inline=False)
-        embed.set_footer(text=f'Punido: {membro.name}', icon_url=membro.avatar_url)
-        await ctx.send(embed=embed)
-
-    @commands.command(usage='{}kick [membro] (motivo)', description='Expulsa um membro do servidor. [Expulsar Membros]')
-    @commands.has_permissions(kick_members=True)
-    @commands.bot_has_permissions(kick_members=True)
-    async def kick(self, ctx, membro:discord.Member, *, reason="Não informado."):
-        erro = self.bot.erEmbed(ctx, 'Sem permissão.')
-        if membro.top_role.position >= ctx.author.top_role.position:
-            erro.description = f'Você não tem permissão para expulsar **{membro.name}** (seu cargo é menor ou igual que o dele)'
-
-        if membro.top_role.position >= ctx.me.top_role.position:
-            erro.description = f'Eu não tenho permissão para expulsar **{membro.name}** (cargo dele é maior ou igual que o meu)'
+            erro.description= trn['np_bot_lower'].format(member_name=membro.name)
 
         if not isinstance(erro.description, type(discord.Embed.Empty)):
             return await ctx.send(embed=erro)
 
-        await membro.kick(reason=f'Por {ctx.author} || Motivo: {reason}')
+        await membro.ban(reason=trn['ban_reason'].format(author=ctx.author, reason=reason))
+        await membro.unban(reason=trn['ban_reason'].format(author=ctx.author, reason=reason))
+        
+        embed = await self.bot.embed(ctx)
+        embed.title = trn['emb_title'].replace('ban', 'soft-ban').format(emote=self.bot.emotes['sora_ban'])
+        embed.add_field(name=trn['emb_user'], value=trn['user_value'].format(member=str(membro), member_id=str(membro.id)), inline=False)
+        embed.add_field(name=trn['emb_staff'], value=trn['staff_value'].format(staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
+        embed.add_field(name=trn['emb_reason'], value=reason, inline=False)
+        embed.set_footer(text=trn['emb_footer'].format(member_name=membro.name), icon_url=membro.avatar_url)
+        await ctx.send(embed=embed)
 
-        embed = self.bot.embed(ctx)
-        embed.title = f'{self.bot.emotes["sora_ban"]} | Kick'
-        embed.description = f'{membro} foi expulso por: `{reason}`'
+    @commands.command(aliases=['kick'])
+    @commands.has_permissions(kick_members=True)
+    @commands.bot_has_permissions(kick_members=True)
+    async def kickar(self, ctx, membro:discord.Member, *, reason="_no_reason"):
+        trn = await ctx.trn
+        erro = await self.bot.erEmbed(ctx, trn["err_np_title"])
+        reason = trn.get(reason, reason)
+
+        if membro == ctx.author:
+            erro.description = trn['np_selfkick']
+
+        elif membro == ctx.me:
+            erro.description = trn['np_botkick']
+
+        elif (membro.top_role.position >= ctx.author.top_role.position and not ctx.author == ctx.guild.owner) or membro == ctx.guild.owner:
+            erro.description = trn['np_ath_lower'].format(member_name=membro.name)
+
+        elif membro.top_role.position >= ctx.me.top_role.position:
+            erro.description = trn['np_bot_lower'].format(member_name=membro.name)
+
+        if not isinstance(erro.description, type(discord.Embed.Empty)):
+            return await ctx.send(embed=erro)
+
+        await membro.kick(reason=trn['kick_reason'].format(author=str(ctx.author), reason=reason))
+
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["emb_title"].format(emote=self.bot.emotes['sora_ban'])
+        embed.description = trn["emb_desc"].format(member=membro, reason=reason)
         return await ctx.send(embed=embed)
 
-    @commands.command(usage='{}lock', description='Bloqueia ou desbloqueia os membros de falarem no canal. [Gerenciar Canais]')
+    @commands.command()
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
     async def lock(self, ctx):
+        trn = await ctx.trn
         rms = None
         unlock = False
         try:
@@ -174,61 +195,69 @@ class ServerAdmin(commands.Cog, name='Moderação'):
         except KeyError:
             rms = None
 
-        await ctx.channel.set_permissions(ctx.guild.default_role, reason=f'Lock | Por: {ctx.author}', send_messages=unlock, read_messages=rms)
+        await ctx.channel.set_permissions(ctx.guild.default_role, reason=trn["reason"].format(author=str(ctx.author)), send_messages=unlock, read_messages=rms)
 
-        embed = self.bot.embed(ctx)
-        embed.title = f'Lock'
-        embed.description = f'O canal foi {"des" if unlock == None else ""}bloqueado para o cargo `{ctx.guild.default_role.name}`.'
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["emb_title"]
+        embed.description = trn["emb_desc"].format(un=trn["_un"] if unlock is None else "", role=ctx.guild.default_role.name)
         await ctx.send(embed=embed)
 
-    @commands.command(usage='{}allow', description='Permite um usuário ver ou desver um canal bloqueado. [Gerenciar Canais]')
+    @commands.command()
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
     async def allow(self, ctx, membro:discord.Member):
+        trn = await ctx.trn
         no = ""
         allow = True
-        erro = self.bot.erEmbed(ctx)
+        erro = await self.bot.erEmbed(ctx)
         try:
             if membro in ctx.channel.members:
+                # Caso ele possa ver o canal, vai mudar para não ver
                 if ctx.channel.overwrites[membro].read_messages == True:
-                    no = "não "
+                    no = trn["_no"]
                     allow = None
+        # Se deu KeyError é pq ele pode ver o canal, mas não tem overwrite (tem perm de cargo)
         except KeyError:
-            erro.description = "Este membro tem permissão de gerenciar canais, ou o canal não está restrito.\nCaso nada disso se aplique quer dizer que ele tem um cargo com permissão."
+            erro.description = trn["err_perm"]
             return await ctx.send(embed=erro)
 
+        # Caso for para tirar as permissões
         if no:
-            await ctx.channel.set_permissions(membro, reason=f'Allow | Por: {ctx.author}', overwrite=None)
+            await ctx.channel.set_permissions(membro, reason=trn["reason"].format(author=ctx.author), overwrite=None)
             if membro in ctx.channel.members:
-                erro.description = 'Este membro tem permissão de gerenciar canais, ou o canal não está restrito.\nCaso nada disso se aplique quer dizer que ele tem um cargo com permissão.'
+                erro.description = trn["err_perm"]
                 return await ctx.send(embed=erro)
 
+        # Adicionar
         else:
-            await ctx.channel.set_permissions(membro, reason=f'Allow | Por: {ctx.author}', send_messages=allow, read_messages=allow)
-        embed = self.bot.embed(ctx)
-        embed.title = 'Lock'
-        embed.description = f'Agora {membro.mention} {no}pode ver ou mandar mensagens nesse canal.'
+            await ctx.channel.set_permissions(membro, reason=trn["reason"], send_messages=allow, read_messages=allow)
+        
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["emb_title"]
+        embed.description = trn["emb_desc"].format(member_mention=membro.mention, no=no)
         await ctx.send(embed=embed)
 
     # Nem veja esse comando, ele é muito mal programado / dificil de entender.
-    @commands.command(usage='{}embed <json/arquivo>', description='Envia um embed no servidor. [Gerenciar Mensagens]\nGere o json aqui: https://discord.club/embedg/\n\n__OBS__: Qualquer valor inválido será ignorado.')
+    @commands.command()
     @commands.has_permissions(manage_messages=True)
-    async def embed(self, ctx, *, jsn=None):
+    async def embed(self, ctx, *, json=None):
+        trn = await ctx.trn
+        json = json if json else {}
         # Caso seja maior que 2000 caracteres
-        if not jsn:
+        if not json:
             if ctx.message.attachments:
                 if ctx.message.attachments[0].url.endswith(".txt"):
-                    jsn = await self.bot.session.get(ctx.message.attachments[0].url)
-                    jsn = await jsn.read()
-                    jsn = jsn.decode('utf-8')
+                    json = await self.bot.session.get(ctx.message.attachments[0].url)
+                    json = await json.read()
+                    json = json.decode('utf-8')
             else: # Caso não tenha nada
                 raise commands.MissingRequiredArgument(Parameter(name="json", kind=Parameter.POSITIONAL_OR_KEYWORD))
-
         try:
-            jsn = loads(jsn)
-        except:
-            return await ctx.send('Tem algo de errado com o json, verifique se as virgulas estão corretas ou se não há aspas ou chaves sem fechar.')
-        
+            jsn = loads(json)
+        except Exception as e:
+            embed = await self.bot.erEmbed(ctx)
+            embed.description = trn["err_invalid"]
+            return await ctx.send(embed=embed)
         msg = jsn.get('content', None)
 
         invalid = []
@@ -238,8 +267,8 @@ class ServerAdmin(commands.Cog, name='Moderação'):
         try:
             jsn_emb = jsn['embed']
         except:
-            error = self.bot.erEmbed(ctx, "Erro!")
-            error.description = 'Você não informou nenhum embed!'
+            error = await self.bot.erEmbed(ctx)
+            error.description = trn["err_noemb"]
             return await ctx.send(embed=error)
     
         # Daqui pra baixo, ele vai verificar tudo que é possivel no embed, e retirar do dicionario caso esteja errado
@@ -327,22 +356,16 @@ class ServerAdmin(commands.Cog, name='Moderação'):
             await ctx.send(embed=discord.Embed.from_dict(jsn_emb), content=msg)
         except Exception as e:
             error = True # Isso pq alguns valores do field, não sei arrumar.
-            await ctx.send(f"Falha ao enviar o embed, algo pode estar errado nele!\n\nErro: `{e}`")
+            await ctx.send(trn["err_fail"].format(error=e))
         
         if invalid:
-            await ctx.send(f'Tudo que foi considerado inválido:\n{"; ".join(invalid)}\n{"`Os valores acima provavelmente foram as causas diretas para o embed não ser enviado.`" if error else ""}\nCheque se algo não está faltando ou não é um valor correto, vá para o <https://embed.discord.website/> e verifique os erros', delete_after=10)
+            await ctx.send(trn["invalid"].format(invalids="; ".join(invalid), delete_after=10))
 
+    @commands.command(aliases=['vote'])
     @commands.has_permissions(manage_messages=True)
-    @commands.command(usage='{}vote (emoji-sim) (emoji-nao) [mensagem]', description='Faz uma votação no canal atual. [Gerenciar Mensagens]', aliases=['votacao'])
-    async def vote(self, ctx, em1:typing.Optional[discord.Emoji], em2:typing.Optional[discord.Emoji], *, mensagem):
-        if not em1:
-            em1 = em1s = '✅'
-        else:
-            em1s = f':{em1.name}:'
-        if not em2:
-            em2 = em2s = '❌'
-        else:
-            em2s = f':{em2.name}:'
+    async def votar(self, ctx, canal:typing.Optional[discord.TextChannel], mensagem):
+        trn = await ctx.trn
+        canal = canal if canal else ctx.channel
         try:
             await ctx.message.delete()
         except:
@@ -351,19 +374,64 @@ class ServerAdmin(commands.Cog, name='Moderação'):
         mentions = re.findall('<@(!|&)?([0-9]*)>', mensagem)
         mentions = [c for c in mentions if c]
 
-        embed = discord.Embed(title=f'Vote para a pergunta abaixo.', description=mensagem, color=self.bot.color)
-        embed.set_footer(text=f'{ctx.author.name} • {str(em1s)} para sim, {str(em2s)} para não.', icon_url=ctx.author.avatar_url)
-        embed.timestamp = ctx.message.created_at
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["title"]
+        embed.description = mensagem
         if mentions:
             mentions = [f'<@{c[0]}{c[1]}>' for c in mentions]
 
         if '@everyone' in mensagem:
             mentions.append('@everyone')
 
-        msg = await ctx.send(embed=embed, content=' '.join(mentions))
+        msg = await canal.send(embed=embed, content=' '.join(mentions))
+        if canal != ctx.channel:
+            embed = await self.bot.embed(ctx, invisible=True)
+            embed.description = trn["sended"].format(channel_mention=canal.mention, msg_link=msg.jump_url)
+            await ctx.send(embed=embed)
+        await msg.add_reaction('✅')
+        await msg.add_reaction('❎')
 
-        await msg.add_reaction(em1)
-        await msg.add_reaction(em2)
+    @commands.group(invoke_without_command=True, case_insensitive=True)
+    @commands.has_permissions(manage_guild=True)
+    async def config(self, ctx):
+        if ctx.invoked_subcommand is None:
+            trn = await ctx.trn
+            embed = await self.bot.embed(ctx)
+            embed.set_author(name=trn['emb_title'].format(guild_name=ctx.guild.name), icon_url=ctx.guild.icon_url)
+            lang = await ctx.lang
+            embed.add_field(name=trn['emb_lang'].format(lang=lang), value=trn['lang_value'])
+            #prefix = await ctx.guild_prefix
+            #prefix = str(prefix)
+            #embed.add_field(name=f'Prefixo: {prefix.replace("None", "?")}', value='Muda o prefixo do servidor')
+            await ctx.send(embed=embed)
+
+    @config.command()
+    async def lang(self, ctx, lang=None):
+        trn = await ctx.trn
+        with open("translation/languages.txt") as lng:
+            langs = lng.read().split('\n')
+        if not lang:
+            embed = await self.bot.embed(ctx)
+            embed.title = trn["emb_def_title"]
+            langs = [f'`{c}`\n' for c in langs]
+            embed.description = trn["emb_def_desc"].format(langs="".join(langs))
+            return await ctx.send(embed=embed)
+        if lang not in langs:
+            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            langs = [f'`{c}`\n' for c in langs]
+            embed.description = trn["invalid_desc"].format(langs='\n'.join(langs))
+            return await ctx.send(embed=embed)
+
+        g = await self.bot.db.update_guild({'_id': ctx.guild.id, 'lang': lang})
+        if g:
+            embed = await self.bot.embed(ctx)
+            embed.title = trn["emb_def_title"]
+            embed.description = trn['emb_success'].format(lang=lang)
+        else:
+            embed = await self.bot.erEmbed(ctx)
+            embed.description = trn['error']
+        await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(ServerAdmin(bot))

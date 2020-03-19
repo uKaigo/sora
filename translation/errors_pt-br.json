@@ -1,0 +1,58 @@
+{
+    "CommandNotFound": {
+        "emb_title": "Comando não encontrado!",
+        "mean": "Você quis dizer:\n"
+    },
+
+    "MissingRequiredArgument": {
+        "emb_title": "Sem argumento!",
+        "emb_use": "Uso:",
+        "emb_desc": "Descrição:",
+        "emb_footer": "{author_name} • [obrigatório] (opcional) <arquivo>"
+    },
+
+    "ExpectedClosingQuoteError": {
+        "emb_title": "Parâmetro inválido!",
+        "emb_desc": "Por favor, retire qualquer `{quote}` dos parâmetros"
+    },
+
+    "MissingPermissions": {
+        "emb_title": "Sem permissão!",
+        "emb_desc": "Você precisa da{s} permiss{oes} `{perms}` para executar esse comando"
+    },
+
+    "BotMissingPermissions": {
+        "emb_title": "Sem permissão!",
+        "emb_desc": "Eu preciso da{s} permiss{oes} `{perms}` para executar esse comando"
+    },
+
+    "BadArgument": {
+        "memberNotFound": {
+            "emb_title": "Membro inválido!",
+            "emb_desc": "O membro `{member}` não foi encontrado.\nVerifique minúsculas, maiúsculas ou se você digitou certo!"
+        },
+
+        "invalid": "Argumento inválido:\n`{arg}`"
+    },
+
+    "NoPrivateMessage": {
+        "emb_title": "Canal Errado!",
+        "emb_desc": "Este comando não pode ser usado em DM's"
+    },
+
+    "noError": {
+        "Forbidden": {
+            "emb_title": "Sem permissão!",
+            "emb_desc": "Desculpe te mandar mensagem no DM, também não gosto disso!\n\n",
+            "desc_perm": "Mas parece que você não me deu permissão pra falar no {channel_mention}.\nPor favor, me dê essa permissão ou tente usar em outro canal.",
+            "desc_noperm": "Mas eu não tenho permissão pra falar no canal do comando, peça a algum superior para me deixar falar no {channel_mention}! (ou apenas use outro canal)"
+        },
+
+        "NotImplementedError": {
+            "emb_title": "Comando em desenvolvimento!",
+            "emb_desc": "Este comando ainda não foi desenvolvido ou está em manutenção. Aguarde futuras atualizações."
+        },
+
+        "emb_desc": "Ocorreu um erro desconhecido durante a execução do comando!"
+    }
+}

@@ -50,7 +50,7 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
 
         errors = [f'**{c[0]}:** {c[1]}: ```{c[2]}```\n' for c in error]
 
-        embed = self.bot.embed(ctx)
+        embed = await self.bot.embed(ctx)
         embed.title = 'Reload'
         embed.description = f'{sccs} módulos recarregados\n{"Erros:" if errors else ""}\n{"".join(errors)}'
         return await msg.edit(embed=embed, content='')
@@ -131,7 +131,8 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         message = ctx.message 
         message.author = member 
         message.content = cmd
-        await self.bot.process_commands(message)
+        sudo_ctx = await self.bot.get_context(message, cls=ctx.__class__)
+        await self.bot.invoke(sudo_ctx)
 
     @commands.is_owner()
     @commands.command(usage='Sigiloso.', description='Sigiloso.')
@@ -141,7 +142,7 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         jsn[member] = reason
         with open("assets/users_banned.json", "w") as f:
             f.write(json.dumps(jsn, indent=4))
-        embed = self.bot.embed(ctx, invisible=True)
+        embed = await self.bot.embed(ctx, invisible=True)
         embed.title = f'{member} foi banido!'
         await ctx.send(embed=embed)
 
@@ -153,9 +154,10 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         del(jsn[member])
         with open("assets/users_banned.json", "w") as f:
             f.write(json.dumps(jsn, indent=4))
-        embed = self.bot.embed(ctx, invisible=True)
+        embed = await self.bot.embed(ctx, invisible=True)
         embed.title = f'{member} foi desbanido!'
         await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Owner(bot))

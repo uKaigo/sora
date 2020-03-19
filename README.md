@@ -7,7 +7,7 @@
 <b>Todos os comandos do bot podem ser encontrados digitando `so.ajuda` em qualquer servidor.</b>
 <h1 align="center">Como rodo ele na minha máquina?</h1
 
-<b>Bom, eu prefiro que você não faça isso (e algumas coisas nem vão funcionar kk), se quiser o Sora no seu servidor, apenas clique na imagem acima, ou <a href="https://bit.ly/SoraBot">aqui</a>. <br><br>Porém, se quiser mesmo executa-lo, você precisará instalar todas as dependências. Primeiro instale o python do <a href="https://github.com/uKaigo/Sora-Bot/blob/master/runtime.txt">runtime.txt</a>, após instalar, execute "pip install -r <a href="https://github.com/uKaigo/Sora-Bot/blob/master/requirements.txt">requirements.txt</a>" na pasta principal do bot. Depois só crie um arquivo `.env` dentro da pasta `assets`, contendo as variáveis</b>
+<b>Bom, eu prefiro que você não faça isso (e algumas coisas nem vão funcionar, sério, você terá que corrigir os erros sozinho), se quiser o Sora no seu servidor, apenas clique na imagem acima, ou <a href="https://bit.ly/SoraBot">aqui</a>. <br><br>Porém, se quiser mesmo executa-lo, você precisará instalar todas as dependências. Primeiro instale o python do <a href="https://github.com/uKaigo/Sora-Bot/blob/master/runtime.txt">runtime.txt</a>, após instalar, execute "pip install -r <a href="https://github.com/uKaigo/Sora-Bot/blob/master/requirements.txt">requirements.txt</a>" na pasta principal do bot. Depois só crie um arquivo `.env` dentro da pasta `assets`, contendo as variáveis</b>
 
 ```env
 TOKEN=[token-do-bot]

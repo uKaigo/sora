@@ -6,80 +6,112 @@ from os import getenv
 from json import load 
 from discord.ext import commands
 
-class BotCmds(commands.Cog, name='Bot'):
+class BotCmds(commands.Cog, name='_bot_cog'):
     def __init__(self, bot):
         self.bot = bot
 
-    @commands.command(usage='{}ping', description='Envia a latência do bot.', aliases=['pong'])
+    @commands.command(aliases=['pong'])
     async def ping(self, ctx):
-        embed = self.bot.embed(ctx)
-        embed.title = '🏓 | Ping!'
-        embed.description = f'Neste momento estou com `{self.bot.latency*1000:.1f}ms`'
+        trn = await ctx.trn
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["emb_title"]
+        embed.description = trn["emb_desc"].format(ping=self.bot.latency*1000)
         await ctx.send(embed=embed)
 
-    @commands.command(usage='{}ajuda (comando) (subcomando)', description='Exibe informações sobre um comando', aliases=['help'])
+    @commands.command(aliases=['help'])
     async def ajuda(self, ctx, *, comando=None):
+        trn = await ctx.trn
         if comando:
             cmd = self.bot.get_command(comando)
-            # Esses "erro = True/False" é para não repetir código.
-            erro = False
-            if cmd is None:
-                erro = True
-            if cmd.hidden:
-                erro = True
-            if erro:
-                embed = self.bot.erEmbed(ctx, 'Comando não encontrado.')
-                embed.description = f'O comando `{comando}` não foi encontrado!\n Verifique ortografia, se você informou o comando pai ou se o comando realmente existe.'
+            if cmd:
+                lang = await ctx.lang
+                with open(f"translation/commands_{lang}.json", encoding='utf-8') as cmds:
+                    cmd_trn = load(cmds).get(cmd.qualified_name.replace(" ", "."))
+            else:
+                cmd_trn = None
+
+            if cmd is None or cmd_trn is None or cmd.hidden:
+                embed = await self.bot.erEmbed(ctx, trn["err_nf_title"])
+                embed.description = trn["err_nf_desc"].format(cmd=comando)
                 return await ctx.send(embed=embed)
+            embed = await self.bot.embed(ctx)
+            embed.title = trn["emb_title"].format(cmd=cmd_trn["name"].capitalize())
 
-            embed = self.bot.embed(ctx)
-            embed.title=f'Ajuda | {cmd.name.capitalize()}'
+            embed.add_field(name=trn["emb_fld_usage"], value=cmd_trn["usage"].format(ctx.prefix), inline=False)
 
-            embed.add_field(name='Uso:', value=cmd.usage.format(ctx.prefix), inline=False)
-
+            aliases = []
             if cmd.aliases:
-                embed.add_field(name='Abreviações:', value=', '.join(cmd.aliases), inline=False)
+                for c in cmd.aliases:
+                    if c == cmd_trn["name"]:
+                        aliases.append(cmd.name)
+                    else:
+                        aliases.append(c)
+                
+                embed.add_field(name=trn["emb_fld_aliases"], value=', '.join(aliases), inline=False)
 
-            embed.add_field(name='Descrição:', value=cmd.description)
+            embed.add_field(name=trn["emb_fld_desc"], value=cmd_trn["description"])
 
             try:
                 if cmd.commands:
-                    embed.add_field(name='Subcomandos:', value=', '.join([c.name for c in cmd.commands]), inline=False)
+                    embed.add_field(name=trn["embed_fld_subc"], value=', '.join([cmd_trn["sub_commands"][name] for c in cmd.commands]), inline=False)
             except:
                 pass
 
             if cmd.parent:
-                embed.add_field(name='Comando pai:', value=comando.split(' ')[0], inline=False)
-            embed.set_footer(text=f'{ctx.author.name} • [obrigatório] (opcional) <arquivo>', icon_url=ctx.author.avatar_url)
+                embed.add_field(name=trn["emb_fld_root"], value=comando.split(' ')[0], inline=False)
+            embed.set_footer(text=trn['emb_footer'].format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
             return await ctx.send(embed=embed)
 
+        # Commands -> cmds
         cogs = [self.bot.get_cog(c) for c in self.bot.cogs]
-        embed = self.bot.embed(ctx)
-        embed.title = 'Sora | Comandos'
-        embed.description = f'Nota: Argumentos opcionais são pulados para o proximo argumento, por exemplo, se você digitar `{self.bot.formatPrefix(ctx)}purge @{ctx.author} 5`, com a menção ou não, deletará 5 mensagens.'
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["cmds_emb_title"]
+        embed.description = trn["cmds_emb_desc"].format(prefix=self.bot.formatPrefix(ctx), author=ctx.author)
+        lang = await ctx.lang
+        with open(f'translation/commands_{lang}.json', encoding='utf-8') as lng:
+            cmds_jsn = load(lng)
 
         for cog in cogs:
-            cogcmd = [f'`{c.name}`' for c in cog.get_commands() if not c.hidden]
+            cogcmd = [f'`==={hasattr(c, "commands")}{cmds_jsn[c.qualified_name.replace(" ", ".")]["name"]}`'.replace('===True', '*').replace('===False', '') for c in cog.walk_commands() if not c.hidden]
             if not cogcmd:
                 continue
-            embed.add_field(name=f'{cog.qualified_name} ({len(cogcmd)}):', value=', '.join(cogcmd), inline=False)
+            embed.add_field(name=f'{cmds_jsn["_cogs"][cog.qualified_name]} ({len(cogcmd)}):', value=', '.join(cogcmd), inline=False)
 
-        embed.set_footer(text=f'{ctx.author.name} • Digite `{self.bot.formatPrefix(ctx)}ajuda [comando]`', icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=trn["cmds_emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 
-    @commands.command(usage='{}botinfo', description='Exibe as informações do bot')
+    @commands.command(aliases=['bi'])
     async def botinfo(self, ctx):
-        embed = self.bot.embed(ctx)
-        embed.description = f'Olá, {ctx.author.name}. Aqui está algumas informações sobre mim.'
-        embed.set_author(name=f"{self.bot.user.name} | Info", icon_url=ctx.me.avatar_url)
-        embed.add_field(name="Estou na versão", value=f'`{self.bot.__version__}`')
-        embed.add_field(name=f'Estou online por:', value=f'`{"".join(self.bot.formatTime(self.bot.uptime))}`', inline=False)
-        embed.add_field(name=f'Fui criado em:', value=f'`{ctx.me.created_at.strftime("%d/%m/%Y ás %H:%M")}`\n`({"".join(self.bot.getTime(ctx.me.created_at))})`', inline=False)
+        trn = await ctx.trn
+        embed = await self.bot.embed(ctx)
+        embed.set_author(name='Sora Info', icon_url=ctx.me.avatar_url)
+        embed.description = trn["desc_intro"]
+        embed.description += trn["desc_creation"]
+        embed.description += trn["desc_grow"]
+        embed.description += trn["desc_love"].format(members=len(self.bot.users))        
+        prf = await ctx.guild_prefix
+        prf = str(prf).replace('None', ctx.prefix)
+        embed.description += trn["desc_prefix"].format(prefix=prf)
+        change = trn["ch_lang"].format(prefix=self.bot.formatPrefix(ctx)) if ctx.author.permissions_in(ctx.channel).manage_guild else ''
+        lang = await ctx.lang
+        embed.description += trn["desc_lang"].format(lang=lang.upper(), change=change)
+        await ctx.send(embed=embed)
+
+    @commands.command(aliases=['stats'])
+    async def botstats(self, ctx):
+        trn = await ctx.trn
+        with open(f'translation/commands_{await ctx.lang}.json', encoding='utf-8') as lng:
+            time_lang = load(lng)["_time"]
+        embed = await self.bot.embed(ctx)
+        embed.set_author(name=trn["emb_title"].format(bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
+        embed.description = trn["emb_desc"].format(author_name=ctx.author.name)
+        embed.add_field(name=trn["emb_version"], value=f'`{self.bot.__version__}`')
+        embed.add_field(name=trn["emb_uptime"], value=f'`{"".join(self.bot.formatTime(time_lang, self.bot.uptime))}`', inline=False)
+        embed.add_field(name=trn["emb_created"], value=f'`{ctx.me.created_at.strftime("%d/%m/%Y %H:%M")}`\n`({"".join(self.bot.getTime(time_lang, ctx.me.created_at))})`', inline=False)
         embed.add_field(name=f'Fui criado por:', value=f'`Kaigo#0833`\nEm: `discord.py {discord.__version__}`')
-        
         mem = psutil.virtual_memory()
-        embed.add_field(name=f'Informações técnicas:', 
-        value=f'Porcentagem da cpu: `{psutil.cpu_percent()}%`\nRam usada: `{mem.used//1024//1024/1024:.1f}/{mem.total//1024//1024/1024:.1f} GB`  ({mem.percent}%)\nUso de disco: `{psutil.disk_usage(".").percent}%`',
+        embed.add_field(name=trn["emb_techinfo"], 
+        value=f'{trn["techinfo_cpu"]} `{psutil.cpu_percent()}%`\n{trn["techinfo_ram"]} `{mem.used//1024//1024/1024:.1f}/{mem.total//1024//1024/1024:.1f} GB`  ({mem.percent}%)\n{trn["techinfo_hd"]} `{psutil.disk_usage(".").percent}%`',
         inline=False)
 
         ping = f'{self.bot.latency*1000:.1f}'
@@ -87,42 +119,44 @@ class BotCmds(commands.Cog, name='Bot'):
             host = f'Heroku `({ping}ms)`'
         else:
             host = f'Local `({ping}ms)`'
-        embed.add_field(name=f'Hospedagem:', value=host, inline=False)
+        embed.add_field(name=trn["emb_host"], value=host, inline=False)
 
-        embed.add_field(name=f'Links:', value='Convite: [Clique](https://bit.ly/SoraBot)\nServidor: [Entre](https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
+        embed.add_field(name=f'Links:', value=f'{trn["links_inv"]}(https://bit.ly/SoraBot)\n{trn["links_server"]}(https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
         
-        embed.set_footer(text=f'{ctx.author.name} • Digite `{self.bot.formatPrefix(ctx)}comandos`', icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=trn["emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
-    @commands.command(usage='{}total', description='Mostra as estatísticas do bot')
-    async def total(self, ctx):
-        embed = self.bot.embed(ctx)
-        embed.title = f'Atualmente com `{len(self.bot.users)}` usuários, `{len(self.bot.guilds)}` servidores, `{len(self.bot.emojis)}` emojis e `{len([c for c in self.bot.get_all_channels()])}` canais.'
-        await ctx.send(embed=embed)
-
-    @commands.command(usage='{}version', description='Mostra as informações da versão atual do bot atual.')
+    @commands.command(aliases=['ver'])
     async def version(self, ctx):
-        embed = self.bot.embed(ctx)
-        embed.title = 'Sora | Versão'
-        embed.description = 'Algumas informações sobre minha versão, e o commit atual.'
-        embed.add_field(name='Versão:', value=f'[{self.bot.__version__}]({self.bot.__commit__["html_url"]})', inline=False)
-        embed.add_field(name='Commit feito por:', value=f'[{self.bot.__commit__["author"]["login"]}]({self.bot.__commit__["author"]["html_url"]})', inline=False)
+        trn = await ctx.trn
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["emb_title"]
+        embed.description = trn["emb_desc"]
+        embed.add_field(name=trn["emb_version"], value=f'[{self.bot.__version__}]({self.bot.__commit__["html_url"]})', inline=False)
+        embed.add_field(name=trn["emb_commiter"], value=f'[{self.bot.__commit__["author"]["login"]}]({self.bot.__commit__["author"]["html_url"]})', inline=False)
+        
         hour = datetime.strptime(self.bot.__commit__["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ')
         hour = self.bot.utc_to_timezone(hour, self.bot.timezone)
+        
         with open("assets/config.json") as jsn:
             message_id = load(jsn)["changelog_id"]
-        embed.add_field(name='Mensagem da changelog:', value=f'[Clique aqui](https://discordapp.com/channels/675889958262931488/676520484820484096/{message_id})', inline=False)
-        embed.add_field(name='Notas desta versão:', value=self.bot.__commit__["commit"]["message"], inline=False)
-        embed.set_footer(text=f'{ctx.author.name} • Commit feito', icon_url=ctx.author.avatar_url)
+        
+        g = self.bot.get_guild(675889958262931488)
+        if ctx.author in g.members:
+            embed.add_field(name=trn["emb_changelog"], value=f'[Link](https://discordapp.com/channels/675889958262931488/676520484820484096/{message_id})', inline=False)
+        
+        embed.add_field(name=trn["emb_notes"], value=self.bot.__commit__["commit"]["message"], inline=False)
+        embed.set_footer(text=trn["emb_footer"].format(author_name = ctx.author.name), icon_url=ctx.author.avatar_url)
         embed.timestamp = hour
         await ctx.send(embed=embed)
 
-    @commands.command(usage='{}source [comando]', description='Mostra o código de um comando.')
+    @commands.command()
     async def source(self, ctx, *, comando=None):
+        trn = await ctx.trn
         github = 'https://github.com/uKaigo/Sora-Bot' # Coloque o source do seu bot
 
-        embed = self.bot.embed(ctx)
-        embed.title = 'Aqui está meu source:' if not comando else f'Aqui está o source do comando {comando.replace(" ", ".")}:'
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["emb_title"] if not comando else trn["emb_title_cmd"].format(obj=comando.replace(" ", "."))
         if not comando:
             embed.description = github
             return await ctx.send(embed=embed)
@@ -135,8 +169,8 @@ class BotCmds(commands.Cog, name='Bot'):
         if not comando in list(listeners):
             cmd = self.bot.get_command(comando)
             if not cmd:
-                embed = self.bot.erEmbed(ctx, "Source inválido!")
-                embed.description = 'O comando ou evento que você digitou, não existe.\nVerifique ortografia ou se o que você está procurando existe.'
+                embed = await self.bot.erEmbed(ctx, trn["err_nf_title"])
+                embed.description = trn["err_nf_desc"]
                 return await ctx.send(embed=embed)
             cmd_func = cmd.callback
         else:

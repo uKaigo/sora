@@ -1,9 +1,30 @@
 import discord
 import aiohttp
+import asyncio
 from datetime import datetime 
 from os import getenv
 from discord.ext import commands
 
+class SoraContext(commands.Context):
+    @property
+    async def lang(self) -> str:
+        return await self.bot.get_lang(self, cmd=False)
+    
+    @property
+    async def translation(self) -> dict:
+        return await self.bot.get_lang(self)
+
+    @property
+    async def trn(self) -> dict:
+        try:
+            trn = await self.translation
+            return trn["texts"]
+        except TypeError:
+            return None
+
+    #@property 
+    #async def guild_prefix(self):
+    #    return await self.bot.db.get_prefix(self.guild.id)
 
 class BotEvents(commands.Cog):
     def __init__(self, bot):
@@ -50,7 +71,7 @@ class BotEvents(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        # Bloquear bots e dm
+        # Bloquear bots
         if message.author.bot:
             return
         
@@ -64,10 +85,10 @@ class BotEvents(commands.Cog):
             return await message.author.add_roles(message.guild.get_role(676517824411336745), reason=f'{message.author} verificado!')
         
         # Interpretar comandos
-        ctx = await self.bot.get_context(message)
+        ctx = await self.bot.get_context(message, cls=SoraContext)
         if message.content.replace('!', '') == ctx.me.mention:
             ctx.prefix = ctx.me.mention
-            ctx.command = self.bot.get_command('botinfo')
+            ctx.command = self.bot.get_command('botstats')
             ctx.args = None
             ctx.author = message.author
         await self.bot.invoke(ctx)

@@ -17,18 +17,29 @@ def sec2hours(secs):
     secs = secs - (minutos*60)
     return (int(anos), int(meses), int(dias), int(horas), int(minutos), int(secs))
 
-def formatTime(a=None, me=None, d=None, h=None, m=None, s=0):
+def formatTime(lang, a=None, me=None, d=None, h=None, m=None, s=0):
     if isinstance(a, tuple) and s == 0:
         a, me, d, h, m, s = a
-    return (f'{a} ano{"s" if a != 1 else ""}, ' if a else "", f'{me} mes{"es" if me != 1 else ""}, ' if me else "",f'{d} dia{"s" if d != 1 else ""}, ' if d else "", f'{h} hora{"s" if h != 1 else ""}, ' if h else "", f'{m} minuto{"s" if m != 1 else ""} e ' if m else "", f'{s} segundo{"s" if s != 1 else ""}')
+    anos = f'{a} {lang["year"]}' + ('s, ' if a!=1 else ', ')
+    anos = anos if a>0 else ''
+    meses = f'{me} {lang["month" + ("s" if me!=1 else "")]}, '
+    meses = meses if me else ''
+    dias = f'{d} {lang["day"]}' + ('s, ' if d!=1 else ', ')
+    dias = dias if d>0 else ''
+    horas = f'{h} {lang["hour"]}' + ('s, ' if h!=1 else ', ')
+    horas = horas if h>0 else ''
+    minutos = f'{m} {lang["minute"]}' + (f's {lang["and"]} ' if m!=1 else f' {lang["and"]} ')
+    minutos = minutos if m>0 else ''
+    segundos = f'{s} {lang["second"]}' + ('s' if s!=1 else '')
+    return (anos, meses, dias, horas, minutos, segundos)
 
-def sec2time(secs):
+def sec2time(lang, secs):
     an, me, di, ho, mi, se = sec2hours(secs)
-    return formatTime(an, me, di, ho, mi, se)
+    return formatTime(lang, an, me, di, ho, mi, se)
 
-def getTime(date: datetime):
+def getTime(lang, date: datetime):
     secs = (datetime.utcnow() - date).total_seconds()
-    return [c for c in sec2time(secs) if c]
+    return [c for c in sec2time(lang, secs) if c]
 
 
 def __getpings__(bot):
