@@ -55,7 +55,6 @@ class CommandError(commands.Cog):
             with open(f'translation/perms_{lang}.json', encoding='utf-8') as lng:
                 prms = json.load(lng)
             perms = [prms[c].title() for c in error.missing_perms]
-            await ctx.send(type(error).__name__)
             embed = await self.bot.erEmbed(ctx, trn["emb_title"])
             embed.description= trn["emb_desc"].format(perms=", ".join(perms), s="s" if len(perms) > 1 else "", oes="ões" if len(perms) > 1 else "ão")
             return await ctx.send(embed=embed)

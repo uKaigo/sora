@@ -72,7 +72,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
             cmds_jsn = load(lng)
 
         for cog in cogs:
-            cogcmd = [f'`==={hasattr(c, "commands")}{cmds_jsn[c.qualified_name.replace(" ", ".")]["name"]}`'.replace('===True', '*').replace('===False', '') for c in cog.walk_commands() if not c.hidden]
+            cogcmd = [f'`{cmds_jsn[c.qualified_name.replace(" ", ".")]["name"]}`' for c in cog.walk_commands() if not c.hidden]
             if not cogcmd:
                 continue
             embed.add_field(name=f'{cmds_jsn["_cogs"][cog.qualified_name]} ({len(cogcmd)}):', value=', '.join(cogcmd), inline=False)

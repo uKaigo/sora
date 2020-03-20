@@ -390,6 +390,20 @@
             "error": "Wasn't possible to change the language.",
             "actual_desc": "This language is already setted."
         }
+    },
+
+    "ffz": {
+        "name": "ffz",
+        "usage": "{}ffz (creator.)[name]",
+        "description": "Searchs for an FrankerFaceZ emote",
+        "texts": {
+            "loading": "Loading...",
+            "err_notfound": "Not found!",
+            "notfound_desc": "The emote wasn't found.\n",
+            "notfound_ath": "You maybe misstyped the emote/author.",
+            "emb_title": "FrankerFaceZ | {name}",
+            "emb_desc": "Created by: [{creator_name}]({creator_twitch})\nUsed in {usage} channels.\n[Add to your channel]({emote_link})"
+        }
     }
 
 }

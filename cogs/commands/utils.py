@@ -1,6 +1,8 @@
 import discord
 import pyfiglet
 import validators
+import itertools
+from assets import ffz
 from json import load
 from discord.ext import commands
 from aiohttp import BasicAuth 
@@ -10,6 +12,7 @@ from datetime import datetime
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
         self.bot = bot
+        self.ffz = ffz.FrankerFaceZ()
 
     @commands.command(name='ascii')
     async def _ascii(self, ctx, fonte, *, texto):
@@ -68,7 +71,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         response = await self.bot.session.get(f'http://api.qrserver.com/v1/read-qr-code/?fileurl={url}')
 
         embed = await self.bot.embed(ctx, invisible=True)
-        embed.description = trn["loading "]
+        embed.description = trn["loading"]
         m = await ctx.send(embed=embed)
         try:
             async with response:
@@ -197,6 +200,24 @@ class Utils(commands.Cog, name='_utils_cog'):
         embed.title = trn["emb_title"].format(name=user.name)
         embed.description = f'{base_url.format(user.id, permissions)}\n\n{trn["perm_inv"] if invalid else ""}'
         await ctx.send(embed=embed)
+
+    @commands.command(name='ffz')
+    async def _ffz(self, ctx, emote):
+        trn = await ctx.trn
+        loading = await self.bot.embed(ctx, True)
+        loading.description = trn['loading']
+        m = await ctx.send(embed=loading)
+        em = self.ffz.search(emote)
+        if not em:
+            embed = await self.bot.erEmbed(ctx, trn['err_notfound'])
+            embed.description = trn['notfound_desc']
+            embed.description += trn['notfound_ath'] if '.' in emote else ''
+            return await m.edit(embed=embed)
+        embed = await self.bot.embed(ctx)
+        embed.title = trn['emb_title'].format(name=em.name)
+        embed.description = trn['emb_desc'].format(creator_name=em.creator.name, creator_twitch=em.creator.twitch, usage=em.usage, emote_link=em.url)
+        embed.set_image(url=em.image)
+        await m.edit(embed=embed)
 
 def setup(bot):
     bot.add_cog(Utils(bot))
