@@ -5,4 +5,5 @@ validators
 motor
 dnspython
 pytz
+requests
 beautifulsoup4
