@@ -3,6 +3,7 @@ import assets.functions as functions
 from pytz import timezone
 from os import getenv, listdir
 import json
+from aiohttp import ClientSession
 from assets.database import Database
 from typing import Optional
 from pathlib import Path
@@ -34,6 +35,7 @@ class Sora(commands.AutoShardedBot):
         # Variáveis internas
         self.__started_in__ = None
         self.__commit__ = ''
+        self.session = ClientSession(loop=self.loop)
         self.lang = 'pt-br'
         self.emotes = dict()
         self.timezone = timezone("America/Sao_Paulo")

@@ -10,7 +10,6 @@ def _get_emotes(txt, emote, limit):
             emotes = soup.find_all(class_='thumbnail')
             emote_list = []
             for k, emote in enumerate(emotes):
-                print(k == limit)
                 if k == limit:
                     return emote_list
                 em = Emote(int(emote.attrs['href'].split('/')[-1].split('-')[0]))
@@ -31,34 +30,34 @@ def _get_emotes(txt, emote, limit):
                 return emote_list
             
 class FrankerFaceZ:
-    def __init__(self):
+    def __init__(self, session):
         self.base = 'https://frankerfacez.com'
+        self.session = session
 
-    def wall(self, limit=None):
+    async def wall(self, limit=None):
         if limit:
             if not isinstance(limit, int):
                 raise ValueError(f"'limit' should be 'int'. (received '{type(limit).__name__}' instead)")
 
-        response = get(f'{self.base}/emoticons/wall')
-        txt = response.text
+        response = await self.session.get(f'{self.base}/emoticons/wall')
+        txt = await response.text()
         return _get_emotes(txt, False, limit)
 
-    def search(self, query, sort='count-desc'):
+    async def search(self, query, sort='count-desc'):
         author = False
         if '.' in query:
             author, query = query.split('.')
         if not author:
-            response = get(f'{self.base}/emoticons/wall?q={query}&sort={sort}')
+            response = await self.session.get(f'{self.base}/emoticons/wall?q={query}&sort={sort}')
             emote = False
         else:
             emote = query
-            response = get(f'https://www.frankerfacez.com/{author}/submissions')
+            response = await self.session.get(f'https://www.frankerfacez.com/{author}/submissions')
             if not response.status_code == 200:
                 return None
-        txt = response.text
+        txt = await response.text()
         try:
             return _get_emotes(txt, emote, 1)[0]
-        except Exception as e:
-            print(e)
+        except:
             return None
     

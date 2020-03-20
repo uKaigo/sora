@@ -1,6 +1,6 @@
 import discord
-import aiohttp
 import asyncio
+import aiohttp
 from datetime import datetime 
 from os import getenv
 from discord.ext import commands
@@ -43,9 +43,6 @@ class BotEvents(commands.Cog):
         print(f'Guilds: {len(self.bot.guilds)}')
         print('---------------------------------')
         ############
-
-        # Requests
-        self.bot.session = aiohttp.ClientSession(loop=self.bot.loop)
 
         # Servidor de emojis, verifique os emojis usados pelo bot para não dar erro. (Caso for usar)
         for emoji in self.bot.get_guild(675889958262931488).emojis:

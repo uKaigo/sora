@@ -395,7 +395,7 @@
         "usage": "{}ffz (criador.)[nome]",
         "description": "Pesquisa um emote do FrankerFaceZ",
         "texts": {
-            "loading": "Carregando...",
+            "loading": "Carregando...\nEsse comando pode demorar para executar.",
             "err_notfound": "Não encontrado!",
             "notfound_desc": "O emote não foi encontrado.\n",
             "notfound_ath": "Talvez você tenha digitado o emote/autor errado.",
