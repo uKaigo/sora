@@ -53,7 +53,7 @@ class FrankerFaceZ:
         else:
             emote = query
             response = await self.session.get(f'https://www.frankerfacez.com/{author}/submissions')
-            if not response.status_code == 200:
+            if not response.status == 200:
                 return None
         txt = await response.text()
         try:
