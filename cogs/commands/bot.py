@@ -94,7 +94,9 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         #embed.description += trn["desc_prefix"].format(prefix=prf)
         change = trn["ch_lang"].format(prefix=self.bot.formatPrefix(ctx)) if ctx.author.permissions_in(ctx.channel).manage_guild else ''
         lang = await ctx.lang
+        embed.description += trn['desc_help'].format(prefix=self.bot.formatPrefix(ctx))
         embed.description += trn["desc_lang"].format(lang=lang.upper(), change=change)
+        embed.description += trn['desc_trn']
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['stats'])
