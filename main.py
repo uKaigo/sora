@@ -79,7 +79,7 @@ class Sora(commands.AutoShardedBot):
     async def get_lang(self, ctx:Optional[commands.Context]=None, cmd=True):
         lang = await self.db.get_language(ctx.guild.id)
         if cmd:
-            with open(f"translation/commands_{lang}.json", encoding="utf-8") as trns:
+            with open(f"translation/{lang}/commands.json", encoding="utf-8") as trns:
                 cmd = json.load(trns).get(ctx.command.qualified_name.replace(" ", "."), None)
             return cmd
         return lang
@@ -88,7 +88,7 @@ class Sora(commands.AutoShardedBot):
         aliases = {"NotOwner": "CommandNotFound", "UnexpectedQuoteError": "ExpectedClosingQuoteError"}
         try:
             lang = await ctx.lang
-            with open(f'translation/errors_{lang}.json', encoding='utf-8') as trns:
+            with open(f'translation/{lang}/errors.json', encoding='utf-8') as trns:
                 loaded = json.load(trns)
                 
                 return loaded.get(aliases.get(type(error).__name__, type(error).__name__), loaded["noError"])
@@ -101,14 +101,14 @@ class Sora(commands.AutoShardedBot):
     async def embed(self, ctx, invisible=False):
         color = self.neutral if invisible else self.color
         emb = discord.Embed(color=color)
-        with open(f"translation/commands_{await ctx.lang}.json", encoding='utf-8') as jsn:
+        with open(f"translation/{await ctx.lang}/commands.json", encoding='utf-8') as jsn:
             trn = json.load(jsn)["_executed_by"]
         emb.set_footer(text=trn.format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
         emb.timestamp = ctx.message.created_at
         return emb
 
     async def erEmbed(self, ctx, error='_err_no_title'):
-        with open(f"translation/commands_{await ctx.lang}.json", encoding='utf-8') as jsn:
+        with open(f"translation/{await ctx.lang}/commands.json", encoding='utf-8') as jsn:
             loaded = json.load(jsn)
             title = loaded.get(error, error)
             trn = loaded["_executed_by"]

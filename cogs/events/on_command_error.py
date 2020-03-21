@@ -52,7 +52,7 @@ class CommandError(commands.Cog):
 
         elif isinstance(error, commands.MissingPermissions):
             lang = await ctx.lang
-            with open(f'translation/perms_{lang}.json', encoding='utf-8') as lng:
+            with open(f'translation/{lang}/perms.json', encoding='utf-8') as lng:
                 prms = json.load(lng)
             perms = [prms[c].title() for c in error.missing_perms]
             embed = await self.bot.erEmbed(ctx, trn["emb_title"])
@@ -61,7 +61,7 @@ class CommandError(commands.Cog):
 
         elif isinstance(error, commands.BotMissingPermissions):
             lang = await ctx.lang
-            with open(f'translation/perms_{lang}.json', encoding='utf-8') as lng:
+            with open(f'translation/{lang}/perms.json', encoding='utf-8') as lng:
                 prms = json.load(lng)
             perms = [prms.get(c, c).title().replace('_', '') for c in error.missing_perms]
 

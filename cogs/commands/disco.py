@@ -101,7 +101,7 @@ class Disco(commands.Cog, name='_disco_cog'):
                 status += f'\n**{activity[membro.activity.type.value]}** {str(membro.activity.emoji).replace("None", "")}{str(membro.activity.name).replace("None", "")}'
         
         embed.add_field(name='Status:', value=status, inline=False)
-        with open(f'translation/commands_{await ctx.lang}.json', encoding='utf-8') as lng:
+        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
         embed.add_field(name=trn["emb_date"], value=trn["date_value"].format(
             created_at=membro.created_at.strftime("%d/%m/%Y %H:%M"), 
@@ -120,7 +120,7 @@ class Disco(commands.Cog, name='_disco_cog'):
             embed.add_field(name=trn["emb_roles"].format(roles=len(roles)), value=', '.join(roles), inline=False)
         
         lang = await ctx.lang
-        with open(f"translation/perms_{lang}.json", encoding='utf-8') as f:
+        with open(f"translation/{lang}/perms.json", encoding='utf-8') as f:
             prms = load(f)
         perms = [prms[c[0]].capitalize() for c in membro.permissions_in(ctx.channel) if c[1]]
         embed.add_field(name=trn["emb_perms"], value=', '.join(perms), inline=False)

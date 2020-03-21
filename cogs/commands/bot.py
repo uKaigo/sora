@@ -25,7 +25,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
             cmd = self.bot.get_command(comando)
             if cmd:
                 lang = await ctx.lang
-                with open(f"translation/commands_{lang}.json", encoding='utf-8') as cmds:
+                with open(f"translation/{lang}/commands.json", encoding='utf-8') as cmds:
                     cmd_trn = load(cmds).get(cmd.qualified_name.replace(" ", "."))
             else:
                 cmd_trn = None
@@ -68,7 +68,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         embed.title = trn["cmds_emb_title"]
         embed.description = trn["cmds_emb_desc"].format(prefix=self.bot.formatPrefix(ctx), author=ctx.author)
         lang = await ctx.lang
-        with open(f'translation/commands_{lang}.json', encoding='utf-8') as lng:
+        with open(f'translation/{lang}/commands.json', encoding='utf-8') as lng:
             cmds_jsn = load(lng)
 
         for cog in cogs:
@@ -100,7 +100,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
     @commands.command(aliases=['stats'])
     async def botstats(self, ctx):
         trn = await ctx.trn
-        with open(f'translation/commands_{await ctx.lang}.json', encoding='utf-8') as lng:
+        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
         embed = await self.bot.embed(ctx)
         embed.set_author(name=trn["emb_title"].format(bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)

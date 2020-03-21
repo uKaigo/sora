@@ -162,7 +162,7 @@ class Utils(commands.Cog, name='_utils_cog'):
 
         created = datetime.strptime(user["created_at"], "%Y-%m-%dT%H:%M:%SZ")
         created_tz = self.bot.utc_to_timezone(created, self.bot.timezone)
-        with open(f'translation/commands_{await ctx.lang}.json', encoding='utf-8') as lng:
+        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
         embed.add_field(name=trn["emb_created"], value=trn["created_desc"].format(created=created_tz.strftime("%d/%m/%Y %H:%M"), 
         relative="".join(self.bot.getTime(time_lang, created)[0].replace(", ", "").replace("e ", ""))), 
