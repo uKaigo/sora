@@ -12,8 +12,7 @@ class Tasks(commands.Cog):
         self.presences = cycle([
             (1, 'minha ajuda'),
             (2, 'seus comandos'),
-            (3, 'o youtube'),
-            (1, 'coronga virus'),
+            (3, 'o youtube')
         ])
 
         self.ch_presence.start()
