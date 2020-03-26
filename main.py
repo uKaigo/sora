@@ -59,12 +59,12 @@ class Sora(commands.AutoShardedBot):
                 if file.startswith('_') or not file.endswith('.py'):
                     continue
                 file = file.replace(".py", "")
-                self.load_extension(f'cogs.{fldr}.{file}')
-#                try:
-#                except Exception as e:
-#                    print(f'Falha ao carregar [{fldr}/{file}]: ({type(e).__name__}) {e}')
-#                else:
-#                    print(f'{fldr.capitalize()}.{file} carregado com sucesso.')
+                try:
+                    self.load_extension(f'cogs.{fldr}.{file}')
+                except Exception as e:
+                    print(f'Falha ao carregar [{fldr}/{file}]: ({type(e).__name__}) {e}')
+                else:
+                    print(f'{fldr.capitalize()}.{file} carregado com sucesso.')
 
     def __repr__(self):
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
