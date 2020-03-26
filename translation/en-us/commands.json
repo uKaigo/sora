@@ -18,7 +18,8 @@
         "_bot_cog": "Bot",
         "_disco_cog": "Discord",
         "_mod_cog": "Moderation",
-        "_utils_cog": "Utilities"
+        "_utils_cog": "Utilities",
+        "_music_cog": "Music"
     },
 
     "ping": {
@@ -77,6 +78,7 @@
         "usage": "{}version",
         "description": "Shows the info about current version.",
         "texts": {
+            "no_commit": "There's an internal error and the commit info is not available.",
             "emb_title": "Sora | Version",
             "emb_desc": "Some info about my version, and the actual commit.",
             "emb_version": "Version:",
@@ -132,6 +134,7 @@
         "usage": "{}oldmembers",
         "description": "Shows the oldest members in the server.",
         "texts": {
+            "_you": "**-You**",
             "msg": "These're the oldest members:\n\n",
             "title": "Old Members | Page {page}/{pages}"
         }
@@ -278,7 +281,7 @@
     },
 
     "qrcode.read": {
-        "name": "read",
+        "name": "qrcode read",
         "usage": "{}qrcode read <url/image>",
         "description": "Reads a qrcode.",
         "texts": {
@@ -405,6 +408,20 @@
             "notfound_ath": "You maybe misstyped the emote/author.",
             "emb_title": "FrankerFaceZ | {name}",
             "emb_desc": "Created by: [{creator_name}]({creator_twitch})\nUsed in {usage} channels.\n[Add to your channel]({emote_link})"
+        }
+    },
+
+    "letra": {
+        "name": "lyrics",
+        "usage": "{}lyric [musica]",
+        "description": "Get the lyrics of a music.",
+        "texts": {
+            "err_notfound": "Not Found!",
+            "notfound_desc": "No music found.",
+            "opts_desc": "Select a song:", 
+            "opts_footer": "{author_name} • Type \"exit\" to exit.",
+            "err_nolyric": "Lyric not found!",
+            "nolyric_desc": "No lyrics were found for this song."
         }
     }
 

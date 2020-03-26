@@ -7,3 +7,4 @@ dnspython
 pytz
 requests
 beautifulsoup4
+-e git://github.com/DiscoMusic/genius-wrapper.git#egg=genius

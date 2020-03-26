@@ -13,6 +13,7 @@
 TOKEN=[token-do-bot]
 MONGO_URI=[url-do-mongoatlas]
 GIT_TOKEN=[username]:[token]
+GENIUS_TOKEN=[token-do-genius]
 ```
 
 <b>Caso não saiba criar uma token do discord, acesse <a href="https://discordpy.readthedocs.io/en/latest/discord.html">este link</a><br><br>Caso não saiba criar uma token do github, acesse <a href="https://github.com/settings/tokens">este link</a> (não dê acesso à nenhum escopo, não será necessário.)</b>

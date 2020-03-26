@@ -1,10 +1,10 @@
 import discord
-import assets.functions as functions
+from assets.models import functions
 from pytz import timezone
 from os import getenv, listdir
 import json
 from aiohttp import ClientSession
-from assets.database import Database
+from assets.models.database import Database
 from typing import Optional
 from pathlib import Path
 from discord.ext import commands
@@ -17,7 +17,7 @@ if not getenv("HEROKU"):
     load_dotenv(dotenv_path=env_f)
 token = getenv('token')
 
-with open('assets/config.json') as cnf:
+with open('assets/json/config.json') as cnf:
     config = json.load(cnf)
     config["prefix"] = config["prefix"] if getenv("HEROKU") else "sc." # Canary é rodado localmente
 
@@ -50,9 +50,7 @@ class Sora(commands.AutoShardedBot):
         self.utc_to_timezone = functions.utc_to_timezone
 
         # Versão do bot
-        with open("assets/config.json") as cnf:
-            jsn = json.load(cnf)
-            self.__version__ = jsn["version"]
+        self.__version__ = config["version"]
 
         # Carregamento de cogs
         self.remove_command('help')
@@ -127,11 +125,12 @@ bot = Sora()
 
 @bot.check
 async def blacklist(ctx):
-    with open('assets/users_banned.json') as bn:
+    with open('assets/json/users_banned.json') as bn:
         jsn = json.load(bn)
     if str(ctx.author.id) in jsn and not ctx.author.id == bot.owner_id:
         reason = jsn[str(ctx.author.id)]
-        embed = discord.Embed(title=f':x: | Sem permissão!', description=f'Você foi banido de usar qualquer comando meu, o motivo é:\n`{reason}`', color=bot.ecolor)
+        embed = await bot.embed(ctx, "Sem permissão!")
+        embed.description = f'Você foi banido de usar qualquer comando meu!\nMotivo: `{reason}`'
         await ctx.send(embed=embed)
         return False
     return True

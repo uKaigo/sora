@@ -20,7 +20,7 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         self.bot = bot
 
     @commands.is_owner()
-    @commands.command(usage='Sigiloso.', description='Sigiloso.')
+    @commands.command()
     async def reload(self, ctx):
         msg = await ctx.send('Recarregando todas as cogs, aguarde...')
         error = []
@@ -56,7 +56,7 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         return await msg.edit(embed=embed, content='')
 
     @commands.is_owner()
-    @commands.command(name='eval', usage='Sigiloso.', description='Sigiloso.')
+    @commands.command(name='eval')
     async def _eval(self, ctx, *, cmd):
         # Funções
         def getsource(arquivo):
@@ -126,7 +126,7 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         await m.edit(content=f'```diff\n- Fechado -```')
 
     @commands.is_owner()
-    @commands.command(usage='Sigiloso.', description='Sigiloso.')
+    @commands.command()
     async def sudo(self, ctx, member:discord.Member, *, cmd):
         message = ctx.message 
         message.author = member 
@@ -135,24 +135,24 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         await self.bot.invoke(sudo_ctx)
 
     @commands.is_owner()
-    @commands.command(usage='Sigiloso.', description='Sigiloso.')
+    @commands.command()
     async def botban(self, ctx, member, *, reason):
-        with open("assets/users_banned.json") as f:
+        with open("assets/json/users_banned.json") as f:
             jsn = json.load(f)
         jsn[member] = reason
-        with open("assets/users_banned.json", "w") as f:
+        with open("assets/json/users_banned.json", "w") as f:
             f.write(json.dumps(jsn, indent=4))
         embed = await self.bot.embed(ctx, invisible=True)
         embed.title = f'{member} foi banido!'
         await ctx.send(embed=embed)
 
     @commands.is_owner()
-    @commands.command(usage='Sigiloso.', description='Sigiloso.')
+    @commands.command()
     async def botunban(self, ctx, member):
-        with open("assets/users_banned.json") as f:
+        with open("assets/json/users_banned.json") as f:
             jsn = json.load(f)
         del(jsn[member])
-        with open("assets/users_banned.json", "w") as f:
+        with open("assets/json/users_banned.json", "w") as f:
             f.write(json.dumps(jsn, indent=4))
         embed = await self.bot.embed(ctx, invisible=True)
         embed.title = f'{member} foi desbanido!'

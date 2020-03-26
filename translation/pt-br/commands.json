@@ -17,7 +17,8 @@
         "_bot_cog": "Bot",
         "_disco_cog": "Discord",
         "_mod_cog": "Moderação",
-        "_utils_cog": "Utilitários"
+        "_utils_cog": "Utilitários",
+        "_music_cog": "Música"
     },
 
     "ping": {
@@ -76,6 +77,7 @@
         "usage": "{}version",
         "description": "Mostra as informações da versão atual.",
         "texts": {
+            "no_commit": "Tem um erro interno e as informações do commit não estão disponíveis.",
             "emb_title": "Sora | Versão",
             "emb_desc": "Algumas informações sobre minha versão, e o commit atual.",
             "emb_version": "Versão:",
@@ -131,6 +133,7 @@
         "usage": "{}oldmembers",
         "description": "Mostra os membros mais antigos do servidor.",
         "texts": {
+            "_you": "**-Você**",
             "msg": "Estes são os membros mais antigos do servidor:\n\n",
             "title": "Old Members | Página {page}/{pages}"
         }
@@ -403,6 +406,20 @@
             "notfound_ath": "Talvez você tenha digitado o emote/autor errado.",
             "emb_title": "FrankerFaceZ | {name}",
             "emb_desc": "Criado por: [{creator_name}]({creator_twitch})\nUsado em {usage} canais.\n[Adicione no seu canal]({emote_link})"
+        }
+    },
+
+    "letra": {
+        "name": "letra",
+        "usage": "{}letra [musica]",
+        "description": "Pega a letra de uma música",
+        "texts": {
+            "err_notfound": "Não encontrado!",
+            "notfound_desc": "Nenhuma música encontrada.",
+            "opts_desc": "Selecione uma música:", 
+            "opts_footer": "{author_name} • Digite \"exit\" para sair.",
+            "err_nolyric": "Letra não encontrada!",
+            "nolyric_desc": "Não foi encontrada uma letra para essa música."
         }
     }
 

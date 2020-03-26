@@ -131,6 +131,8 @@ class BotCmds(commands.Cog, name='_bot_cog'):
     @commands.command(aliases=['ver'])
     async def version(self, ctx):
         trn = await ctx.trn
+        if not hasattr(self.bot, '__commit__'):
+            return await ctx.send(trn['no_commit'])
         embed = await self.bot.embed(ctx)
         embed.title = trn["emb_title"]
         embed.description = trn["emb_desc"]
@@ -140,7 +142,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         hour = datetime.strptime(self.bot.__commit__["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ')
         hour = self.bot.utc_to_timezone(hour, self.bot.timezone)
         
-        with open("assets/config.json") as jsn:
+        with open("assets/json/config.json") as jsn:
             message_id = load(jsn)["changelog_id"]
         
         g = self.bot.get_guild(675889958262931488)

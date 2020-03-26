@@ -1,63 +1,28 @@
 import discord
 from typing import Optional
 from json import load
-import assets.discordMenus as menus
+from assets.models.menus import baseMenu
+from assets.packages import discordMenus as menus
 from discord.ext import commands 
 
-class OldMembersMenu(menus.Menu):
+class OldMembersMenu(baseMenu):
     def __init__(self, pages, title, msg, author_page):
-        super().__init__(clear_reactions_after=True, timeout=30)
+        super().__init__(pages, title, msg, '')
         self.author_page = author_page
-        self.title = title
-        self.index = 0
-        self.pages = [c for c in pages if c]
-        self.msg = msg
-        self.nopage = False
 
     @property 
     async def embed(self):
-        msg = self.msg
-        msg += self.pages[self.index]
+        msg = self._msg
+        msg += self.pages[self._index]
         embed = await self.bot.embed(self.ctx)
-        embed.title = self.title.format(page=str(self.index+1), pages=str(len(self.pages)))
+        embed.title = self._title.format(page=str(self._index+1), pages=str(len(self.pages)))
         embed.description = msg
         return embed
 
-    def should_add_reactions(self):
-        if self.nopage:
-            return 0
-        return len(self.buttons)
-
-    async def send_initial_message(self, ctx, channel):
-        if len(self.pages) == 1:
-            self.nopage = True
-        embed = await self.embed
-        return await ctx.send(embed=embed)
-
     @menus.button('👨')
     async def ath_page(self, _):
-        self.index = self.author_page
+        self._index = self.author_page
         await self.message.edit(embed=await self.embed)
-
-    @menus.button('⬅️')
-    async def voltar(self, _):
-        self.index -= 1
-        if self.index < 0:
-            self.index = len(self.pages)-1
-        embed = await self.embed
-        await self.message.edit(embed=embed)    
-
-    @menus.button('➡️')
-    async def avancar(self, _):
-        self.index += 1
-        if self.index == len(self.pages):
-            self.index = 0
-        embed = await self.embed
-        await self.message.edit(embed=embed)    
-
-    @menus.button('❌')
-    async def parar(self, _):
-        self.stop()
 
 class Disco(commands.Cog, name='_disco_cog'):
     def __init__(self, bot):
@@ -128,7 +93,7 @@ class Disco(commands.Cog, name='_disco_cog'):
         await ctx.send(embed=embed)
 
     @commands.guild_only()
-    @commands.command(usage='{}oldmembers', description='Exibe os membros mais antigos do servidor.')
+    @commands.command()
     async def oldmembers(self, ctx, param=None):
         trn = await ctx.trn
         membros = [(member, member.joined_at.timestamp()) for member in ctx.guild.members]
@@ -142,9 +107,11 @@ class Disco(commands.Cog, name='_disco_cog'):
 
         for k, membro in enumerate(membros):
             index += 1
+            you = ''
             if membro == ctx.author:
+                you = trn['_you']
                 author_page = len(pages)
-            text += f'`{k+1}º` {self.bot.emotes[f"sora_{membro.status}"]} `{membro}`\n'
+            text += f'`{k+1}º` {self.bot.emotes[f"sora_{membro.status}"]} `{membro}` {you}\n'
             if index == 10:
                 pages.append(text)
                 index = 0
@@ -152,8 +119,7 @@ class Disco(commands.Cog, name='_disco_cog'):
             if k+1 == len(membros):
                 pages.append(text)
 
-        msg = trn["msg"]
-        menu = OldMembersMenu(pages, trn["title"], msg, author_page)
+        menu = OldMembersMenu(pages, trn["title"], trn["msg"], author_page)
         await menu.start(ctx)
 
 def setup(bot):

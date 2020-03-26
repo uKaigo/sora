@@ -1,8 +1,7 @@
 import discord
 import pyfiglet
-import validators
-import itertools
-from assets import ffz
+from assets.models.menus import baseMenu  
+from assets.packages import ffz
 from json import load
 from discord.ext import commands
 from aiohttp import BasicAuth 
@@ -57,7 +56,7 @@ class Utils(commands.Cog, name='_utils_cog'):
 
             await m.edit(embed=embed)
 
-    @qrcode.command(aliases=['r'])
+    @qrcode.command()
     async def read(self, ctx, *, url=None):
         trn = await ctx.trn
         nofile = await self.bot.erEmbed(ctx, trn["err_nofile"])
