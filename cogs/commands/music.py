@@ -5,6 +5,26 @@ from assets.models.menus import baseMenu
 from asyncio import TimeoutError
 from discord.ext import commands
 
+class LyricsMenu(baseMenu):
+    def __init__(self, pages, song, msg_obj):
+        self._obj = msg_obj
+        self._song = song
+        self._title = f'{song.artist} - {song}'
+        super().__init__(pages, self._title, '')
+    
+    async def send_initial_message(self, ctx, channel):
+        await self._obj.edit(content='', embed=await self.embed)
+        return self._obj
+
+    @property 
+    async def embed(self):
+        msg = self.pages[self._index].strip()
+        msg += '...' if not self._index == len(self.pages)-1 and self.should_add_reactions() else ''
+        embed = await self.bot.embed(self.ctx)
+        embed.description = msg 
+        embed.set_author(name=self._title, icon_url=self._song.image_url)
+        return embed
+
 
 class Music(commands.Cog, name='_music_cog'):
     def __init__(self, bot):
@@ -46,10 +66,11 @@ class Music(commands.Cog, name='_music_cog'):
         if not lyrics:
             embed = await self.bot.erEmbed(ctx, trn['err_nolyric'])
             embed.description = trn['nolyric_desc']
-        
+            return await msg.edit(embed=embed)
+
         pages = self.bot.paginator(lyrics, 2045)
 
-        menu = baseMenu(pages, f'{song.artist} - {song}', '', '...', msg_obj=msg)
+        menu = LyricsMenu(pages, song, msg)
         await menu.start(ctx)
 
 def setup(bot):

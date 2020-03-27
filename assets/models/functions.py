@@ -58,14 +58,5 @@ def __getuptime__(bot):
     return bot.sec2hours((datetime.utcnow() - bot.__started_in__).total_seconds())
 
 def paginator(text, amount):
-    text = str(text)
-    pages = []
-    pages.append(text[:amount])
-    text = text[amount:]
-    for k, _ in enumerate(text):
-        if k % amount:
-            pages.append(text[:amount])
-            text = text[amount:]
-    if text:
-        pages.append(text.rstrip())
-    return [c for c in pages if c] # Gambiarra, pq não sei arrumar, ele retornava valores em branco
+    return [text[i:i+amount] for i in range(0, len(text), amount)]
+
