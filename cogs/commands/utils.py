@@ -1,12 +1,12 @@
 import discord
 import pyfiglet
-from assets.models.menus import baseMenu  
 import ffz
 from json import load
 from discord.ext import commands
 from aiohttp import BasicAuth 
 from os import getenv
 from datetime import datetime
+from assets.models.menus import baseMenu  
 
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
