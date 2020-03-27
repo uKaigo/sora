@@ -1,4 +1,4 @@
-from assets.packages import discordMenus as menus
+from discord.ext import menus 
 
 class baseMenu(menus.Menu):
     def __init__(self, pages, title, msg):

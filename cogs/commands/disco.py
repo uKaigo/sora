@@ -2,12 +2,12 @@ import discord
 from typing import Optional
 from json import load
 from assets.models.menus import baseMenu
-from assets.packages import discordMenus as menus
+from discord.ext import menus
 from discord.ext import commands 
 
 class OldMembersMenu(baseMenu):
     def __init__(self, pages, title, msg, author_page):
-        super().__init__(pages, title, msg, '')
+        super().__init__(pages, title, msg)
         self.author_page = author_page
 
     @property 
