@@ -8,3 +8,5 @@ pytz
 requests
 beautifulsoup4
 -e git://github.com/DiscoMusic/genius-wrapper.git#egg=genius
+-e git://github.com/Rapptz/discord-ext-menus.git#egg=menus
+-e git://github.com/uKaigo/frankerfacez.git#egg=frankerfacez

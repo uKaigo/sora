@@ -112,18 +112,22 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
                 await ctx.message.add_reaction('✅')
             except:
                 pass
-        m = None
+        msgs = []
         for txt in self.bot.paginator(result, 1990):
-            m = await ctx.send(f"```py\n{txt}```")
-        if not m:
+            msgs.append(await ctx.send(f"```py\n{txt}```"))
+        if not msgs:
             return await ctx.send("Nenhuma saida.")
-        await m.add_reaction('❌')
+        await msgs[-1].add_reaction('❌')
         try:
             await self.bot.wait_for('reaction_add', timeout=20, check=lambda r, u: u == ctx.author and r.emoji == '❌')
         except Exception as e:
             pass
-        await m.remove_reaction('❌', ctx.me)
-        await m.edit(content=f'```diff\n- Fechado -```')
+        await msgs[-1].remove_reaction('❌', ctx.me)
+        for k, m in enumerate(msgs):
+            if k == len(msgs)-1:
+                await m.edit(content='```diff\n- Fechado -```', embed=None)
+                break
+            await m.delete()
 
     @commands.is_owner()
     @commands.command()

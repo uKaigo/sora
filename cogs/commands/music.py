@@ -22,9 +22,8 @@ class LyricsMenu(baseMenu):
         msg += '...' if not self._index == len(self.pages)-1 and self.should_add_reactions() else ''
         embed = await self.bot.embed(self.ctx)
         embed.description = msg 
-        embed.set_author(name=self._title, icon_url=self._song.image_url)
+        embed.set_author(name=self._title, icon_url=self._song.image_url, url=self._song.url)
         return embed
-
 
 class Music(commands.Cog, name='_music_cog'):
     def __init__(self, bot):

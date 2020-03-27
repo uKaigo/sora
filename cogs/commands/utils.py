@@ -1,7 +1,7 @@
 import discord
 import pyfiglet
 from assets.models.menus import baseMenu  
-from assets.packages import ffz
+import ffz
 from json import load
 from discord.ext import commands
 from aiohttp import BasicAuth 
@@ -11,7 +11,6 @@ from datetime import datetime
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
         self.bot = bot
-        self.ffz = ffz.FrankerFaceZ(self.bot.session)
 
     @commands.command(name='ascii')
     async def _ascii(self, ctx, fonte, *, texto):
@@ -206,7 +205,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         loading = await self.bot.embed(ctx, True)
         loading.description = trn['loading']
         m = await ctx.send(embed=loading)
-        em = await self.ffz.search(emote)
+        em = await ffz.search(emote)
         if not em:
             embed = await self.bot.erEmbed(ctx, trn['err_notfound'])
             embed.description = trn['notfound_desc']

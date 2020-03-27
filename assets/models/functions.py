@@ -58,5 +58,6 @@ def __getuptime__(bot):
     return bot.sec2hours((datetime.utcnow() - bot.__started_in__).total_seconds())
 
 def paginator(text, amount):
+    text = str(text)
     return [text[i:i+amount] for i in range(0, len(text), amount)]
 
