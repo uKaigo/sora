@@ -221,6 +221,7 @@ class Utils(commands.Cog, name='_utils_cog'):
 
     @commands.command(aliases=['corona', 'covid19', 'covid'])
     async def ncov(self, ctx):
+        trn = await ctx.trn
         if True: #Imprementação futura
             res = await self.bot.session.get('https://www.worldometers.info/coronavirus/')
             soup = BeautifulSoup(await res.text(), 'html.parser')
@@ -235,19 +236,19 @@ class Utils(commands.Cog, name='_utils_cog'):
             active_fmt = f'{active:,}'.replace(',', '.')
 
             embed = await self.bot.embed(ctx)
-            embed.title = 'Info | Novo Corona Virus'
+            embed.title = trn['emb_title']
 
-            stats = f'{fmt_counters[0]} casos\n'
-            stats += f'{fmt_counters[1]} mortes `({counters[1]/counters[0]*100:.2f}%)`\n'
-            stats += f'{fmt_counters[2]} recuperações `({counters[2]/counters[0]*100:.2f}%)`\n'
-            stats += f'{active_fmt} casos ativos `({active/counters[0]*100:.2f}%)`'
-            embed.add_field(name='O COVID-19 tem atualmente:', value=stats)
+            stats = trn['stats_cases'].format(cases=fmt_counters[0])
+            stats += trn['stats_deaths'].format(deaths=fmt_counters[1], pcent=counters[1]/counters[0]*100)
+            stats += trn['stats_recov'].format(recovered=fmt_counters[2], pcent=counters[2]/counters[0]*100)
+            stats += trn['stats_activ'].format(active=active_fmt, pcent=active/counters[0]*100)
+            embed.add_field(name=trn['emb_stats'], value=stats)
  
-            pac_stats = f'{fmt_st_count[0]} estão em estado leve `({st_count[0]/active*100:.2f}%)`\n'
-            pac_stats += f'{fmt_st_count[1]} estão em estado crítico `({st_count[1]/active*100:.2f}%)`'
-            embed.add_field(name='Dos casos ativos:', value=pac_stats, inline=False)
+            pac_stats = trn['p_stats_mild'].format(mild=fmt_st_count[0], pcent=st_count[0]/active*100)
+            pac_stats += trn['p_stats_crit'].format(critical=fmt_st_count[1], pcent=st_count[1]/active*100)
+            embed.add_field(name=trn['emb_p_stats'], value=pac_stats, inline=False)
 
-            embed.set_footer(text=f'{ctx.author.name} • Atualizado:', icon_url=ctx.author.avatar_url)
+            embed.set_footer(text=trn['emb_footer'].format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
             embed.timestamp = datetime.strptime(updated, '%B %d, %Y, %H:%M GMT')
             return await ctx.send(embed=embed)
 

@@ -423,6 +423,25 @@
             "err_nolyric": "Lyric not found!",
             "nolyric_desc": "No lyrics were found for this song."
         }
+    },
+
+    "ncov": {
+        "name": "ncov",
+        "usage": "{}ncov",
+        "description": "Info about COVID-19",
+        "texts": {
+            "emb_title": "Info | New Corona Virus",
+            "emb_stats": "COVID-19 currently has:",
+            "stats_cases": "**{cases}** cases.\n",
+            "stats_deaths": "**{deaths}** deaths `({pcent:.2f}%)`\n",
+            "stats_recov": "**{recovered}** recoveries `({pcent:.2f}%)`\n",
+            "stats_activ": "**{active}** active cases `({pcent:.2f}%)\n`",
+            "emb_p_stats": "Of the active cases:",
+            "p_stats_mild": "**{mild}** are in mild state `({pcent:.2f}%)`\n",
+            "p_stats_crit": "**{critical}** are in critical state `({pcent:.2f}%)`",
+            "emb_footer": "{author_name} • Updated:"
+        }
     }
+
 
 }
