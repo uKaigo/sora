@@ -1,6 +1,8 @@
 import discord
 import pyfiglet
 import ffz
+import re
+from bs4 import BeautifulSoup
 from json import load
 from discord.ext import commands
 from aiohttp import BasicAuth 
@@ -162,7 +164,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         created_tz = self.bot.utc_to_timezone(created, self.bot.timezone)
         with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
-        embed.add_field(name=trn["emb_created"], value=trn["created_desc"].format(created=created_tz.strftime("%d/%m/%Y %H:%M"), 
+        embed.add_field(name=trn["emb_created"], value=trn["created_desc"].format(created=created_tz.strftime("%d/%m/%Y %H:%M GMT-03"), 
         relative="".join(self.bot.getTime(time_lang, created)[0].replace(", ", "").replace("e ", ""))), 
         inline=False)
 
@@ -216,6 +218,39 @@ class Utils(commands.Cog, name='_utils_cog'):
         embed.description = trn['emb_desc'].format(creator_name=em.creator.name, creator_twitch=em.creator.twitch, usage=em.usage, emote_link=em.url)
         embed.set_image(url=em.image)
         await m.edit(embed=embed)
+
+    @commands.command(aliases=['corona', 'covid19', 'covid'])
+    async def ncov(self, ctx):
+        if True: #Imprementação futura
+            res = await self.bot.session.get('https://www.worldometers.info/coronavirus/')
+            soup = BeautifulSoup(await res.text(), 'html.parser')
+
+            counters = [int(c.text.replace(',', '')) for c in soup.find_all(class_='maincounter-number')]
+            st_count = [int(c.text.replace(',', '')) for c in soup.find_all(class_='number-table')]
+            fmt_st_count = [f'{c:,}'.replace(',', '.') for c in st_count]
+            fmt_counters = [f'{c:,}'.replace(',','.') for c in counters]
+
+            updated = re.search('(?<=Last updated: ).+', soup.text).group()
+            active = int(counters[0]-(counters[1]+counters[2]))
+            active_fmt = f'{active:,}'.replace(',', '.')
+
+            embed = await self.bot.embed(ctx)
+            embed.title = 'Info | Novo Corona Virus'
+
+            stats = f'{fmt_counters[0]} casos\n'
+            stats += f'{fmt_counters[1]} mortes `({counters[1]/counters[0]*100:.2f}%)`\n'
+            stats += f'{fmt_counters[2]} recuperações `({counters[2]/counters[0]*100:.2f}%)`\n'
+            stats += f'{active_fmt} casos ativos `({active/counters[0]*100:.2f}%)`'
+            embed.add_field(name='O COVID-19 tem atualmente:', value=stats)
+ 
+            pac_stats = f'{fmt_st_count[0]} estão em estado leve `({st_count[0]/active*100:.2f}%)`\n'
+            pac_stats += f'{fmt_st_count[1]} estão em estado crítico `({st_count[1]/active*100:.2f}%)`'
+            embed.add_field(name='Dos casos ativos:', value=pac_stats, inline=False)
+
+            embed.set_footer(text=f'{ctx.author.name} • Atualizado:', icon_url=ctx.author.avatar_url)
+            embed.timestamp = datetime.strptime(updated, '%B %d, %Y, %H:%M GMT')
+            return await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Utils(bot))

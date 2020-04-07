@@ -16,4 +16,6 @@ class TopGG(commands.Cog):
         print(f'[TOP.GG] {time} - Guilds atualizados: {len(self.bot.guilds)}')
 
 def setup(bot):
-    bot.add_cog(TopGG(bot))
+    # Para não rodar no canary
+    if getenv("heroku"):
+        bot.add_cog(TopGG(bot))
