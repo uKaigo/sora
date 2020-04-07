@@ -15,6 +15,11 @@ class DiscordEvents(commands.Cog, name=''):
         except:
             pass
         await self.bot.process_commands(after)
+    
+    @commands.Cog.listener()
+    async def on_raw_reaction_add(payload):
+        if payload.channel.id == 676516685192364042:
+            await self.bot.get_channel(676516685192364042).send(f'algum corno chamado {payload.user} reagiu no regras')
 
 def setup(bot):
     bot.add_cog(DiscordEvents(bot))
