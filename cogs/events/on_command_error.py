@@ -103,7 +103,7 @@ class CommandError(commands.Cog):
                     else:
                         embed.description += trn["desc_noperm"].format(channel_mention=ctx.channel.mention)
                     return await ctx.author.send(embed=embed)
-            
+
                 if isinstance(error.original, NotImplementedError):
                     embed = await self.bot.erEmbed(ctx, trn["emb_title"])
                     embed.description = trn["emb_desc"]

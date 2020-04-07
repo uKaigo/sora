@@ -50,10 +50,8 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
 
         errors = [f'**{c[0]}:** {c[1]}: ```{c[2]}```\n' for c in error]
 
-        embed = await self.bot.embed(ctx)
-        embed.title = 'Reload'
-        embed.description = f'{sccs} módulos recarregados\n{"Erros:" if errors else ""}\n{"".join(errors)}'
-        return await msg.edit(embed=embed, content='')
+        _msg = f'{sccs} módulos recarregados\n{"Erros:" if errors else ""}\n{"".join(errors)}'
+        return await msg.edit(content=_msg)
 
     @commands.is_owner()
     @commands.command(name='eval')

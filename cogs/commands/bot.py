@@ -63,22 +63,24 @@ class BotCmds(commands.Cog, name='_bot_cog'):
             return await ctx.send(embed=embed)
 
         # Commands -> cmds
+        print(1)
         cogs = [self.bot.get_cog(c) for c in self.bot.cogs]
+        print(2)
         embed = await self.bot.embed(ctx)
+        print(3)
         embed.title = trn["cmds_emb_title"]
         embed.description = trn["cmds_emb_desc"].format(prefix=self.bot.formatPrefix(ctx), author=ctx.author)
         lang = await ctx.lang
         with open(f'translation/{lang}/commands.json', encoding='utf-8') as lng:
             cmds_jsn = load(lng)
-
         for cog in cogs:
             cogcmd = [f'`{cmds_jsn[c.qualified_name.replace(" ", ".")]["name"]}`' for c in cog.walk_commands() if not c.hidden]
             if not cogcmd:
                 continue
             embed.add_field(name=f'{cmds_jsn["_cogs"][cog.qualified_name]} ({len(cogcmd)}):', value=', '.join(cogcmd), inline=False)
-
         embed.set_footer(text=trn["cmds_emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
+
 
     @commands.command(aliases=['bi'])
     async def botinfo(self, ctx):
