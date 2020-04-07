@@ -15,9 +15,5 @@ class TopGG(commands.Cog):
         time = datetime.now().strftime('%H:%M:%S')
         print(f'[TOP.GG] {time} - Guilds atualizados: {len(self.bot.guilds)}')
 
-    @commands.Cog.listener()
-    async def on_dbl_vote(self, data):   
-        print(data)
-
 def setup(bot):
     bot.add_cog(TopGG(bot))
