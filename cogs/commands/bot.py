@@ -63,11 +63,8 @@ class BotCmds(commands.Cog, name='_bot_cog'):
             return await ctx.send(embed=embed)
 
         # Commands -> cmds
-        print(1)
         cogs = [self.bot.get_cog(c) for c in self.bot.cogs]
-        print(2)
         embed = await self.bot.embed(ctx)
-        print(3)
         embed.title = trn["cmds_emb_title"]
         embed.description = trn["cmds_emb_desc"].format(prefix=self.bot.formatPrefix(ctx), author=ctx.author)
         lang = await ctx.lang

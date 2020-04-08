@@ -6,6 +6,7 @@ class Database:
         self._db = self.__client__[database]
         self.guilds = self._db["Guilds"]
         self.users = self._db["Users"]
+        self._guilds_cache = {}
 
     async def new_user(self, _id):
         user = await self.users.insert_one({'_id': str(_id)})
@@ -26,11 +27,13 @@ class Database:
         return None
     
     async def new_guild(self, _id):
-        guild = await self.guilds.insert_one({'_id': str(_id), 'prefix': None, 'lang': 'en-us'})
-        return guild
+        await self.guilds.insert_one({'_id': str(_id), 'prefix': None, 'lang': 'en-us'})
+        self._guilds_cache[_id] = {'_id': str(_id), 'prefix': None, 'lang': 'en-us'}
+        return True
 
     async def get_guild(self, _id):
-        guild = await self.guilds.find_one({"_id": str(_id)})
+        guild = self._guilds_cache.get(_id, await self.guilds.find_one({"_id": str(_id)}))
+        self._guilds_cache[_id] = guild
         if not guild:
             await self.new_guild(_id)
         guild = await self.guilds.find_one({"_id": str(_id)})
@@ -38,6 +41,8 @@ class Database:
     
     async def update_guild(self, content):
         try:
+            if content["_id"] in self._guilds_cache:
+                self._guilds_cache[content["_id"]].update(content)
             await self.guilds.update_one({"_id": str(content.pop('_id'))}, {"$set": content})
         except Exception as e:
             print(f'update_guild -> {e}')
