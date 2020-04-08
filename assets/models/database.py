@@ -5,27 +5,8 @@ class Database:
         self.__client__ = AsyncIOMotorClient(uri)
         self._db = self.__client__[database]
         self.guilds = self._db["Guilds"]
-        self.users = self._db["Users"]
         self._guilds_cache = {}
 
-    async def new_user(self, _id):
-        user = await self.users.insert_one({'_id': str(_id)})
-        return user
-
-    async def get_user(self, _id):
-        user = await self.users.find_one({"_id": str(_id)})
-        if not user:
-            user = self.new_user(_id)
-        return user
-    
-    async def update_user(self, content):
-        try:
-            await self.users.update_one({"_id": str(content["_id"])}, {"$set": content})
-        except Exception as e:
-            print(f'update_user -> {e}')
-            return False
-        return None
-    
     async def new_guild(self, _id):
         await self.guilds.insert_one({'_id': str(_id), 'prefix': None, 'lang': 'en-us'})
         self._guilds_cache[_id] = {'_id': str(_id), 'prefix': None, 'lang': 'en-us'}
@@ -48,6 +29,11 @@ class Database:
             print(f'update_guild -> {e}')
             return False
         return True
+
+    async def delete_guild(self, _id):
+        await self.guilds.delete_one({"_id": str(_id)})
+        if _id in self._guilds_cache:
+            del(self._guilds_cache[_id])
 
     async def get_language(self, guild_id):
         g = await self.get_guild(guild_id)
