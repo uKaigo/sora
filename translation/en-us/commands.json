@@ -378,7 +378,24 @@
         "texts": {
             "emb_title": "Info about {guild_name}",
             "emb_lang": "Lang: {lang}",
-            "lang_value": "Changes the server language."
+            "lang_value": "Changes the server language.",
+            "prefix_value": "Changes the server prefix.\n`Reset` to reset.",
+            "none": "None"
+        }
+    },
+
+    "config.prefix": {
+        "name": "config prefix",
+        "usage": "{}config prefix [novo-prefixo]",
+        "description": "Changes the server prefix.",
+        "texts": {
+            "err_invalid": "Invalid prefix!",
+            "err_equal": "This prefix is already defined.",
+            "err_five": "This prefix has more than 5 letters.",
+            "emb_success": "Prefix changed.",
+            "none": "Nenhum.",
+            "emb_prefix": "The new prefix is `{prefix}`",
+            "error": "Wasn't possible to change the prefx."
         }
     },
 

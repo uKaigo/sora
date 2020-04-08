@@ -21,9 +21,13 @@ with open('assets/json/config.json') as cnf:
     config = json.load(cnf)
     config["prefix"] = config["prefix"] if getenv("HEROKU") else "sc." # Canary é rodado localmente
 
+async def _prefix(bot, message):
+    prefix = await bot.db.get_prefix(message.guild.id) or config["prefix"]
+    return commands.when_mentioned_or(prefix)(bot, message)
+
 class Sora(commands.AutoShardedBot):
     def __init__(self):
-        super().__init__(commands.when_mentioned_or(config["prefix"]), case_insensitive=True)
+        super().__init__(command_prefix=_prefix, case_insensitive=True)
         self.token = 'Bela tentativa, quase me pegou...'
         self.db = Database(getenv("mongo_uri"), "Sora")
 

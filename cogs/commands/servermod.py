@@ -400,9 +400,9 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.set_author(name=trn['emb_title'].format(guild_name=ctx.guild.name), icon_url=ctx.guild.icon_url)
             lang = await ctx.lang
             embed.add_field(name=trn['emb_lang'].format(lang=lang), value=trn['lang_value'])
-            #prefix = await ctx.guild_prefix
-            #prefix = str(prefix)
-            #embed.add_field(name=f'Prefixo: {prefix.replace("None", "?")}', value='Muda o prefixo do servidor')
+            prefix = await ctx.guild_prefix
+            prefix = str(prefix)
+            embed.add_field(name=f'Prefixo: {prefix.replace("None", trn["none"])}', value=trn['prefix_value'], inline=False)
             await ctx.send(embed=embed)
 
     @config.command()
@@ -436,6 +436,34 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.description = trn['error']
         await ctx.send(embed=embed)
 
+
+    @config.command()
+    async def prefix(self, ctx, prefix):
+        trn = await ctx.trn
+        _prefix = await ctx.guild_prefix
+        prefix = prefix.lower()
+        if prefix == _prefix: 
+            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed.description = trn['err_equal']
+            return await ctx.send(embed=embed)
+        if len(prefix) > 5 and not prefix == "reset":
+            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed.description = trn['err_five']
+            return await ctx.send(embed=embed)
+        if prefix == "reset":
+            prefix = None
+        g = await self.bot.db.update_guild({"_id": ctx.guild.id, "prefix": prefix})
+        if g:
+            embed = await self.bot.embed(ctx)
+            embed.title = trn['emb_success']
+            if prefix == None:
+                prefix = trn['none']
+            embed.description = trn['emb_prefix'].format(prefix = prefix)
+            return await ctx.send(embed=embed)
+        else:
+            embed = await self.bot.erEmbed(ctx)
+            embed.description = trn['error']
+            return await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(ServerAdmin(bot))

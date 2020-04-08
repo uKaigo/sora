@@ -22,9 +22,9 @@ class SoraContext(commands.Context):
         except TypeError:
             return None
 
-    #@property 
-    #async def guild_prefix(self):
-    #    return await self.bot.db.get_prefix(self.guild.id)
+    @property 
+    async def guild_prefix(self):
+        return await self.bot.db.get_prefix(self.guild.id)
 
 class BotEvents(commands.Cog):
     def __init__(self, bot):
