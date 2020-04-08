@@ -78,26 +78,6 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         embed.set_footer(text=trn["cmds_emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         return await ctx.send(embed=embed)
 
-
-    @commands.command(aliases=['bi'])
-    async def botinfo(self, ctx):
-        trn = await ctx.trn
-        embed = await self.bot.embed(ctx)
-        embed.set_author(name='Sora Info', icon_url=ctx.me.avatar_url)
-        embed.description = trn["desc_intro"]
-        embed.description += trn["desc_creation"]
-        embed.description += trn["desc_grow"]
-        embed.description += trn["desc_love"].format(members=len(self.bot.users))        
-        #prf = await ctx.guild_prefix
-        #prf = str(prf).replace('None', ctx.prefix)
-        #embed.description += trn["desc_prefix"].format(prefix=prf)
-        change = trn["ch_lang"].format(prefix=self.bot.formatPrefix(ctx)) if ctx.author.permissions_in(ctx.channel).manage_guild else ''
-        lang = await ctx.lang
-        embed.description += trn['desc_help'].format(prefix=self.bot.formatPrefix(ctx))
-        embed.description += trn["desc_lang"].format(lang=lang.upper(), change=change)
-        embed.description += trn['desc_trn']
-        await ctx.send(embed=embed)
-
     @commands.command(aliases=['stats'])
     async def botstats(self, ctx):
         trn = await ctx.trn

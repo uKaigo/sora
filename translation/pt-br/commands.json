@@ -351,24 +351,6 @@
         }
     },
 
-    "botinfo": {
-        "name": "botinfo",
-        "usage": "{}botinfo",
-        "description": "Exibe as informações do bot.",
-        "texts": {
-            "emb_title": "Informações sobre mim.",
-            "desc_intro": "Oi! Sou **Sora**, um bot feito para aprendizado, mas principalmente para ajudar outros membros do discord!\n\n",
-            "desc_creation": "Fui criado na linguagem python e nasci no Brasil! Já tive vários irmãos também (todos python), que, infelizmente, morreram :( \n***R.I.P Awme***\n\n",
-            "desc_grow": "Eu pretendo me tornar grande algum dia ~~com pelo menos 100 guilds~~.\nPorém, não vou deixar meu dono desanimar!\n\n",
-            "desc_love": "Tenho muito amor por meus {members} usuários! :blue_heart: (principalmente você que está lendo isso <3) \n\n",
-            "ch_lang": " You can change it by typing:\n`{prefix}config lang [lang]`",
-            "desc_lang": "*I'm actually in the {lang} lang.{change}*",
-            "desc_prefix": "Minha prefixo nesse servidor é: `{prefix}`\n\n",
-            "desc_help": "Digite `{prefix}ajuda` par ver meus comandos.\n\n",
-            "desc_trn": "\n\n```diff\n- Tradução PT-BR por Kaigo#0833 -```"
-        }
-    },
-
     "config": {
         "name": "config",
         "usage": "{}config (subcomando)",
