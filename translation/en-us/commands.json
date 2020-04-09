@@ -19,7 +19,8 @@
         "_disco_cog": "Discord",
         "_mod_cog": "Moderation",
         "_utils_cog": "Utilities",
-        "_music_cog": "Music"
+        "_music_cog": "Music",
+        "_fun_cog": "Fun"
     },
 
     "ping": {
