@@ -440,7 +440,19 @@
             "p_stats_crit": "**{critical}** are in critical state `({pcent:.2f}%)`",
             "emb_footer": "{author_name} • Updated:"
         }
+    },
+
+    "meme": {
+        "name": "meme",
+        "usage": "{}meme",
+        "description": "Chooses an random meme from the featured (ifunny).\nThe server is choosen by the language.",
+        "texts": {
+            "loading": "Loading...",
+            "err_notfound": "Nothing found!",
+            "notfound_desc": "No image or video found, it's probally a server error."
+        }
     }
+
 
 
 }
