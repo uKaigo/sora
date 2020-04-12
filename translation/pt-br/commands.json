@@ -32,23 +32,19 @@
         }
     },
 
-    "ajuda": {
+    "help": {
         "name": "ajuda",
         "usage": "{}ajuda (comando) (subcomando)",
         "description": "Exibe a lista de comandos ou informações sobre um comando.",
         "texts": {
-            "err_nf_title": "Comando não encontrado!",
-            "err_nf_desc": "O comando `{cmd}` não foi encontrado!\n Verifique ortografia, se você informou o comando pai ou se o comando realmente existe.",
-            "emb_title": "Ajuda | {cmd}",
-            "emb_fld_usage": "Uso:",
-            "emb_fld_aliases": "Abreviações:",
-            "emb_fld_desc": "Descrição:",
-            "emb_fld_subc": "Sub-comandos:",
-            "emb_fld_root": "Comando-pai:",
-            "emb_footer": "{author_name} • [obrigatório] (opcional) <arquivo>",
-            "cmds_emb_title": "Sora | Comandos",
-            "cmds_emb_desc": "Nota: Argumentos opcionais são pulados para o próximo argumento, por exemplo, se você digitar `{prefix}limpar @{author} 5`, com a menção ou não, deletará 5 mensagens.",
-            "cmds_emb_footer": "{author_name} • Digite `{prefix}ajuda [comando]`"
+            "notfound": "Nenhum comando chamado `{cmd}`!",
+            "sub_notfound": [
+                "O comando `{cmd}` não tem um subcomando chamado `{sub}`.",
+                "O comando `{cmd}` não tem subcomandos."
+            ],
+            "no_cat": "Sem categoria",
+            "emb_title": "Comandos de {cog}",
+            "page_c": "Página {page} de {max}"
         }
     },
 
@@ -86,18 +82,6 @@
             "emb_changelog": "Mensagem do changelog:", 
             "emb_notes": "Notas desta versão:",
             "emb_footer": "{author_name} • Commit postado"
-        }
-    },
-
-    "source": {
-        "name": "source",
-        "usage": "{}source [cmd/evento]",
-        "description": "Mostra o código de um comando/evento.",
-        "texts": {
-            "emb_title": "Aqui está meu código:",
-            "emb_title_cmd": "Aqui está o código do {obj}",
-            "err_nf_title": "Não encontrado!",
-            "err_nf_desc": "O comando ou evento que você digitou, não existe.\nVerifique ortografia ou se o que você está procurando existe."
         }
     },
 

@@ -2,13 +2,121 @@ import discord
 from datetime import datetime
 import inspect
 import psutil
+from re import sub, split
 from os import getenv 
 from json import load 
 from discord.ext import commands
+from assets.models import menus
+import itertools
+
+class HelpPaginator(menus.baseMenu):
+    def __init__(self, page_trn, title, prefix, _index, pages):
+        super().__init__(pages, title, '')
+        self.prefix = prefix
+        self._pagec = page_trn
+        if _index != -1:
+            self._index = _index
+            self.should_add_reactions = lambda: False
+        else:
+            self._index = _index+1
+
+    @property
+    async def embed(self):
+        current = self.pages[self._index]
+
+        cog = current[0]
+        commands = current[1]
+
+        embed = await self.bot.embed(self.ctx)
+        
+        if self.should_add_reactions():
+            embed.set_author(name=self._pagec.format(page=self._index+1, max=len(self.pages)))
+        
+        embed.title = self._title.format(cog=cog)
+        
+        for cmd, description in commands:
+            embed.add_field(name=cmd.format(self.prefix), value=description, inline=False)
+        
+        return embed
+
+class SoraHelp(commands.HelpCommand):
+    def __init__(self):
+        super().__init__(command_attrs={"aliases": ['ajuda']})
+        self._help_index = -1
+
+    async def command_not_found(self, string):
+        # For Cogs
+        with open(f"translation/{await self.context.lang}/commands.json", encoding='utf-8') as trns:
+            trns = load(trns)
+            translated = [trns["_cogs"][c].lower() for c in trns["_cogs"]]
+            translated.sort()
+            if string.lower() in translated or (string.isnumeric() and 0 <= int(string) <= len(translated)):
+                if string.isnumeric():
+                    return str(string)
+                return str(translated.index(string.lower()))
+
+        trn = await self.context.trn
+        return trn['notfound'].format(cmd=string)
+
+    async def subcommand_not_found(self, command, string):
+        trn = await self.context.trn
+        if isinstance(command, commands.Group):
+            return trn['sub_notfound'][0].format(cmd=command.name, sub=string) 
+        return trn['sub_notfound'][1].format(sub=command.name)
+
+    async def send_error_message(self, error):
+        if error.isnumeric():
+            self._help_index = int(error)
+            await self.send_bot_help([])
+            return
+        await self.context.send(error)
+
+    async def send_bot_help(self, mapping):
+        ctx = self.context
+        trn = await ctx.trn
+
+        def key(cmd):
+            return cmd.cog_name or trn['no_cat']
+
+        cmds = await self.filter_commands(ctx.bot.commands, sort=True, key=key)
+
+        pages = []
+
+        _cogs = []
+        _cog_list = ["_bot_cog", "_disco_cog", "_fun_cog", "_mod_cog", "_music_cog", "_utils_cog"]
+        for cog, commands in itertools.groupby(cmds, key=key):
+            commands = sorted(commands, key = lambda m: m.name)
+            if not commands:
+                continue
+
+            with open(f"translation/{await ctx.lang}/commands.json", encoding='utf-8') as trns:
+                trns = load(trns)
+                
+                _cogs.append(cog)
+                cog = trns["_cogs"][cog]
+                commands = [[trns[c.name]["usage"]] + [trns[c.name]["description"]] for c in commands]
+
+            pages.append((cog, commands))
+
+        if not self._help_index == -1:
+            try:
+                _pg = _cog_list[self._help_index]
+                if not _pg == _cogs[self._help_index]:
+                    self._help_index = -1
+            except:
+                self._help_index = -1
+        _index = self._help_index
+        self._help_index = -1
+
+        paginator = HelpPaginator(trn['page_c'], trn['emb_title'], self.clean_prefix, _index, pages)
+        await paginator.start(ctx)
 
 class BotCmds(commands.Cog, name='_bot_cog'):
     def __init__(self, bot):
         self.bot = bot
+        bot.old_help = bot.help_command
+        bot.help_command = SoraHelp()
+        bot.help_command.cog = self
 
     @commands.command(aliases=['pong'])
     async def ping(self, ctx):
@@ -17,66 +125,6 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         embed.title = trn["emb_title"]
         embed.description = trn["emb_desc"].format(ping=self.bot.latency*1000)
         await ctx.send(embed=embed)
-
-    @commands.command(aliases=['help'])
-    async def ajuda(self, ctx, *, comando=None):
-        trn = await ctx.trn
-        if comando:
-            cmd = self.bot.get_command(comando)
-            if cmd:
-                lang = await ctx.lang
-                with open(f"translation/{lang}/commands.json", encoding='utf-8') as cmds:
-                    cmd_trn = load(cmds).get(cmd.qualified_name.replace(" ", "."))
-            else:
-                cmd_trn = None
-
-            if cmd is None or cmd_trn is None or cmd.hidden:
-                embed = await self.bot.erEmbed(ctx, trn["err_nf_title"])
-                embed.description = trn["err_nf_desc"].format(cmd=comando)
-                return await ctx.send(embed=embed)
-            embed = await self.bot.embed(ctx)
-            embed.title = trn["emb_title"].format(cmd=cmd_trn["name"].capitalize())
-
-            embed.add_field(name=trn["emb_fld_usage"], value=cmd_trn["usage"].format(ctx.prefix), inline=False)
-
-            aliases = []
-            if cmd.aliases:
-                for c in cmd.aliases:
-                    if c == cmd_trn["name"]:
-                        aliases.append(cmd.name)
-                    else:
-                        aliases.append(c)
-                
-                embed.add_field(name=trn["emb_fld_aliases"], value=', '.join(aliases), inline=False)
-
-            embed.add_field(name=trn["emb_fld_desc"], value=cmd_trn["description"])
-
-            try:
-                if cmd.commands:
-                    embed.add_field(name=trn["embed_fld_subc"], value=', '.join([cmd_trn["sub_commands"][name] for c in cmd.commands]), inline=False)
-            except:
-                pass
-
-            if cmd.parent:
-                embed.add_field(name=trn["emb_fld_root"], value=comando.split(' ')[0], inline=False)
-            embed.set_footer(text=trn['emb_footer'].format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
-            return await ctx.send(embed=embed)
-
-        # Commands -> cmds
-        cogs = [self.bot.get_cog(c) for c in self.bot.cogs]
-        embed = await self.bot.embed(ctx)
-        embed.title = trn["cmds_emb_title"]
-        embed.description = trn["cmds_emb_desc"].format(prefix=self.bot.formatPrefix(ctx), author=ctx.author)
-        lang = await ctx.lang
-        with open(f'translation/{lang}/commands.json', encoding='utf-8') as lng:
-            cmds_jsn = load(lng)
-        for cog in cogs:
-            cogcmd = [f'`{cmds_jsn[c.qualified_name.replace(" ", ".")]["name"]}`' for c in cog.walk_commands() if not c.hidden]
-            if not cogcmd:
-                continue
-            embed.add_field(name=f'{cmds_jsn["_cogs"][cog.qualified_name]} ({len(cogcmd)}):', value=', '.join(cogcmd), inline=False)
-        embed.set_footer(text=trn["cmds_emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
-        return await ctx.send(embed=embed)
 
     @commands.command(aliases=['stats'])
     async def botstats(self, ctx):
@@ -133,42 +181,6 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         embed.timestamp = hour
         await ctx.send(embed=embed)
 
-    @commands.command()
-    async def source(self, ctx, *, comando=None):
-        trn = await ctx.trn
-        github = 'https://github.com/uKaigo/Sora-Bot' # Coloque o source do seu bot
-
-        embed = await self.bot.embed(ctx)
-        embed.title = trn["emb_title"] if not comando else trn["emb_title_cmd"].format(obj=comando.replace(" ", "."))
-        if not comando:
-            embed.description = github
-            return await ctx.send(embed=embed)
-    
-        listeners = dict()
-        for c in [self.bot.get_cog(c) for c in self.bot.cogs]:
-            for event in c.get_listeners():
-                listeners[event[0]] = event[1]
-
-        if not comando in list(listeners):
-            cmd = self.bot.get_command(comando)
-            if not cmd:
-                embed = await self.bot.erEmbed(ctx, trn["err_nf_title"])
-                embed.description = trn["err_nf_desc"]
-                return await ctx.send(embed=embed)
-            cmd_func = cmd.callback
-        else:
-            cmd_func = listeners[comando]
-
-        cmd_mod = cmd_func.__module__
-
-        code, linha1 = inspect.getsourcelines(cmd_func.__code__)
-        linha2 = linha1+(len(code)-1)
-
-        loc = cmd_mod.replace('.', '/') + '.py'
-        branch = 'master'
-        source = f'{github}/blob/{branch}/{loc}#L{linha1}-L{linha2}'
-        embed.description = f'[{branch}/{loc}#L{linha1}]({source})'
-        await ctx.send(embed=embed)
 
 def setup(bot): 
     bot.add_cog(BotCmds(bot))

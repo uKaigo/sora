@@ -49,7 +49,7 @@ class BotEvents(commands.Cog):
             self.bot.emotes[emoji.name] = emoji
         
         await self.bot.change_presence(activity=discord.Activity(name='minha ajuda', type=1, url='https://twitch.tv/ukaigo'))
-        
+
         self.bot.__started_in__ = datetime.utcnow()
 
         # Embaixo do uptime, pq isso não é necessário antes.

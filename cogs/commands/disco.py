@@ -94,7 +94,7 @@ class Disco(commands.Cog, name='_disco_cog'):
 
     @commands.guild_only()
     @commands.command()
-    async def oldmembers(self, ctx, param=None):
+    async def oldmembers(self, ctx):
         trn = await ctx.trn
         membros = [(member, member.joined_at.timestamp()) for member in ctx.guild.members]
         membros.sort(key=lambda t: t[1])

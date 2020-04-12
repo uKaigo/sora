@@ -27,16 +27,16 @@ class baseMenu(menus.Menu):
         embed.description = msg 
         return embed
 
-    @menus.button('⏹')
-    async def _stop(self, _):
-        self.stop()
-
     @menus.button('◀️')
     async def back(self, _):
         self._index -= 1
         if self._index < 0:
             self._index = len(self.pages)-1
         return await self.message.edit(embed=await self.embed)
+
+    @menus.button('⏹')
+    async def _stop(self, _):
+        self.stop()
 
     @menus.button('▶️')
     async def front(self, _):

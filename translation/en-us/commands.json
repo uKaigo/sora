@@ -90,18 +90,6 @@
         }
     },
 
-    "source": {
-        "name": "source",
-        "usage": "{}source [cmd/event]",
-        "description": "Shows the source of a command/event.",
-        "texts": {
-            "emb_title": "Here's my code:",
-            "emb_title_cmd": "Here's the code of {obj}",
-            "err_nf_title": "Not found!",
-            "err_nf_desc": "The command or event that you wrote, doesn't exist.\nCheck for typos or if what you're searching really exists."
-        }
-    },
-
     "avatar": {
         "name": "avatar",
         "usage": "{}avatar (member)",

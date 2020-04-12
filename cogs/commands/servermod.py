@@ -436,7 +436,6 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.description = trn['error']
         await ctx.send(embed=embed)
 
-
     @config.command()
     async def prefix(self, ctx, prefix):
         trn = await ctx.trn
