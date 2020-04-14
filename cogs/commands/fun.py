@@ -22,8 +22,10 @@ class Fun(commands.Cog, name='_fun_cog'):
         res = await self.bot.session.get(f'https://{server}ifunny.co/page2')
         soup = BeautifulSoup(await res.text(), 'html.parser')
         
-        to_choice = soup.find_all(class_='media__image')
-        
+        to_choice = soup.find_all(class_='media__preview')
+        to_choice = [a for a in to_choice if not a.attrs['href'].startswith('/video/')]
+        to_choice = [c.find('img') for c in to_choice]
+
         if not to_choice:
             embed = await self.bot.erEmbed(ctx, trn['err_notfound'])
             embed.description = trn['notfound_desc']
