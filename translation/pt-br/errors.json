@@ -4,13 +4,6 @@
         "mean": "Você quis dizer:\n"
     },
 
-    "MissingRequiredArgument": {
-        "emb_title": "Sem argumento!",
-        "emb_use": "Uso:",
-        "emb_desc": "Descrição:",
-        "emb_footer": "{author_name} • [obrigatório] (opcional) <arquivo>"
-    },
-
     "ExpectedClosingQuoteError": {
         "emb_title": "Parâmetro inválido!",
         "emb_desc": "Por favor, retire qualquer `{quote}` dos parâmetros"

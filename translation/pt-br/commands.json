@@ -23,7 +23,6 @@
     },
 
     "ping": {
-        "name": "ping",
         "usage": "{}ping",
         "description": "Envia a latência do bot.",
         "texts": {
@@ -33,8 +32,7 @@
     },
 
     "help": {
-        "name": "ajuda",
-        "usage": "{}ajuda (comando) (subcomando)",
+        "usage": "{}help (comando) (subcomando)",
         "description": "Exibe a lista de comandos ou informações sobre um comando.",
         "texts": {
             "notfound": "Nenhum comando chamado `{cmd}`!",
@@ -44,12 +42,18 @@
             ],
             "no_cat": "Sem categoria",
             "emb_title": "Comandos de {cog}",
-            "page_c": "Página {page} de {max}"
+            "page_c": "Página {page} de {max}",
+            "cmd_title": "Ajuda | {cmd}",
+            "cmd_usage": "Uso:",
+            "cmd_desc": "Descrição:",
+            "cmd_parent": "Comando pai:",
+            "cmd_perms": "Permissão necessária:",
+            "cmd_aliases": "Alternativas:",
+            "group_sub": "Subcomandos:"
         }
     },
 
     "botstats": {
-        "name": "botstats",
         "usage": "{}botstats",
         "description": "Exibe informações técnicas sobre o bot.",
         "texts": {
@@ -65,12 +69,11 @@
             "emb_host": "Hospedagem:",
             "links_inv": "Convite: [Clique]",
             "links_server": "Servidor: [Entre]",
-            "emb_footer": "{author_name} • Digite `{prefix}ajuda`"
+            "emb_footer": "{author_name} • Digite `{prefix}help`"
         }
     },
 
     "version": {
-        "name": "version",
         "usage": "{}version",
         "description": "Mostra as informações da versão atual.",
         "texts": {
@@ -81,14 +84,13 @@
             "emb_commiter": "Commit feito por:",
             "emb_changelog": "Mensagem do changelog:", 
             "emb_notes": "Notas desta versão:",
-            "emb_footer": "{author_name} • Commit postado"
+            "emb_footer": "{author_name} • Commitado"
         }
     },
 
     "avatar": {
-        "name": "avatar",
         "usage": "{}avatar (membro)",
-        "description": "Retorna seu avatar ou de um membro.",
+        "description": "Manda seu avatar ou de um membro.",
         "texts": {
             "emb_title": "Avatar de {member_name}",
             "emb_author": "{author_mention}, aqui está seu avatar."
@@ -96,7 +98,6 @@
     },
 
     "userinfo": {
-        "name": "userinfo",
         "usage": "{}userinfo (membro)",
         "description": "Exibe as informações de um membro.",
         "texts": {
@@ -114,7 +115,6 @@
     },
 
     "oldmembers": {
-        "name": "oldmembers",
         "usage": "{}oldmembers",
         "description": "Mostra os membros mais antigos do servidor.",
         "texts": {
@@ -124,10 +124,10 @@
         }
     },
 
-    "limpar": {
-        "name": "limpar",
-        "usage": "{}limpar (membro) (2-500)",
-        "description": "Limpa `x` do canal ou de um membro. [Gerenciar Mensagens]",
+    "clear": {
+        "usage": "{}clear (membro) (2-500)",
+        "description": "Limpa `x` mensagens do canal ou de um membro.",
+        "perms": ["manage_messages"],
         "texts": {
             "deleting": "Apagando...",
             "high_low": ["alto", "baixo"],
@@ -139,10 +139,10 @@
         } 
     },
 
-    "banir": {
-        "name": "banir",
-        "usage": "{}banir [membro] (motivo)",
-        "description": "Bane um membro, no servidor ou não. [Banir Membros]",
+    "ban": {
+        "usage": "{}ban [membro] (motivo)",
+        "description": "Bane um membro, no servidor ou não.",
+        "perms": ["ban_members"],
         "texts": {
             "_no_reason": "Não informado.",
             "ban_reason": "Por {author} | {reason}",
@@ -168,18 +168,18 @@
     },
 
     "softban": {
-        "name": "softban",
         "usage": "{}softban [membro] (motivo)",
-        "description": "Bane e desbane um membro, util para rapidamente limpar as mensagens do membro. [Banir Membros]",
+        "description": "Bane e desbane um membro.",
+        "perms": ["ban_members"],
         "texts": {
             "_comment": "Estou usando as mensagens do ban"
         }
     },
 
-    "kickar": {
-        "name": "kickar",
-        "usage": "{}kickar [membro] (motivo)",
-        "description": "Expulsa um membro do servidor. [Expulsar Membros]",
+    "kick": {
+        "usage": "{}kick [membro] (motivo)",
+        "description": "Expulsa um membro do servidor.",
+        "perms": ["kick_members"],
         "texts": {
             "_no_reason": "Não informado.",
             "kick_reason": "Por {author} | {reason}",
@@ -194,9 +194,9 @@
     },
 
     "lock": {
-        "name": "lock",
         "usage": "{}lock",
-        "description": "Bloqueia ou desbloqueia os membros de falarem no canal. [Gerenciar Canais]",
+        "description": "Bloqueia ou desbloqueia os membros de falarem no canal.",
+        "perms": ["manage_messages"],
         "texts": {
             "_un": "des",
             "reason": "Lock | Por: {author}",
@@ -206,9 +206,9 @@
     },
 
     "allow": {
-        "name": "allow",
         "usage": "{}allow [membro]",
-        "description": "Permite um usuário ver ou desver um canal bloqueado. [Gerenciar Canais]", 
+        "description": "Permite um usuário ver ou desver um canal bloqueado.",
+        "perms": ["manage_channels"], 
         "texts": {
             "_no": "não ",
             "reason": "Allow | Por: {author}",
@@ -219,9 +219,9 @@
     },
 
     "embed": {
-        "name": "embed",
         "usage": "{}embed <json/arquivo>",
-        "description": "Envia um embed no servidor. [Gerenciar Mensagens]\nGere o json aqui: https://discord.club/embedg/\n\n__OBS__: Qualquer valor inválido será ignorado.",
+        "description": "Envia um [embed](https://discord.club/embedg/) no servidor.\n",
+        "perms": ["manage_messages"],
         "texts": {
             "err_invalid": "Este json é inválido!",
             "err_noemb": "Você não informou nenhum embed!",
@@ -230,10 +230,10 @@
         }
     },
 
-    "votar": {
-        "name": "votar",
-        "usage": "{}votar (canal) [mensagem]",
-        "description": "Faz uma enquete no canal. [Gerenciar Mensagens]",
+    "vote": {
+        "usage": "{}vote (canal) [mensagem]",
+        "description": "Faz uma enquete no canal.",
+        "perms": ["manage_messages"],
         "texts": {
             "title": "Vote para a pergunta abaixo.",
             "sended": "Mensagem enviada no canal {channel_mention}\n\n[Link]({msg_link})"
@@ -241,9 +241,8 @@
     },
 
     "ascii": {
-        "name": "ascii",
         "usage": "{}ascii [fonte] [texto]",
-        "description": "Envia um texto ascii provido pelo figlet\nFontes encontradas em: http://www.figlet.org/examples.html",
+        "description": "Envia um texto ascii. ([Fontes](http://www.figlet.org/examples.html))\n",
         "texts": {
             "loading": "Carregando...",
             "err_invalid": "Fonte inválida!",
@@ -254,9 +253,8 @@
     },
 
     "qrcode": {
-        "name": "qrcode",
         "usage": "{}qrcode [texto] (#cor:hex)",
-        "description": "Gera um código QR\nSe o texto começar com `read`, coloque tudo entre aspas.",
+        "description": "Gera um código QR\n||Se o texto começar com `read`, coloque tudo entre aspas.||",
         "texts": {
             "loading": "Carregando...",
             "title": "QR Code"
@@ -280,7 +278,6 @@
     },
 
     "barcode": {
-        "name": "barcode",
         "usage": "{}barcode [texto]",
         "description": "Gera um código de barras.",
         "texts": {
@@ -290,7 +287,6 @@
     },
 
     "skin": {
-        "name": "skin",
         "usage": "{}skin [nick]",
         "description": "Exibe a skin de um jogador do minecraft.",
         "texts": {
@@ -301,7 +297,6 @@
     },
 
     "github": {
-        "name": "github",
         "usage": "{}github [usuario]",
         "description": "Exibe informações sobre um usuário do github.",
         "texts": {
@@ -325,7 +320,6 @@
     },
 
     "addbot": {
-        "name": "addbot",
         "usage": "{}addbot [id] (permissões)",
         "description": "Envia o convite de um bot.",
         "texts": {
@@ -337,12 +331,11 @@
     },
 
     "config": {
-        "name": "config",
         "usage": "{}config (subcomando)",
         "description": "Muda as configurações do servidor.",
         "texts": {
             "emb_title": "Informações de {guild_name}",
-            "emb_lang": "Lang: {lang}",
+            "emb_lang": "Linguagem: {lang}",
             "lang_value": "Muda a linguagem do servidor.",
             "prefix_value": "Muda o prefixo do servidor.\n`Reset` para redefinir",
             "none": "Nenhum"
@@ -366,13 +359,13 @@
 
     "config.lang": {
         "name": "config lang",
-        "usage": "{}config lang (lang)",
+        "usage": "{}config lang (linguagem)",
         "description": "Muda a linguagem do servidor.",
         "texts": {
             "emb_def_title": "Config | Lang",
             "emb_def_desc": "Esta são as linguagens disponíveis:\n\n{langs}",
             "err_invalid": "Linguagem inválida!",
-            "invalid_desc": "A linguagem que você tentou não é suportada!\n\nLinguagens disponíveis:\n{langs}",
+            "invalid_desc": "A linguagem que você digitou não é suportada!\n\nLinguagens disponíveis:\n{langs}",
             "emb_success": "Linguagem alterada para {lang}",
             "error": "Não foi possível alterar a linguagem.",
             "actual_desc": "Esta linguagem já está setada."
@@ -380,7 +373,6 @@
     },
 
     "ffz": {
-        "name": "ffz",
         "usage": "{}ffz (criador.)[nome]",
         "description": "Pesquisa um emote do FrankerFaceZ",
         "texts": {
@@ -393,9 +385,8 @@
         }
     },
 
-    "letra": {
-        "name": "letra",
-        "usage": "{}letra [musica]",
+    "lyrics": {
+        "usage": "{}lyrics [musica]",
         "description": "Pega a letra de uma música",
         "texts": {
             "err_notfound": "Não encontrado!",
@@ -408,7 +399,6 @@
     },
 
     "ncov": {
-        "name": "ncov",
         "usage": "{}ncov",
         "description": "Informações sobre o COVID-19",
         "texts": {
@@ -426,9 +416,8 @@
     },
 
     "meme": {
-        "name": "meme",
         "usage": "{}meme",
-        "description": "Escolhe um meme aleatório dos destaques (ifunny).\nO servidor é escolhido pela linguagem.",
+        "description": "Escolhe um meme aleatório dos destaques (ifunny).",
         "texts": {
             "loading": "Carregando...",
             "err_notfound": "Nada encontrado!",

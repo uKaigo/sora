@@ -84,10 +84,7 @@ class BotEvents(commands.Cog):
         # Interpretar comandos
         ctx = await self.bot.get_context(message, cls=SoraContext)
         if message.content.replace('!', '') == ctx.me.mention:
-            ctx.prefix = ctx.me.mention
-            ctx.command = self.bot.get_command('botinfo')
-            ctx.args = None
-            ctx.author = message.author
+            return await ctx.send_help()
         await self.bot.invoke(ctx)
 
     @commands.Cog.listener()

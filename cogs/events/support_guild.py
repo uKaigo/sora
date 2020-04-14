@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 
-class SupportEvents(commands.Cog, name=''):
+class SupportEvents(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
 

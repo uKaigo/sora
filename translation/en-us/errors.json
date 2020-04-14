@@ -4,13 +4,6 @@
         "mean": "Did you mean:\n"
     },
 
-    "MissingRequiredArgument": {
-        "emb_title": "Missing argument!",
-        "emb_use": "Usage:",
-        "emb_desc": "Description:",
-        "emb_footer": "{author_name} • [required] (optional) <file>"
-    },
-
     "ExpectedClosingQuoteError": {
         "emb_title": "Invalid parameter!",
         "emb_desc": "Please, remove any `{quote}` of the parameters."

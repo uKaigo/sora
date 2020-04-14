@@ -30,8 +30,8 @@ class Music(commands.Cog, name='_music_cog'):
         self.bot = bot
         self.genius = Client(getenv('genius_token'))
 
-    @commands.command(aliases=['lyrics', 'l'])
-    async def letra(self, ctx, *, query):
+    @commands.command(aliases=['letra', 'l'])
+    async def lyrics(self, ctx, *, query):
         trn = await ctx.trn
         _results = await self.genius.search(query)
         if not _results:

@@ -133,12 +133,8 @@ class Utils(commands.Cog, name='_utils_cog'):
 
         if user.status != 200:
             erro = await self.bot.erEmbed(ctx)
-            if user.status == 401:
-                erro.description = trn["err_401"]
+            erro.description = trn[f'err_{user.status}']
            
-            if user.status == 403:
-                erro.description = trn["err_403"]
-
             if user.status == 404:
                 erro.title = trn["err_404"]
                 erro.description = trn["notfound_desc"]

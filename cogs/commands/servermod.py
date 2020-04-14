@@ -17,10 +17,10 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             raise commands.NoPrivateMessage
         return True
 
-    @commands.command(aliases=['clear'])
+    @commands.command(aliases=['limpar'])
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def limpar(self, ctx, membro:typing.Optional[discord.Member], quantidade:typing.Optional[int]=100):
+    async def clear(self, ctx, membro:typing.Optional[discord.Member], quantidade:typing.Optional[int]=100):
         trn = await ctx.trn
         if quantidade not in range(2, 501): # Out Range (or)
             high_low = trn["high_low"][quantidade<2]
@@ -49,10 +49,10 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             pass
         await ctx.message.delete()
 
-    @commands.command(aliases=['ban'])
+    @commands.command(aliases=['banir'])
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def banir(self, ctx, membro:typing.Union[discord.Member, str], *, reason="_no_reason"):
+    async def ban(self, ctx, membro:typing.Union[discord.Member, str], *, reason="_no_reason"):
         trn = await ctx.trn
         reason = trn.get(reason, reason)
         async def ban_embed(member):
@@ -151,10 +151,10 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         embed.set_footer(text=trn['emb_footer'].format(member_name=membro.name), icon_url=membro.avatar_url)
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['kick'])
+    @commands.command(aliases=['kickar'])
     @commands.has_permissions(kick_members=True)
     @commands.bot_has_permissions(kick_members=True)
-    async def kickar(self, ctx, membro:discord.Member, *, reason="_no_reason"):
+    async def kick(self, ctx, membro:discord.Member, *, reason="_no_reason"):
         trn = await ctx.trn
         erro = await self.bot.erEmbed(ctx, trn["err_np_title"])
         reason = trn.get(reason, reason)
@@ -361,9 +361,9 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         if invalid:
             await ctx.send(trn["invalid"].format(invalids="; ".join(invalid), delete_after=10))
 
-    @commands.command(aliases=['vote'])
+    @commands.command(aliases=['votar'])
     @commands.has_permissions(manage_messages=True)
-    async def votar(self, ctx, canal:typing.Optional[discord.TextChannel], mensagem):
+    async def vote(self, ctx, canal:typing.Optional[discord.TextChannel], mensagem):
         trn = await ctx.trn
         canal = canal if canal else ctx.channel
         try:

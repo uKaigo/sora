@@ -62,7 +62,7 @@ class SoraHelp(commands.HelpCommand):
         trn = await self.context.trn
         if isinstance(command, commands.Group):
             return trn['sub_notfound'][0].format(cmd=command.name, sub=string) 
-        return trn['sub_notfound'][1].format(sub=command.name)
+        return trn['sub_notfound'][1].format(cmd=command.name)
 
     async def send_error_message(self, error):
         if error.isnumeric():
@@ -110,6 +110,58 @@ class SoraHelp(commands.HelpCommand):
 
         paginator = HelpPaginator(trn['page_c'], trn['emb_title'], self.clean_prefix, _index, pages)
         await paginator.start(ctx)
+
+    async def send_command_help(self, command):
+        ctx = self.context
+        trn = await ctx.trn
+        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as _trn:
+            _trn = load(_trn)
+            cmd_json = _trn[command.qualified_name.replace(' ', '.')]
+
+        embed = await ctx.bot.embed(ctx)
+        embed.title = trn['cmd_title'].format(cmd=command.name.title())
+        embed.add_field(name=trn['cmd_usage'], value=cmd_json["usage"].format(self.clean_prefix), inline=False)
+        embed.add_field(name=trn['cmd_desc'], value=cmd_json["description"], inline=False)
+        if command.aliases:
+            embed.add_field(name=trn['cmd_aliases'], value=', '.join(command.aliases), inline=False)
+
+        if command.parent:
+            embed.add_field(name=trn['cmd_parent'], value=f'{self.clean_prefix}`{command.parent.name}`', inline=False)
+
+        if cmd_json.get("perms"):
+            with open(f'translation/{await ctx.lang}/perms.json') as prms:
+                prms = load(prms)
+                embed.add_field(name=trn['cmd_perms'], value=', '.join([prms[c].title() for c in cmd_json["perms"]]))
+        await ctx.send(embed=embed)
+    
+    async def send_group_help(self, group):
+        ctx = self.context
+        trn = await ctx.trn
+        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as _trn:
+            _trn = load(_trn)
+            cmd_json = _trn[group.name]
+
+        embed = await ctx.bot.embed(ctx)
+        print(trn)
+        embed.title = trn['cmd_title'].format(cmd=group.name.title())
+        embed.add_field(name=trn['cmd_usage'], value=cmd_json["usage"].format(self.clean_prefix), inline=False)
+        embed.add_field(name=trn['cmd_desc'], value=cmd_json["description"], inline=False)
+        if group.aliases:
+            embed.add_field(name=trn['cmd_aliases'], value=', '.join(group.aliases), inline=False)
+
+        if cmd_json.get("perms"):
+            with open(f'translation/{await ctx.lang}/perms.json') as prms:
+                prms = load(prms)
+                embed.add_field(name=trn['cmd_perms'], value=', '.join([prms[c].title() for c in cmd_json["perms"]]))
+
+        if group.commands:
+            sub = ''
+            for cmd in group.commands:
+                _sub_jsn = _trn[cmd.qualified_name.replace(' ', '.')]
+                sub += f'{_sub_jsn["usage"].format(self.clean_prefix)} — {_sub_jsn["description"]}\n\n'
+            embed.add_field(name=trn['group_sub'], value=sub)
+
+        await ctx.send(embed=embed)
 
 class BotCmds(commands.Cog, name='_bot_cog'):
     def __init__(self, bot):

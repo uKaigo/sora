@@ -1,99 +1,96 @@
 {
     "_err_no_title": "Error!",
     "_executed_by": "Executed by {author_name}",
-
+    
     "_time": {
         "year": "year",
         "month": "month",
         "months": "months",
         "day": "day",
-        "hour": "hour",
-        "minute": "minute",
-        "second": "second",
+        "hour": "hours",
+        "minute": "minutes",
+        "second": "seconds",
         "and": "and"
     },
-
 
     "_cogs": {
         "_bot_cog": "Bot",
         "_disco_cog": "Discord",
         "_mod_cog": "Moderation",
-        "_utils_cog": "Utilities",
+        "_utils_cog": "Utils",
         "_music_cog": "Music",
         "_fun_cog": "Fun"
     },
 
     "ping": {
-        "name": "ping",
         "usage": "{}ping",
-        "description": "Sends bot latency.",
+        "description": "Sends the bot latency.",
         "texts": {
             "emb_title": ":ping_pong: | Ping!",
-            "emb_desc": "I'm with `{ping:.1f}ms` of ping."
+            "emb_desc": "I'm with `{ping:.1f}ms` of latency."
         }
     },
 
-    "ajuda": {
-        "name": "help",
-        "usage": "{}help (command) (sub-command)",
-        "description": "Sends the list of commands or show info of a command",
+    "help": {
+        "usage": "{}help (command) (subcommand)",
+        "description": "Shows the list of commands or information about a command.",
         "texts": {
-            "err_nf_title": "Command not found!",
-            "err_nf_desc": "Command `{cmd}` wasn't found!\n Please check for typos, if you passed the root command or if the command really exists.",
-            "emb_title": "Help | {cmd}",
-            "emb_fld_usage": "Usage:",
-            "emb_fld_aliases": "Aliases:",
-            "emb_fld_desc": "Description:",
-            "emb_fld_subc": "Sub-commands:",
-            "emb_fld_root": "Root-command:",
-            "emb_footer": "{author_name} • [required] (optional) <file>",
-            "cmds_emb_title": "Sora | Commands",
-            "cmds_emb_desc": "Note: Optional arguments are skipped to the next argument, for example, if you type `{prefix}clear @{author} 5`, with the mention or not, Will delete 5 messages.",
-            "cmds_emb_footer": "{author_name} • Send `{prefix}help [command]`"
+            "notfound": "No command called `{cmd}`!",
+            "sub_notfound": [
+                "The command `{cmd}` don't have a subcommand called `{sub}`.",
+                "The command `{cmd}` don't have subcommands."
+            ],
+            "no_cat": "No category",
+            "emb_title": "{cog} commands",
+            "page_c": "Page {page} of {max}",
+            "cmd_title": "Help | {cmd}",
+            "cmd_usage": "Usage:",
+            "cmd_desc": "Description:",
+            "cmd_parent": "Parent command:",
+            "cmd_perms": "Permissions needed:",
+            "cmd_aliases": "Aliases:",
+            "group_sub": "Subcommands:"
         }
     },
 
     "botstats": {
-        "name": "botstats",
         "usage": "{}botstats",
         "description": "Shows technical information about the bot.",
         "texts": {
             "emb_title": "{bot_name} | Info",
-            "emb_desc": "Hi, {author_name}. Here's some information about me.",
-            "emb_version": "I'm in version",
+            "emb_desc": "Hi, {author_name}. Here's some info about me.",
+            "emb_version": "I'm in the version:",
             "emb_uptime": "I'm online for:",
-            "emb_created": "I was created at:",
-            "emb_techinfo": "Technical information:",
-            "techinfo_cpu": "CPU percent:",
-            "techinfo_ram": "Used RAM:",
-            "techinfo_hd": "Used disk:",
+            "emb_created": "I was created:",
+            "emb_techinfo": "Techincal information:",
+            "techinfo_cpu": "CPU Percent:",
+            "techinfo_ram": "Used ram:",
+            "techinfo_hd": "Disk usage:",
             "emb_host": "Host:",
             "links_inv": "Invite: [Click]",
-            "links_server": "Guild: [Join]",
-            "emb_footer": "{author_name} • Send `{prefix}help`"
+            "links_server": "Server: [Join]",
+            "emb_footer": "{author_name} • Type `{prefix}help`"
         }
     },
 
     "version": {
-        "name": "version",
         "usage": "{}version",
-        "description": "Shows the info about current version.",
+        "description": "Shows information about the current version.",
         "texts": {
-            "no_commit": "There's an internal error and the commit info is not available.",
+            "no_commit": "There's an internal error and the commit info aren't available.",
             "emb_title": "Sora | Version",
-            "emb_desc": "Some info about my version, and the actual commit.",
+            "emb_desc": "Here's some information about my version, and the actual commit.",
             "emb_version": "Version:",
             "emb_commiter": "Commit made by:",
             "emb_changelog": "Changelog message:", 
             "emb_notes": "Version notes:",
-            "emb_footer": "{author_name} • Commit posted"
+            "emb_footer": "{author_name} • Commited"
         }
     },
 
     "avatar": {
-        "name": "avatar",
         "usage": "{}avatar (member)",
-        "description": "Returns your avatar or of a member.",
+        "description": "Sends your avatar or of another member.",
         "texts": {
             "emb_title": "{member_name}'s avatar",
             "emb_author": "{author_mention}, here's your avatar."
@@ -101,97 +98,95 @@
     },
 
     "userinfo": {
-        "name": "userinfo",
         "usage": "{}userinfo (member)",
-        "description": "Shows a member info.",
+        "description": "Shows information about a member.",
         "texts": {
             "emb_title": "Here's some info about {member_name}.",
-            "nick": "**Nick:**",
+            "nick": "**Nickname:**",
             "emb_member": "Member:",
-            "status_l": {"online": "Online", "dnd": "Do not disturb", "idle": "Idle", "offline": "Offline"},
+            "status_l": {"online": "Online", "dnd": "Do Not Disturb", "idle": "Idle", "offline": "Offline"},
             "activities_l": ["Playing:", "Streaming:", "Listening:", "Watching:", "Custom:"],
-            "emb_date": "Date: (DD/MM/YYYY HH:mm)",
-            "date_value": "**That created the account:** {created_at} ({rel_created})\n**That joined in the server:** {joined_at} ({rel_joined})",
+            "emb_date": "Date:",
+            "date_value": "**That created the account:** {created_at} ({rel_created})\n**That joined the server:** {joined_at} ({rel_joined})",
             "topr_value": "{member.top_role.mention} ({member.top_role.id})\n**Color:** {member.top_role.color}",
             "emb_roles": "Roles: [{roles}]",
-            "emb_perms": "This member has the following permissions:"
+            "emb_perms": "This member has the followings permissions:"
         }
     },
 
+
     "oldmembers": {
-        "name": "oldmembers",
         "usage": "{}oldmembers",
-        "description": "Shows the oldest members in the server.",
+        "description": "Shows the oldest members of the server.",
         "texts": {
             "_you": "**-You**",
-            "msg": "These're the oldest members:\n\n",
+            "msg": "These are the oldest members in the server:\n\n",
             "title": "Old Members | Page {page}/{pages}"
         }
     },
 
-    "limpar": {
-        "name": "clear",
+    "clear": {
         "usage": "{}clear (member) (2-500)",
-        "description": "Clear `x` messages of the channel or of a member. [Manage Messages]",
+        "description": "Clears `x` messages from the server or of a member.",
+        "perms": ["manage_messages"],
         "texts": {
             "deleting": "Deleting...",
             "high_low": ["high", "low"],
-            "err_or_title": "Invalid limit!",
-            "err_or_desc": "You wrote a very {high_low} number, use numbers between 2 and 500!",
+            "err_or_title": "Invalid amount!",
+            "err_or_desc": "You typed a very {high_low} number, use numbers between 2 and 500!",
             "of": " of ",
-            "emb_title": ":broom: | Purge",
-            "emb_desc": "{len_deleted} messages{of_member} have been deleted."
-        }
+            "emb_title": ":broom: | Clear",
+            "emb_desc": "{len_deleted} messages was deleted{of_member}."   
+        } 
     },
 
-    "banir": {
-        "name": "ban",
+    "ban": {
         "usage": "{}ban [member] (reason)",
-        "description": "Bans a member, in the server or not. [Ban Members]",
+        "description": "Bans a member, in the server or not.",
+        "perms": ["ban_members"],
         "texts": {
-            "_no_reason": "Uninformed",
+            "_no_reason": "Uninformed.",
             "ban_reason": "By {author} | {reason}",
             "err_np_title": "No permission.",
             "np_selfban": "You can't ban yourself, silly!",
-            "np_botban": "I can't ban me...",
-            "np_ath_lower": "You don't have permission to ban **{member_name}**! (Your role is lower or equal to his)",
-            "np_bot_lower": "I don't have permission to ban **{member_name}**! (My role is lower or equal to his)",
+            "np_botban": "I can't ban myself...",
+            "np_ath_lower": "You don't have permission to ban **{member_name}**! (Your role is lower or equal to him)",
+            "np_bot_lower": "I don't have permission to ban **{member_name}**! (My role is lower or equal to him)",
             "emb_title": "{emote} | Member banned!",
             "emb_user": "User:",
             "user_value": "Tag: {member}\nID: {member_id}",
             "emb_staff": "Who banned:",
             "staff_value": "Mention: {staff_mention}\nRole: `{role}`",
-            "emb_reason": "Reason:",
+            "emb_reason": "Reaosn:",
             "emb_footer": "Banned: {member_name}",
             "err_invalid": "Invalid!",
-            "invalid_desc": "The \"id\" that you wrote isn't a number!",
+            "invalid_desc": "The \"id\" you typed isn't a number!",
             "banning": "Banning...",
             "err_notfound": "Not found!",
-            "notfound_value": "The id that you wrote ({id}) don't belong to an member.\nCheck for typos.",
+            "notfound_value": "The id you typed ({id}) don't belongs to a member.\nCheck for typos.",
             "member_banned": "Member banned, loading embed..."
         }
-
     },
 
     "softban": {
-        "name": "softban",
         "usage": "{}softban [member] (reason)",
-        "description": "Ban and unban a member, useful for instantly clear the member messages. [Ban Members]",
+        "description": "Bans and unbans a member.",
+        "perms": ["ban_members"],
         "texts": {
             "_comment": "I'm using the ban messages"
         }
     },
 
-    "kickar": {
-        "name": "kick",
+    "kick": {
         "usage": "{}kick [member] (reason)",
-        "description": "Kicks a member from the server. [Kick Members]",
+        "description": "Kicks a member from the server.",
+        "perms": ["kick_members"],
         "texts": {
             "_no_reason": "Uninformed.",
             "kick_reason": "By {author} | {reason}",
             "err_np_title": "No permission.",
             "np_selfkick": "You can't kick yourself, silly!",
-            "np_botkick": "I can't kick me...",
+            "np_botkick": "I can't kick myself...",
             "np_ath_lower": "You don't have permission to kick **{member_name}**! (Your role is lower or equal to him)",
             "np_bot_lower": "I don't have permission to kick **{member_name}**! (My role is lower or equal to him)",
             "emb_title": "{emote} | Kick",
@@ -200,69 +195,67 @@
     },
 
     "lock": {
-        "name": "lock",
         "usage": "{}lock",
-        "description": "Locks or unlocks the members of speaking in the channel. [Manage Channels]",
+        "description": "Blocks or unblocks the members from speaking in the channel.",
+        "perms": ["manage_messages"],
         "texts": {
             "_un": "un",
             "reason": "Lock | By: {author}",
             "emb_title": ":lock: | Lock",
-            "emb_desc": "The channel is now {un}locked to the role `{role}`."
+            "emb_desc": "The channel was {un}blocked to the role `{role}`."
         }
     },
 
     "allow": {
-        "name": "allow",
         "usage": "{}allow [member]",
-        "description": "Allow an user to see a blocked channel. [Manage Channels]", 
+        "description": "Allows a member to see a blocked channel.",
+        "perms": ["manage_channels"], 
         "texts": {
-            "_no": "'t ",
+            "_no": "n't ",
             "reason": "Allow | By: {author}",
-            "err_perm": "This member has the `manage channels` permission or the channel isn't blocked.\nIf nothing applies, means the he has an role with permission.",
+            "err_perm": "This member has the `manage channels` permission, the channel isn't blocked.\nIf nothing of this applies it means he has a role with permission.",
             "emb_title": ":unlock: | Allow",
-            "emb_desc": "Now {member_mention} can{no} see messages in this channel."
+            "emb_desc": "Now {member_mention} can{no} see the messages in this channel."
         }
     },
 
     "embed": {
-        "name": "embed",
-        "usage": "{}embed <json/file>",
-        "description": "Sends an embed in the channel. [Manage Messages]\nGenerate the json here: https://discord.club/embedg/\n\n__PS__: Any invalid value is gonna be ignored.",
+        "usage": "{}embed [json/file]",
+        "description": "Sends an [embed](https://discord.club/embedg/) in the server.\n",
+        "perms": ["manage_messages"],
         "texts": {
             "err_invalid": "This json is invalid!",
-            "err_noemb": "You didn't passed any embed!",
-            "err_fail": "Failure on send!\n\n{error}",
+            "err_noemb": "You didn't informed an embed!",
+            "err_fail": "Failing sending the embed!\n\n{error}",
             "invalid": "All that was disregarded:\n\n{invalids}"
         }
     },
 
-    "votar": {
-        "name": "vote",
+    "vote": {
         "usage": "{}vote (channel) [message]",
-        "description": "Makes an survey in the channel. [Manage Messages]",
+        "description": "Make a pool in the channel.",
+        "perms": ["manage_messages"],
         "texts": {
             "title": "Vote for the question bellow.",
-            "sended": "Message sended in {channel_mention}\n\n[Link]({msg_link})"
+            "sended": "Message send in the channel {channel_mention}\n\n[Link]({msg_link})"
         }
     },
 
     "ascii": {
-        "name": "ascii",
         "usage": "{}ascii [font] [text]",
-        "description": "Sends an ascii text provided by figlet\nFonts found in: http://www.figlet.org/examples.html",
+        "description": "Sends an ascii text. ([Fonts](http://www.figlet.org/examples.html))\n",
         "texts": {
             "loading": "Loading...",
             "err_invalid": "Invalid font!",
-            "invalid_desc": "The font that you requested doesn't exists.\nFonts found in: http://www.figlet.org/examples.html",
-            "err_big": "Invalid text!",
-            "big_desc": "The text that you requested is so big to be converted to ascii."
+            "invalid_desc": "The font you typed didn't exist.\nFonts founded in: http://www.figlet.org/examples.html",
+            "err_big": "Invalid text.",
+            "big_desc": "The text you typed is too long to be converted to ascii."
         }
     },
 
     "qrcode": {
-        "name": "qrcode",
         "usage": "{}qrcode [text] (#color:hex)",
-        "description": "Generates a qrcode\nIf the text starts with `read`, put all between quotes.",
+        "description": "Generates a QR Code\n||If the text starts with `read`, put it in quotes.||",
         "texts": {
             "loading": "Loading...",
             "title": "QR Code"
@@ -272,13 +265,13 @@
     "qrcode.read": {
         "name": "qrcode read",
         "usage": "{}qrcode read <url/image>",
-        "description": "Reads a qrcode.",
+        "description": "Reads a QR Code.",
         "texts": {
             "err_nofile": "No file.",
-            "nofile_desc": "You didn't passed any image.",
+            "nofile_desc": "You didn't passed an image.",
             "loading": "Loading...",
             "err_invalid": "Invalid image!",
-            "invalid_desc": "This image can't be downloaded or readed.",
+            "invalid_desc": "This image couldn't be downloaded or readed.",
             "title": "QR Code | Read",
             "exit": "Exit:",
             "type": "Type:"
@@ -286,99 +279,95 @@
     },
 
     "barcode": {
-        "name": "barcode",
         "usage": "{}barcode [text]",
-        "description": "Generates an barcode.",
+        "description": "Generates a bar code.",
         "texts": {
-            "error": "An error occurred generating the imagem, check the text that you used.",
+            "error": "Some error occurred generating the image, check the text that you used.",
             "title": "Barcode"
         }
     },
 
     "skin": {
-        "name": "skin",
         "usage": "{}skin [nick]",
-        "description": "Shows the skin from a minecraft player.",
+        "description": "Shows a minecraft player skin.",
         "texts": {
             "download": "Download skin",
             "model": "3d model",
-            "emb_title": "Skin of {nick}:"
+            "emb_title": "{nick}'s skin:"
         }
     },
 
     "github": {
-        "name": "github",
         "usage": "{}github [user]",
-        "description": "Shows informations about an user from github.",
+        "description": "Shows information about a github user.",
         "texts": {
             "err_401": "The github token is wrong!\nContact a developer.",
-            "err_403": "The bot is in ratelimit!",
+            "err_403": "The bot is in ratelimit, contact a developer and whate.",
             "err_404": "User not found!",
-            "notfound_desc": "The user that you informed, was not found.\nCheck if the name corresponds to the used in the github link.",
-            "emb_title": "Github of {name}",
+            "notfound_desc": "The user you passed wasn't found.\nCheck if the typed name is equal to the used in the link.",
+            "emb_title": "{name}'s github",
             "emb_uname": "Username:",
-            "load_repo": "Loading repositories:",
+            "load_repo": "Loading repositories...",
             "loading": "Loading...",
             "emb_follow": "Followers:",
-            "follow_desc": "This user is followed by {followers} users\nAnd follow {following} users.",
+            "follow_desc": "This user is followed by {followers} users\nAnd follows {following} users.",
             "emb_email": "Email:",
-            "emb_created": "Account created in:",
+            "emb_created": "Account created:",
             "created_desc": "{created} ({relative} ago)",
             "emb_repo": "This user has {repos} repos:",
-            "none": "None",
-            "more": "And more {repos} repositories."
+            "none": "None.",
+            "more": "And more {repos} repos."
         }
     },
 
+    
     "addbot": {
-        "name": "addbot",
         "usage": "{}addbot [id] (perms)",
         "description": "Sends a bot invite.",
         "texts": {
             "err_invalid": "Invalid user!",
             "invalid_desc": "This user isn't a bot!",
-            "emb_title": "Here's the invite of {name}:",
-            "perm_inv": "The permission that you typed was invalid, using 8."
+            "emb_title": "Here's the invite of the bot {name}:",
+            "perm_inv": "The permission you typed was invalid, using 8."
         }
     },
 
     "config": {
-        "name": "config",
         "usage": "{}config (subcommand)",
         "description": "Changes the server config.",
         "texts": {
-            "emb_title": "Info about {guild_name}",
-            "emb_lang": "Lang: {lang}",
+            "emb_title": "{guild_name}'s info",
+            "emb_lang": "Language: {lang}",
             "lang_value": "Changes the server language.",
-            "prefix_value": "Changes the server prefix.\n`Reset` to reset.",
+            "prefix_value": "Changes the server prefix.\n`Reset` to reset",
             "none": "None"
         }
     },
 
     "config.prefix": {
         "name": "config prefix",
-        "usage": "{}config prefix [novo-prefixo]",
+        "usage": "{}config prefix [new-prefix]",
         "description": "Changes the server prefix.",
         "texts": {
             "err_invalid": "Invalid prefix!",
-            "err_equal": "This prefix is already defined.",
+            "err_equal": "This prefix is already setted.",
             "err_five": "This prefix has more than 5 letters.",
             "emb_success": "Prefix changed.",
-            "none": "Nenhum.",
+            "none": "None.",
             "emb_prefix": "The new prefix is `{prefix}`",
-            "error": "Wasn't possible to change the prefx."
+            "error": "Wasn't possible to change the prefix."
         }
     },
 
     "config.lang": {
         "name": "config lang",
-        "usage": "{}config lang (lang)",
-        "description": "Changes the server language.",
+        "usage": "{}config lang (language)",
+        "description": "Muda a linguagem do servidor.",
         "texts": {
             "emb_def_title": "Config | Lang",
-            "emb_def_desc": "These are the available languages:\n\n{langs}",
-            "err_invalid": "Invalid language!",
-            "invalid_desc": "The language that you tried isn't supported!\n\nAvailable languages:\n{langs}",
+            "emb_def_desc": "These're the available languages:\n\n{langs}",
+            "err_invalid": "Invalid lang!",
+            "invalid_desc": "The language you typed isn't supported!\n\nAvailable languages:\n{langs}",
             "emb_success": "Language changed to {lang}",
             "error": "Wasn't possible to change the language.",
             "actual_desc": "This language is already setted."
@@ -386,43 +375,40 @@
     },
 
     "ffz": {
-        "name": "ffz",
         "usage": "{}ffz (creator.)[name]",
-        "description": "Searchs for an FrankerFaceZ emote",
+        "description": "Searchs for a FrankerFaceZ emote",
         "texts": {
-            "loading": "Loading...\nThis command may take a while to execute.",
+            "loading": "Loading...\nThis command can take a while to execute.",
             "err_notfound": "Not found!",
             "notfound_desc": "The emote wasn't found.\n",
-            "notfound_ath": "You maybe misstyped the emote/author.",
+            "notfound_ath": "Maybe you've misspelled the emote/author.",
             "emb_title": "FrankerFaceZ | {name}",
-            "emb_desc": "Created by: [{creator_name}]({creator_twitch})\nUsed in {usage} channels.\n[Add to your channel]({emote_link})"
+            "emb_desc": "Created by: [{creator_name}]({creator_twitch})\nUsed in {usage} channels.\n[Add in your channel]({emote_link})"
         }
     },
 
-    "letra": {
-        "name": "lyrics",
-        "usage": "{}lyric [musica]",
-        "description": "Get the lyrics of a music.",
+    "lyrics": {
+        "usage": "{}lyrics [song]",
+        "description": "Searchs for a song lyrics.",
         "texts": {
-            "err_notfound": "Not Found!",
-            "notfound_desc": "No music found.",
+            "err_notfound": "Not found!",
+            "notfound_desc": "No song found.",
             "opts_desc": "Select a song:", 
             "opts_footer": "{author_name} • Type \"exit\" to exit.",
-            "err_nolyric": "Lyric not found!",
+            "err_nolyric": "Lyrics not found!",
             "nolyric_desc": "No lyrics were found for this song."
         }
     },
 
     "ncov": {
-        "name": "ncov",
         "usage": "{}ncov",
-        "description": "Info about COVID-19",
+        "description": "Information about COVID-19",
         "texts": {
             "emb_title": "Info | New Corona Virus",
-            "emb_stats": "COVID-19 currently has:",
+            "emb_stats": "COVID-19 has:",
             "stats_cases": "**{cases}** cases.\n",
             "stats_deaths": "**{deaths}** deaths `({pcent:.2f}%)`\n",
-            "stats_recov": "**{recovered}** recoveries `({pcent:.2f}%)`\n",
+            "stats_recov": "**{recovered}** recovers `({pcent:.2f}%)`\n",
             "stats_activ": "**{active}** active cases `({pcent:.2f}%)\n`",
             "emb_p_stats": "Of the active cases:",
             "p_stats_mild": "**{mild}** are in mild state `({pcent:.2f}%)`\n",
@@ -432,16 +418,13 @@
     },
 
     "meme": {
-        "name": "meme",
         "usage": "{}meme",
-        "description": "Chooses an random meme from the featured (ifunny).\nThe server is choosen by the language.",
+        "description": "Picks a random meme of the featured (ifunny).",
         "texts": {
             "loading": "Loading...",
             "err_notfound": "Nothing found!",
-            "notfound_desc": "No image or video found, it's probally a server error."
+            "notfound_desc": "No video or image was found, probally is a server error."
         }
     }
-
-
 
 }

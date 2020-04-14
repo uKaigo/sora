@@ -36,12 +36,7 @@ class CommandError(commands.Cog):
                 return
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            translation = await ctx.translation
-            embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-            embed.add_field(name=trn["emb_use"], value=translation["usage"].format(ctx.prefix), inline=False)
-            embed.add_field(name=trn["emb_desc"], value=translation["description"])
-            embed.set_footer(text=trn["emb_footer"].format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
-            return await ctx.send(embed=embed)
+            return await ctx.send_help(ctx.command)
 
         elif isinstance(error, commands.ExpectedClosingQuoteError) or isinstance(error, commands.UnexpectedQuoteError):
             quote = error.quote if isinstance(error, commands.UnexpectedQuoteError) else error.close_quote
