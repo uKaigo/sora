@@ -405,6 +405,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.add_field(name=f'Prefixo: {prefix.replace("None", trn["none"])}', value=trn['prefix_value'], inline=False)
             await ctx.send(embed=embed)
 
+    @commands.has_permissions(manage_guild=True)
     @config.command()
     async def lang(self, ctx, lang=None):
         trn = await ctx.trn
@@ -436,6 +437,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.description = trn['error']
         await ctx.send(embed=embed)
 
+    @commands.has_permissions(manage_guild=True)
     @config.command()
     async def prefix(self, ctx, prefix):
         trn = await ctx.trn
