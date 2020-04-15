@@ -74,7 +74,7 @@ class BotEvents(commands.Cog):
             return
 
         # Anti-token
-        has_token = search(r'[A-Za-z\d]{21,27}.[\w-]{4,6}.[\w-]{25,27}', message.content)
+        has_token = search(r'[A-Za-z\d]{27}.[\w-]{6}.[\w-]{27}', message.content)
         if has_token:
             try:
                 await message.delete()
