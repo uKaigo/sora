@@ -30,6 +30,17 @@ class SupportEvents(commands.Cog):
             if cargo in membro.roles:
                 await membro.remove_roles(cargo)
 
+    @commands.Cog.listener()
+    async def on_message(self, message):
+        if message.author.bot:
+            return
+
+        if message.channel.id == 676523018943594572 and not message.content.startswith('>'):
+            await message.add_reaction('👍')
+            return await message.add_reaction('👎') 
+        if message.channel.id == 676520526910324768:
+            return await message.author.add_roles(message.guild.get_role(676517824411336745), reason=f'{message.author} verificado!')
+
 
 def setup(bot):
     bot.add_cog(SupportEvents(bot))

@@ -1,6 +1,7 @@
 import discord
 import asyncio
 import aiohttp
+from re import search
 from datetime import datetime 
 from os import getenv
 from discord.ext import commands
@@ -71,20 +72,18 @@ class BotEvents(commands.Cog):
         # Bloquear bots
         if message.author.bot:
             return
+
+        # Anti-token
+        has_token = search(r'[A-Za-z\d]{21,27}.[\w-]{4,6}.[\w-]{25,27}', message.content)
+        if has_token:
+            return await message.channel.send(f'Your token was leaked {message.author.mention}!\n\nSua token foi vazada {message.author.mention}!')
         
         await self.bot.wait_until_ready()
 
-        # Servidor de suporte
-        if message.channel.id == 676523018943594572 and not message.content.startswith('>'):
-            await message.add_reaction('👍')
-            return await message.add_reaction('👎') 
-        if message.channel.id == 676520526910324768:
-            return await message.author.add_roles(message.guild.get_role(676517824411336745), reason=f'{message.author} verificado!')
-        
         # Interpretar comandos
         ctx = await self.bot.get_context(message, cls=SoraContext)
         if message.content.replace('!', '') == ctx.me.mention:
-            return await ctx.send_help()
+            return await ctx.invoke(self.bot.get_command('help'))
         await self.bot.invoke(ctx)
 
     @commands.Cog.listener()
