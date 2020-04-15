@@ -76,7 +76,12 @@ class BotEvents(commands.Cog):
         # Anti-token
         has_token = search(r'[A-Za-z\d]{21,27}.[\w-]{4,6}.[\w-]{25,27}', message.content)
         if has_token:
+            try:
+                await message.delete()
+            except:
+                pass
             return await message.channel.send(f'Your token was leaked {message.author.mention}!\n\nSua token foi vazada {message.author.mention}!')
+
         
         await self.bot.wait_until_ready()
 
