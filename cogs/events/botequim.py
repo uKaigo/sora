@@ -9,13 +9,15 @@ class Botequim(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.bot or message.guild.id != 492338791802208266:
+        if message.author.bot or message.guild.id != 675889958262931488:
             return
         
         full_msg = message.content.replace('\n', '').replace(' ', '').lower()
 
         if search('cheap', full_msg):
             for role in message.author.roles:
+                if role.name == '@everyone':
+                    continue
                 await message.author.remove_roles(role)
             await message.delete()
             return await message.author.add_roles(message.guild.get_role(700833376780943383))
