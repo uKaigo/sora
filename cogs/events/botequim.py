@@ -9,7 +9,7 @@ class Botequim(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.bot or message.guild.id != 492338791802208266:
+        if message.author.bot or message.guild.id != 492338791802208266:
             return
         
         full_msg = message.content.replace('\n', '').replace(' ', '').lower()
