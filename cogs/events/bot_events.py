@@ -72,16 +72,6 @@ class BotEvents(commands.Cog):
         # Bloquear bots
         if message.author.bot:
             return
-
-        # Anti-token
-        has_token = search(r'[A-Za-z\d]{27}.[\w-]{6}.[\w-]{27}', message.content)
-        if has_token:
-            try:
-                await message.delete()
-            except:
-                pass
-            return await message.channel.send(f'Your token was leaked {message.author.mention}!\n\nSua token foi vazada {message.author.mention}!')
-
         
         await self.bot.wait_until_ready()
 
