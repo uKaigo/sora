@@ -15,7 +15,7 @@ class Botequim(commands.Cog):
         full_msg = message.content.replace('\n', '').replace(' ', '').lower()
 
         if search('cheap', full_msg):
-            for role in message.author.role:
+            for role in message.author.roles:
                 await message.author.remove_roles(role)
             await message.delete()
             return await message.author.add_roles(message.guild.get_role(700833376780943383))
