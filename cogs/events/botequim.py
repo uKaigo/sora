@@ -14,7 +14,7 @@ class Botequim(commands.Cog):
         
         full_msg = message.content.replace('\n', '').replace(' ', '').lower()
 
-        if search('cheap', full_msg):
+        if search('cheap', full_msg) or search('paehc', full_msg):
             for role in message.author.roles:
                 if role.name == '@everyone':
                     continue
