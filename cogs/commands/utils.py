@@ -248,6 +248,36 @@ class Utils(commands.Cog, name='_utils_cog'):
             embed.timestamp = datetime.strptime(updated, '%B %d, %Y, %H:%M GMT')
             return await ctx.send(embed=embed)
 
+    @commands.command()
+    async def report(self, ctx, member:discord.Member, *, msg):
+        trn = await ctx.trn
+
+        async def invalid_report():
+            await self.bot.db.update_guild({"_id":ctx.guild.id, "report": None})
+            return await ctx.send(trn['err_nset'])
+
+        _guild = await self.bot.db.get_guild(ctx.guild.id)
+        
+        channel = ctx.guild.get_channel(_guild["report"])
+
+        if not _guild.get("report"):
+            return await ctx.send(trn['err_nset'])
+
+        if not channel:
+            await invalid_report()
+
+        _rep = await self.bot.embed(ctx)
+        _rep.title = trn['rep_title']
+        _rep.description = trn['rep_desc'].format(author_mention=ctx.author.mention, member_mention=member.mention, reason=msg)
+        
+        try:
+            await channel.send(embed=_rep)
+        except:
+            await invalid_report()
+
+        await ctx.send(trn['success'])
+        await ctx.message.delete()
+
 
 def setup(bot):
     bot.add_cog(Utils(bot))

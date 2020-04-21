@@ -8,8 +8,8 @@ class Database:
         self._guilds_cache = {}
 
     async def new_guild(self, _id):
-        await self.guilds.insert_one({'_id': str(_id), 'prefix': None, 'lang': 'en-us'})
-        self._guilds_cache[_id] = {'_id': str(_id), 'prefix': None, 'lang': 'en-us'}
+        await self.guilds.insert_one({'_id': str(_id), 'prefix': None, 'lang': 'en-us', 'report': None})
+        self._guilds_cache[_id] = {'_id': str(_id), 'prefix': None, 'lang': 'en-us', 'report': None}
         return True
 
     async def get_guild(self, _id):

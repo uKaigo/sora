@@ -10,7 +10,7 @@ from pathlib import Path
 from discord.ext import commands
 
     
-if not getenv("HEROKU"):
+if not getenv("DYNO"):
     ### Caso for executar no seu computador, digite `pip install python-dotenv` ###
     from dotenv import load_dotenv
     env_f = Path('./assets/') / '.env'
@@ -41,7 +41,7 @@ class Sora(commands.AutoShardedBot):
         self.__commit__ = ''
         self.session = ClientSession(loop=self.loop)
         self.lang = 'pt-br'
-        self.emotes = dict()
+        self.emotes = {}
         self.timezone = timezone("America/Sao_Paulo")
         self.nfimg = 'https://i.imgur.com/byuoWoJ.png' # Not Found Image
         

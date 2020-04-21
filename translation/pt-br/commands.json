@@ -32,7 +32,7 @@
     },
 
     "help": {
-        "usage": "{}help (comando) (subcomando)",
+        "usage": "{}help (comando|cog) (subcomando)",
         "description": "Exibe a lista de comandos ou informações sobre um comando.",
         "texts": {
             "notfound": "Nenhum comando chamado `{cmd}`!",
@@ -262,7 +262,6 @@
     },
 
     "qrcode.read": {
-        "name": "qrcode read",
         "usage": "{}qrcode read <url/imagem>",
         "description": "Lê um código QR.",
         "texts": {
@@ -337,13 +336,15 @@
             "emb_title": "Informações de {guild_name}",
             "emb_lang": "Linguagem: {lang}",
             "lang_value": "Muda a linguagem do servidor.",
+            "emb_prefix": "{emote} | Prefixo: {prefix}",
             "prefix_value": "Muda o prefixo do servidor.\n`Reset` para redefinir",
+            "emb_report": "{emote} | Reportes: {channel}",
+            "report_value": "Permite os usuários reportarem outros membros.\n`Reset` para redefinir.",
             "none": "Nenhum"
         }
     },
 
     "config.prefix": {
-        "name": "config prefix",
         "usage": "{}config prefix [novo-prefixo]",
         "description": "Altera o prefixo do servidor.",
         "texts": {
@@ -358,7 +359,6 @@
     },
 
     "config.lang": {
-        "name": "config lang",
         "usage": "{}config lang (linguagem)",
         "description": "Muda a linguagem do servidor.",
         "texts": {
@@ -369,6 +369,20 @@
             "emb_success": "Linguagem alterada para {lang}",
             "error": "Não foi possível alterar a linguagem.",
             "actual_desc": "Esta linguagem já está setada."
+        }
+    },
+
+    "config.reports": {
+        "usage": "{}config reports [canal]",
+        "description": "Altera o canal de reportes.",
+        "texts": {
+            "emb_disabled": "Reportes desativados!",
+            "disabled_desc": "O comando de reporte foi desativado.",
+            "err_notfound": "Canal não encontrado!",
+            "err_invalid": "Canal inválido!",
+            "err_equal": "Este canal já foi definido.",
+            "err_forbidden": "Eu não consigo enviar mensagens nesse canal.",
+            "emb_title": "O canal de reportes foi alterado para {channel}"
         }
     },
 
@@ -422,6 +436,17 @@
             "loading": "Carregando...",
             "err_notfound": "Nada encontrado!",
             "notfound_desc": "Nenhum video ou imagem encontrado, provavelmente é erro no servidor."
+        }
+    },
+    
+    "report": {
+        "usage": "{}report [membro] [motivo]",
+        "description": "Reporta um membro.",
+        "texts": {
+            "err_nset": "O canal de reportes não foi configurado.",
+            "rep_title": "Novo reporte!",
+            "rep_desc": "Autor: {author_mention}\nUsuário: {member_mention}\n\nMotivo: {reason}",
+            "success": "Reporte enviado!"
         }
     }
 

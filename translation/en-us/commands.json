@@ -32,7 +32,7 @@
     },
 
     "help": {
-        "usage": "{}help (command) (subcommand)",
+        "usage": "{}help (command|cog) (subcommand)",
         "description": "Shows the list of commands or information about a command.",
         "texts": {
             "notfound": "No command called `{cmd}`!",
@@ -339,7 +339,10 @@
             "emb_title": "{guild_name}'s info",
             "emb_lang": "Language: {lang}",
             "lang_value": "Changes the server language.",
+            "emb_prefix": "{emote} | Prefix: {prefix}",
             "prefix_value": "Changes the server prefix.\n`Reset` to reset",
+            "emb_report": "{emote} | Reports: {channel}",
+            "report_value": "Allows users to report other members.\n`Reset` to reset.",
             "none": "None"
         }
     },
@@ -350,7 +353,7 @@
         "description": "Changes the server prefix.",
         "texts": {
             "err_invalid": "Invalid prefix!",
-            "err_equal": "This prefix is already setted.",
+            "err_equal": "This prefix is already defined.",
             "err_five": "This prefix has more than 5 letters.",
             "emb_success": "Prefix changed.",
             "none": "None.",
@@ -373,6 +376,21 @@
             "actual_desc": "This language is already setted."
         }
     },
+
+    "config.reports": {
+        "usage": "{}config reports [channel]",
+        "description": "Channel the reports channel.",
+        "texts": {
+            "emb_disabled": "Reports disabled!",
+            "disabled_desc": "The report command is disabled.",
+            "err_notfound": "Channel not found!",
+            "err_invalid": "Invalid channel!",
+            "err_equal": "This channel is already defined.",
+            "err_forbidden": "I can't send messages in this channel.",
+            "emb_title": "Reports channel changed to {channel}"
+        }
+    },
+
 
     "ffz": {
         "usage": "{}ffz (creator.)[name]",
@@ -425,6 +443,18 @@
             "err_notfound": "Nothing found!",
             "notfound_desc": "No video or image was found, probally is a server error."
         }
+    },
+    
+    "report": {
+        "usage": "{}report [member] [reason]",
+        "description": "Reports a member.",
+        "texts": {
+            "err_nset": "The reports channel isn't setted.",
+            "rep_title": "New report!",
+            "rep_desc": "Author: {author_mention}\nUser: {member_mention}\n\nReason: {reason}",
+            "success": "Report sended!"
+        }
     }
+
 
 }

@@ -6,26 +6,6 @@ from datetime import datetime
 from os import getenv
 from discord.ext import commands
 
-class SoraContext(commands.Context):
-    @property
-    async def lang(self) -> str:
-        return await self.bot.get_lang(self, cmd=False)
-    
-    @property
-    async def translation(self) -> dict:
-        return await self.bot.get_lang(self)
-
-    @property
-    async def trn(self) -> dict:
-        try:
-            trn = await self.translation
-            return trn["texts"]
-        except TypeError:
-            return None
-
-    @property 
-    async def guild_prefix(self):
-        return await self.bot.db.get_prefix(self.guild.id)
 
 class BotEvents(commands.Cog):
     def __init__(self, bot):
@@ -66,20 +46,6 @@ class BotEvents(commands.Cog):
             aux = j["commit"]["message"]
             index += 1
         self.bot.__commit__ = j
-
-    @commands.Cog.listener()
-    async def on_message(self, message):
-        # Bloquear bots
-        if message.author.bot:
-            return
-        
-        await self.bot.wait_until_ready()
-
-        # Interpretar comandos
-        ctx = await self.bot.get_context(message, cls=SoraContext)
-        if message.content.replace('!', '') == ctx.me.mention:
-            return await ctx.invoke(self.bot.get_command('help'))
-        await self.bot.invoke(ctx)
 
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
