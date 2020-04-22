@@ -1,6 +1,7 @@
 from discord.ext import commands
 from json import load
 import itertools
+from assets.packages import discordMenus as dMenus
 from assets.models import menus
 
 class SoraContext(commands.Context):
@@ -23,7 +24,6 @@ class SoraContext(commands.Context):
     @property 
     async def guild_prefix(self):
         return await self.bot.db.get_prefix(self.guild.id)
-
 
 class HelpPaginator(menus.baseMenu):
     def __init__(self, page_trn, title, prefix, _index, pages):
@@ -60,6 +60,20 @@ class SoraHelp(commands.HelpCommand):
         super().__init__(command_attrs={"aliases": ['ajuda']})
         self._help_index = -1
 
+    async def on_help_command_error(self, ctx, error):
+        print(f'[{type(error).__name__}]: {error}')
+
+    async def prepare_help_command(self, ctx, command):
+        self.context.command = self.context.bot.get_command('help')
+        pass
+
+    async def send_error_message(self, error):
+        if error.isnumeric():
+            self._help_index = int(error)
+            await self.send_bot_help([])
+            return
+        return await self.context.send(error)
+
     async def command_not_found(self, string):
         # For Cogs
         with open(f"translation/{await self.context.lang}/commands.json", encoding='utf-8') as trns:
@@ -79,13 +93,6 @@ class SoraHelp(commands.HelpCommand):
         if isinstance(command, commands.Group):
             return trn['sub_notfound'][0].format(cmd=command.name, sub=string) 
         return trn['sub_notfound'][1].format(cmd=command.name)
-
-    async def send_error_message(self, error):
-        if error.isnumeric():
-            self._help_index = int(error)
-            await self.send_bot_help([])
-            return
-        await self.context.send(error)
 
     async def send_bot_help(self, mapping):
         ctx = self.context
@@ -148,7 +155,7 @@ class SoraHelp(commands.HelpCommand):
             with open(f'translation/{await ctx.lang}/perms.json') as prms:
                 prms = load(prms)
                 embed.add_field(name=trn['cmd_perms'], value=', '.join([prms[c].title() for c in cmd_json["perms"]]))
-        await ctx.send(embed=embed)
+        return await ctx.send(embed=embed)
     
     async def send_group_help(self, group):
         ctx = self.context
@@ -158,7 +165,6 @@ class SoraHelp(commands.HelpCommand):
             cmd_json = _trn[group.name]
 
         embed = await ctx.bot.embed(ctx)
-        print(trn)
         embed.title = trn['cmd_title'].format(cmd=group.name.title())
         embed.add_field(name=trn['cmd_usage'], value=cmd_json["usage"].format(self.clean_prefix), inline=False)
         embed.add_field(name=trn['cmd_desc'], value=cmd_json["description"], inline=False)
@@ -177,4 +183,4 @@ class SoraHelp(commands.HelpCommand):
                 sub += f'{_sub_jsn["usage"].format(self.clean_prefix)} — {_sub_jsn["description"]}\n\n'
             embed.add_field(name=trn['group_sub'], value=sub)
 
-        await ctx.send(embed=embed)
+        return await ctx.send(embed=embed)
