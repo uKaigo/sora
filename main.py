@@ -19,7 +19,7 @@ token = getenv('token')
 
 with open('assets/json/config.json') as cnf:
     config = json.load(cnf)
-    config["prefix"] = config["prefix"] if getenv("HEROKU") else "sc." # Canary é rodado localmente
+    config["prefix"] = config["prefix"] if getenv("DYNO") else "sc." # Canary é rodado localmente
 
 async def _prefix(bot, message):
     prefix = await bot.db.get_prefix(message.guild.id) or config["prefix"]
