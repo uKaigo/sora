@@ -19,7 +19,8 @@ class DiscordEvents(commands.Cog, name=''):
         # Interpretar comandos
         ctx = await self.bot.get_context(message, cls=SoraContext)
         if message.content.replace('!', '') == ctx.me.mention:
-            return await ctx.invoke(self.bot.get_command('help'))
+            ctx.prefix = ctx.me.mention
+            return await ctx.send_help()
         await self.bot.invoke(ctx)
 
     @commands.Cog.listener()

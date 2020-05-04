@@ -9,42 +9,42 @@ from typing import Optional
 from pathlib import Path
 from discord.ext import commands
 
-    
+
 if not getenv("DYNO"):
     ### Caso for executar no seu computador, digite `pip install python-dotenv` ###
     from dotenv import load_dotenv
-    env_f = Path('./assets/') / '.env'
-    load_dotenv(dotenv_path=env_f)
-token = getenv('token')
+    env = Path('./assets/') / '.env'
+    load_dotenv(dotenv_path=env)
 
 with open('assets/json/config.json') as cnf:
     config = json.load(cnf)
-    config["prefix"] = config["prefix"] if getenv("DYNO") else "sc." # Canary é rodado localmente
+    config["prefix"] = config["prefix"] if getenv(
+        "DYNO") else "sc."  # Canary é rodado localmente
+
 
 async def _prefix(bot, message):
     prefix = await bot.db.get_prefix(message.guild.id) or config["prefix"]
     return commands.when_mentioned_or(prefix)(bot, message)
 
+
 class Sora(commands.AutoShardedBot):
     def __init__(self):
         super().__init__(command_prefix=_prefix, case_insensitive=True)
-        self.token = 'Bela tentativa, quase me pegou...'
         self.db = Database(getenv("mongo_uri"), "Sora")
 
         # Cores
         self.color = 0xBA3C51
         self.ecolor = 0xDD2E44
         self.neutral = 0x36393F
-        
+
         # Variáveis internas
         self.__started_in__ = None
         self.__commit__ = ''
         self.session = ClientSession(loop=self.loop)
-        self.lang = 'pt-br'
         self.emotes = {}
         self.timezone = timezone("America/Sao_Paulo")
-        self.nfimg = 'https://i.imgur.com/byuoWoJ.png' # Not Found Image
-        
+        self.nfimg = 'https://i.imgur.com/byuoWoJ.png'  # Not Found Image
+
         # Funções
         self.sec2hours = functions.sec2hours
         self.formatTime = functions.formatTime
@@ -66,7 +66,8 @@ class Sora(commands.AutoShardedBot):
                 try:
                     self.load_extension(f'cogs.{fldr}.{file}')
                 except Exception as e:
-                    print(f'Falha ao carregar [{fldr}/{file}]: ({type(e).__name__}) {e}')
+                    print(
+                        f'Falha ao carregar [{fldr}/{file}]: ({type(e).__name__}) {e}')
                 else:
                     print(f'{fldr.capitalize()}.{file} carregado com sucesso.')
 
@@ -74,25 +75,28 @@ class Sora(commands.AutoShardedBot):
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
 
     def formatPrefix(self, ctx):
-        prefix = ctx.prefix if not str(self.user.id) in ctx.prefix else f'@{ctx.me} '
+        prefix = ctx.prefix if not str(
+            self.user.id) in ctx.prefix else f'@{ctx.me} '
         return ctx.prefix.replace(ctx.prefix, prefix)
-    
+
     # Tradução
-    async def get_lang(self, ctx:Optional[commands.Context]=None, cmd=True):
+    async def get_lang(self, ctx: Optional[commands.Context] = None, cmd=True):
         lang = await self.db.get_language(ctx.guild.id)
         if cmd:
             with open(f"translation/{lang}/commands.json", encoding="utf-8") as trns:
-                cmd = json.load(trns).get(ctx.command.qualified_name.replace(" ", "."), None)
+                cmd = json.load(trns).get(
+                    ctx.command.qualified_name.replace(" ", "."), None)
             return cmd
         return lang
 
     async def get_error(self, error, ctx):
-        aliases = {"NotOwner": "CommandNotFound", "UnexpectedQuoteError": "ExpectedClosingQuoteError"}
+        aliases = {"NotOwner": "CommandNotFound",
+                   "UnexpectedQuoteError": "ExpectedClosingQuoteError"}
         try:
             lang = await ctx.lang
             with open(f'translation/{lang}/errors.json', encoding='utf-8') as trns:
                 loaded = json.load(trns)
-                
+
                 return loaded.get(aliases.get(type(error).__name__, type(error).__name__), loaded["noError"])
 
         except Exception as e:
@@ -105,7 +109,8 @@ class Sora(commands.AutoShardedBot):
         emb = discord.Embed(color=color)
         with open(f"translation/{await ctx.lang}/commands.json", encoding='utf-8') as jsn:
             trn = json.load(jsn)["_executed_by"]
-        emb.set_footer(text=trn.format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
+        emb.set_footer(text=trn.format(author_name=ctx.author.name),
+                       icon_url=ctx.author.avatar_url)
         emb.timestamp = ctx.message.created_at
         return emb
 
@@ -115,17 +120,22 @@ class Sora(commands.AutoShardedBot):
             title = loaded.get(error, error)
             trn = loaded["_executed_by"]
         emb = discord.Embed(title=f':x: | {title}', color=self.ecolor)
-        emb.set_footer(text=trn.format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
+        emb.set_footer(text=trn.format(author_name=ctx.author.name),
+                       icon_url=ctx.author.avatar_url)
         emb.timestamp = ctx.message.created_at
         return emb
 
     async def on_message(self, message):
         return
 
-    pings = property(functions.__getpings__, functions.__cantset__, functions.__cantdel__)
-    uptime = property(functions.__getuptime__, functions.__cantset__, functions.__cantdel__)
+    pings = property(functions.__getpings__,
+                     functions.__cantset__, functions.__cantdel__)
+    uptime = property(functions.__getuptime__,
+                      functions.__cantset__, functions.__cantdel__)
+
 
 bot = Sora()
+
 
 @bot.check
 async def blacklist(ctx):
@@ -141,6 +151,6 @@ async def blacklist(ctx):
 
 if __name__ == '__main__':
     try:
-        bot.run(token)
-    except KeyboardInterrupt: 
+        bot.run(getenv('token'))
+    except KeyboardInterrupt:
         pass

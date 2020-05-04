@@ -1,14 +1,14 @@
 from discord.ext import commands
 from json import load
 import itertools
-from assets.packages import discordMenus as dMenus
 from assets.models import menus
+import traceback
 
 class SoraContext(commands.Context):
     @property
     async def lang(self) -> str:
         return await self.bot.get_lang(self, cmd=False)
-    
+
     @property
     async def translation(self) -> dict:
         return await self.bot.get_lang(self)
@@ -61,11 +61,12 @@ class SoraHelp(commands.HelpCommand):
         self._help_index = -1
 
     async def on_help_command_error(self, ctx, error):
-        print(f'[{type(error).__name__}]: {error}')
+        lines = traceback.format_exception(type(error), error, error.__traceback__, 2)
+        trace_txt = ''.join(lines)
+        print(trace_txt)
 
-    async def prepare_help_command(self, ctx, command):
+    async def prepare_help_command(self, ctx, command=None):
         self.context.command = self.context.bot.get_command('help')
-        pass
 
     async def send_error_message(self, error):
         if error.isnumeric():
