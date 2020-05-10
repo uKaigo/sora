@@ -6,7 +6,7 @@
 
     "ExpectedClosingQuoteError": {
         "emb_title": "Parâmetro inválido!",
-        "emb_desc": "Por favor, retire qualquer `{quote}` dos parâmetros"
+        "emb_desc": "Exclua qualquer `{quote}` dos parâmetros"
     },
 
     "MissingPermissions": {
@@ -22,28 +22,28 @@
     "BadArgument": {
         "memberNotFound": {
             "emb_title": "Membro inválido!",
-            "emb_desc": "O membro `{member}` não foi encontrado.\nVerifique minúsculas, maiúsculas ou se você digitou certo!"
+            "emb_desc": "O membro `{member}` não foi encontrado.\nVerifique as maiúsculas, minúsculas e se você digitou corretamente!"
         },
 
         "invalid": "Argumento inválido:\n`{arg}`"
     },
 
     "NoPrivateMessage": {
-        "emb_title": "Canal Errado!",
-        "emb_desc": "Este comando não pode ser usado em DM's"
+        "emb_title": "Canal errado!",
+        "emb_desc": "Esse comando não pode ser usado em grupos privados"
     },
 
     "noError": {
         "Forbidden": {
             "emb_title": "Sem permissão!",
-            "emb_desc": "Desculpe te mandar mensagem no DM, também não gosto disso!\n\n",
-            "desc_perm": "Mas parece que você não me deu permissão pra falar no {channel_mention}.\nPor favor, me dê essa permissão ou tente usar em outro canal.",
-            "desc_noperm": "Mas eu não tenho permissão pra falar no canal do comando, peça a algum superior para me deixar falar no {channel_mention}! (ou apenas use outro canal)"
+            "emb_desc": "Desculpe por enviar uma mensagem privada, também não gosto disso!\n\n",
+            "desc_perm": "Mas parece que você não me permitiu falar no {channel_mention}.\nDê-me essa permissão ou tente usar em outro canal.",
+            "desc_noperm": "Mas eu não tenho permissão para falar no canal do comando. Peça a um superior para deixar-me falar no {channel_mention}! (ou apenas use outro canal)"
         },
 
         "NotImplementedError": {
             "emb_title": "Comando em desenvolvimento!",
-            "emb_desc": "Este comando ainda não foi desenvolvido ou está em manutenção. Aguarde futuras atualizações."
+            "emb_desc": "Esse comando ainda não foi desenvolvido ou está em manutenção. Aguarde futuras atualizações."
         },
 
         "emb_desc": "Ocorreu um erro desconhecido durante a execução do comando!"
