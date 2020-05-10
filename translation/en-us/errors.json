@@ -6,7 +6,7 @@
 
     "ExpectedClosingQuoteError": {
         "emb_title": "Invalid parameter!",
-        "emb_desc": "Please, remove any `{quote}` of the parameters."
+        "emb_desc": "Please remove any `{quote}` of the parameters."
     },
 
     "MissingPermissions": {
@@ -22,7 +22,7 @@
     "BadArgument": {
         "memberNotFound": {
             "emb_title": "Invalid member!",
-            "emb_desc": "Member `{member}` wasn't found.\nCheck lowercase, uppercase or if you typed correctly!"
+            "emb_desc": "Member `{member}` hasn't been found.\nCheck lowercase, uppercase, and if you typed correctly!"
         },
 
         "invalid": "Invalid argument:\n`{arg}`"
@@ -36,16 +36,16 @@
     "noError": {
         "Forbidden": {
             "emb_title": "No permission!",
-            "emb_desc": "Sorry for sending messages in DM, I don't like it either!\n\n",
-            "desc_perm": "But seems like you didn't allowed me to speak in {channel_mention}.\nPlease, give me that perm or try me in another channel.",
-            "desc_noperm": "But i'm not allowed to speak in the channel, ask to a superior to allow me speaking in {channel_mention}! (or just use another channel)"
+            "emb_desc": "Sorry for reaching out to you in DM's, I don't like it either!\n\n",
+            "desc_perm": "But it seems that you didn't allow me to speak in {channel_mention}.\nPlease give me this permission or try me in another channel.",
+            "desc_noperm": "But I'm not allowed to speak in the channel. Ask a admin to allow me to speak in {channel_mention}! (or just run me in another channel)"
         },
 
         "NotImplementedError": {
             "emb_title": "W.I.P!",
-            "emb_desc": "This command is still in developing or it's in maintenance. Wait future updates."
+            "emb_desc": "This command is under development or maintenance. Wait for updates."
         },
 
-        "emb_desc": "An error ocurred during the execution of this command!"
+        "emb_desc": "An error ocurred while executing this command!"
     }
 }
