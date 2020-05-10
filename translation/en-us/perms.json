@@ -24,7 +24,7 @@
     "move_members": "move members",
     "use_vad": "use voice activity",
     "priority_speaker": "priority speaker",
-    "stream": "go live",
+    "stream": "video",
     "change_nickname": "change nickname",
     "manage_nicknames": "manage nicknames",
     "manage_roles": "manage roles",
@@ -33,4 +33,3 @@
     "read_messages": "read messages",
     "view_guild_insights": "view server insights"
 }
-
