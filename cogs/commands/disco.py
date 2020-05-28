@@ -62,9 +62,11 @@ class Disco(commands.Cog, name='_disco_cog'):
             activity = trn["activities_l"]
             if membro.activity.type.value == 1:
                 status += f'\n**{activity[membro.activity.type.value]}** [{membro.activity.name}]({membro.activity.url})'
-            else:
+            elif hasattr(membro.activity, 'emoji'):
                 status += f'\n**{activity[membro.activity.type.value]}** {str(membro.activity.emoji).replace("None", "")}{str(membro.activity.name).replace("None", "")}'
-        
+            else:
+                status += f'\n**{activity[membro.activity.type.value]}** {str(membro.activity.name)}'
+
         embed.add_field(name='Status:', value=status, inline=False)
         with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
