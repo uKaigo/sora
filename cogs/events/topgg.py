@@ -17,5 +17,5 @@ class TopGG(commands.Cog):
 
 def setup(bot):
     # Para não rodar no canary
-    if getenv("heroku"):
+    if bot.is_heroku:
         bot.add_cog(TopGG(bot))

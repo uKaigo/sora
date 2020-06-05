@@ -44,7 +44,7 @@ class CommandError(commands.Cog):
             return await ctx.send(embed=embed)
 
         elif isinstance(error, commands.MissingPermissions):
-            lang = await ctx.lang
+            lang = await ctx.lang()
             with open(f'translation/{lang}/perms.json', encoding='utf-8') as lng:
                 prms = json.load(lng)
             perms = [prms[c].title() for c in error.missing_perms]
@@ -53,7 +53,7 @@ class CommandError(commands.Cog):
             return await ctx.send(embed=embed)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            lang = await ctx.lang
+            lang = await ctx.lang()
             with open(f'translation/{lang}/perms.json', encoding='utf-8') as lng:
                 prms = json.load(lng)
             perms = [prms.get(c, c).title().replace('_', '') for c in error.missing_perms]
