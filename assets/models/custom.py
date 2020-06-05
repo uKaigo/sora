@@ -1,28 +1,24 @@
 from discord.ext import commands
 from json import load
 import itertools
+from typing import Optional
 from assets.models import menus
 import traceback
 
 class SoraContext(commands.Context):
-    @property
     async def lang(self) -> str:
-        return await self.bot.get_lang(self, cmd=False)
+        return await self.bot.get_lang(self.guild.id)
 
     @property
-    async def translation(self) -> dict:
-        return await self.bot.get_lang(self)
-
-    @property
-    async def trn(self) -> dict:
+    async def trn(self) -> Optional[dict]:
+        _trn_jsn = await self.bot.get_translation(self)
         try:
-            trn = await self.translation
-            return trn["texts"]
+            return _trn_jsn['texts']
         except TypeError:
             return None
 
     @property 
-    async def guild_prefix(self):
+    async def guild_prefix(self) -> Optional[str]:
         return await self.bot.db.get_prefix(self.guild.id)
 
 class HelpPaginator(menus.baseMenu):
@@ -77,7 +73,7 @@ class SoraHelp(commands.HelpCommand):
 
     async def command_not_found(self, string):
         # For Cogs
-        with open(f"translation/{await self.context.lang}/commands.json", encoding='utf-8') as trns:
+        with open(f"translation/{await self.context.lang()}/commands.json", encoding='utf-8') as trns:
             trns = load(trns)
             translated = [trns["_cogs"][c].lower() for c in trns["_cogs"]]
             translated.sort()
@@ -86,11 +82,11 @@ class SoraHelp(commands.HelpCommand):
                     return str(string)
                 return str(translated.index(string.lower()))
 
-        trn = await self.context.trn
+        trn = await self.context.trn()
         return trn['notfound'].format(cmd=string)
 
     async def subcommand_not_found(self, command, string):
-        trn = await self.context.trn
+        trn = await self.context.trn()
         if isinstance(command, commands.Group):
             return trn['sub_notfound'][0].format(cmd=command.name, sub=string) 
         return trn['sub_notfound'][1].format(cmd=command.name)
@@ -113,7 +109,7 @@ class SoraHelp(commands.HelpCommand):
             if not commands:
                 continue
 
-            with open(f"translation/{await ctx.lang}/commands.json", encoding='utf-8') as trns:
+            with open(f"translation/{await ctx.lang()}/commands.json", encoding='utf-8') as trns:
                 trns = load(trns)
                 
                 _cogs.append(cog)
@@ -138,7 +134,7 @@ class SoraHelp(commands.HelpCommand):
     async def send_command_help(self, command):
         ctx = self.context
         trn = await ctx.trn
-        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as _trn:
+        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as _trn:
             _trn = load(_trn)
             cmd_json = _trn[command.qualified_name.replace(' ', '.')]
 
@@ -153,7 +149,7 @@ class SoraHelp(commands.HelpCommand):
             embed.add_field(name=trn['cmd_parent'], value=f'{self.clean_prefix}`{command.parent.name}`', inline=False)
 
         if cmd_json.get("perms"):
-            with open(f'translation/{await ctx.lang}/perms.json') as prms:
+            with open(f'translation/{await ctx.lang()}/perms.json') as prms:
                 prms = load(prms)
                 embed.add_field(name=trn['cmd_perms'], value=', '.join([prms[c].title() for c in cmd_json["perms"]]))
         return await ctx.send(embed=embed)
@@ -161,7 +157,7 @@ class SoraHelp(commands.HelpCommand):
     async def send_group_help(self, group):
         ctx = self.context
         trn = await ctx.trn
-        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as _trn:
+        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as _trn:
             _trn = load(_trn)
             cmd_json = _trn[group.name]
 
@@ -173,7 +169,7 @@ class SoraHelp(commands.HelpCommand):
             embed.add_field(name=trn['cmd_aliases'], value=', '.join(group.aliases), inline=False)
 
         if cmd_json.get("perms"):
-            with open(f'translation/{await ctx.lang}/perms.json') as prms:
+            with open(f'translation/{await ctx.lang()}/perms.json') as prms:
                 prms = load(prms)
                 embed.add_field(name=trn['cmd_perms'], value=', '.join([prms[c].title() for c in cmd_json["perms"]]))
 

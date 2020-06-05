@@ -1,6 +1,5 @@
 import discord
 from assets.models import functions
-from pytz import timezone
 from os import getenv, listdir
 import json
 from aiohttp import ClientSession
@@ -9,28 +8,26 @@ from typing import Optional
 from pathlib import Path
 from discord.ext import commands
 
+is_heroku = bool(getenv('DYNO'))
 
-if not getenv("DYNO"):
-    ### Caso for executar no seu computador, digite `pip install python-dotenv` ###
+if not is_heroku: # Carregamento do canary
     from dotenv import load_dotenv
     env = Path('./assets/') / '.env'
     load_dotenv(dotenv_path=env)
 
 with open('assets/json/config.json') as cnf:
     config = json.load(cnf)
-    config["prefix"] = config["prefix"] if getenv(
-        "DYNO") else "sc."  # Canary é rodado localmente
+    config['prefix'] = config['prefix'] if is_heroku else 'sc.'
 
-
-async def _prefix(bot, message):
-    prefix = await bot.db.get_prefix(message.guild.id) or config["prefix"]
+async def get_prefix(bot, message):
+    prefix = await bot.db.guild_get(message.guild.id, 'prefix') or config['prefix']
     return commands.when_mentioned_or(prefix)(bot, message)
 
 
 class Sora(commands.AutoShardedBot):
     def __init__(self):
-        super().__init__(command_prefix=_prefix, case_insensitive=True)
-        self.db = Database(getenv("mongo_uri"), "Sora")
+        super().__init__(command_prefix=get_prefix, case_insensitive=True)
+        self.db = Database(getenv('mongo_uri'), 'Sora')
 
         # Cores
         self.color = 0xBA3C51
@@ -39,11 +36,11 @@ class Sora(commands.AutoShardedBot):
 
         # Variáveis internas
         self.__started_in__ = None
-        self.__commit__ = ''
+        self.is_heroku = is_heroku
         self.session = ClientSession(loop=self.loop)
-        self.emotes = {}
-        self.timezone = timezone("America/Sao_Paulo")
-        self.nfimg = 'https://i.imgur.com/byuoWoJ.png'  # Not Found Image
+        self.emotes = dict()
+        self.config = config
+        self.nfimg = 'https://i.imgur.com/byuoWoJ.png' # Not Found Image
 
         # Funções
         self.sec2hours = functions.sec2hours
@@ -54,71 +51,80 @@ class Sora(commands.AutoShardedBot):
         self.utc_to_timezone = functions.utc_to_timezone
 
         # Versão do bot
-        self.__version__ = config["version"]
+        self.__version__ = self.config['version']
 
         # Carregamento de cogs
-        self.remove_command('help')
         for fldr in listdir('cogs'):
-            for file in listdir(f'cogs/{fldr}'):
-                if file.startswith('_') or not file.endswith('.py'):
+            for _file in listdir(f'cogs/{fldr}'):
+                if _file .startswith('_') or not _file.endswith('.py'):
                     continue
-                file = file.replace(".py", "")
+                _file = _file.replace('.py', '')
                 try:
-                    self.load_extension(f'cogs.{fldr}.{file}')
+                    self.load_extension(f'cogs.{fldr}.{_file}')
                 except Exception as e:
-                    print(
-                        f'Falha ao carregar [{fldr}/{file}]: ({type(e).__name__}) {e}')
+                    print(f'Falha ao carregar [{fldr}/{_file}]: ({type(e).__name__}) {e}')
                 else:
-                    print(f'{fldr.capitalize()}.{file} carregado com sucesso.')
+                    print(f'{fldr.capitalize()}.{_file} carregado com sucesso.')
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
 
-    def formatPrefix(self, ctx):
-        prefix = ctx.prefix if not str(
-            self.user.id) in ctx.prefix else f'@{ctx.me} '
+    def formatPrefix(self, ctx) -> str:
+        prefix = ctx.prefix if not str(self.user.id) in ctx.prefix else f'@{ctx.me} '
         return ctx.prefix.replace(ctx.prefix, prefix)
 
     # Tradução
-    async def get_lang(self, ctx: Optional[commands.Context] = None, cmd=True):
-        lang = await self.db.get_language(ctx.guild.id)
-        if cmd:
-            with open(f"translation/{lang}/commands.json", encoding="utf-8") as trns:
-                cmd = json.load(trns).get(
-                    ctx.command.qualified_name.replace(" ", "."), None)
-            return cmd
-        return lang
 
-    async def get_error(self, error, ctx):
-        aliases = {"NotOwner": "CommandNotFound",
-                   "UnexpectedQuoteError": "ExpectedClosingQuoteError"}
+    async def get_lang(self, guild_id) -> str:
+        return await self.db.guild_get(guild_id, 'lang')
+
+    async def get_translation(self, ctx) -> str:
+        lang = await ctx.lang()
+        command_name = ctx.command.qualified_name.replace(' ', '.')
+        with open(f'translation/{lang}/commands.json', encoding='utf-8') as trns:
+            cmd = json.load(trns).get(command_name)
+        return cmd
+
+    async def get_error(self, error, ctx) -> Optional[str]:
+        # Para erros que são tratados como outros.
+        aliases = {
+            'NotOwner': 'CommandNotFound',
+            'UnexpectedQuoteError': 'ExpectedClosingQuoteError'
+        }
+        
+        error = error.__class__.__name__ # Nome do erro
+        
         try:
-            lang = await ctx.lang
+            lang = await ctx.lang()
             with open(f'translation/{lang}/errors.json', encoding='utf-8') as trns:
                 loaded = json.load(trns)
-
-                return loaded.get(aliases.get(type(error).__name__, type(error).__name__), loaded["noError"])
-
+                return loaded.get(aliases.get(error, error), loaded['noError'])
         except Exception as e:
             print(e)
             return None
 
     # Embeds
-    async def embed(self, ctx, invisible=False):
+    async def embed(self, ctx, invisible=False) -> discord.Embed:
+        # Cor do embed
         color = self.neutral if invisible else self.color
+
         emb = discord.Embed(color=color)
-        with open(f"translation/{await ctx.lang}/commands.json", encoding='utf-8') as jsn:
-            trn = json.load(jsn)["_executed_by"]
+
+        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as jsn:
+            trn = json.load(jsn)['_executed_by']
+        
         emb.set_footer(text=trn.format(author_name=ctx.author.name),
                        icon_url=ctx.author.avatar_url)
+        
         emb.timestamp = ctx.message.created_at
         return emb
 
-    async def erEmbed(self, ctx, error='_err_no_title'):
-        with open(f"translation/{await ctx.lang}/commands.json", encoding='utf-8') as jsn:
+    async def erEmbed(self, ctx, error='_err_no_title') -> discord.Embed:
+        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as jsn:
             loaded = json.load(jsn)
             title = loaded.get(error, error)
-            trn = loaded["_executed_by"]
+            trn = loaded['_executed_by']
+        
         emb = discord.Embed(title=f':x: | {title}', color=self.ecolor)
         emb.set_footer(text=trn.format(author_name=ctx.author.name),
                        icon_url=ctx.author.avatar_url)

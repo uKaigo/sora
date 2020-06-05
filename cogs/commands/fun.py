@@ -17,7 +17,7 @@ class Fun(commands.Cog, name='_fun_cog'):
         embed.description = trn['loading']
         msg = await ctx.send(embed=embed)
         
-        server = {"pt-br": "br.", "en-us": ""}.get(await ctx.lang, "")
+        server = {"pt-br": "br.", "en-us": ""}.get(await ctx.lang(), "")
         
         res = await self.bot.session.get(f'https://{server}ifunny.co/page2')
         soup = BeautifulSoup(await res.text(), 'html.parser')
@@ -34,7 +34,6 @@ class Fun(commands.Cog, name='_fun_cog'):
         meme = choice(to_choice)
 
         embed = await self.bot.embed(ctx)
-        embed.description = meme.attrs['alt'].replace('\n', ' ')
         embed.set_image(url=meme.attrs['data-src'])
         await msg.edit(embed=embed)
 

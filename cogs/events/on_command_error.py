@@ -32,8 +32,6 @@ class CommandError(commands.Cog):
                 embed.description = trn["mean"]
                 embed.description += f'\n'.join(suggestions)
                 return await ctx.send(embed=embed)
-            else:
-                return
 
         elif isinstance(error, commands.MissingRequiredArgument):
             return await ctx.send_help(ctx.command)

@@ -28,7 +28,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
     @commands.command(aliases=['stats'])
     async def botstats(self, ctx):
         trn = await ctx.trn
-        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as lng:
+        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
         embed = await self.bot.embed(ctx)
         embed.set_author(name=trn["emb_title"].format(bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
@@ -54,32 +54,9 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         embed.set_footer(text=trn["emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
-    @commands.command(aliases=['ver'])
-    async def version(self, ctx):
-        trn = await ctx.trn
-        if not hasattr(self.bot, '__commit__'):
-            return await ctx.send(trn['no_commit'])
-        embed = await self.bot.embed(ctx)
-        embed.title = trn["emb_title"]
-        embed.description = trn["emb_desc"]
-        embed.add_field(name=trn["emb_version"], value=f'[{self.bot.__version__}]({self.bot.__commit__["html_url"]})', inline=False)
-        embed.add_field(name=trn["emb_commiter"], value=f'[{self.bot.__commit__["author"]["login"]}]({self.bot.__commit__["author"]["html_url"]})', inline=False)
-        
-        hour = datetime.strptime(self.bot.__commit__["commit"]["author"]["date"], '%Y-%m-%dT%H:%M:%SZ')
-        hour = self.bot.utc_to_timezone(hour, self.bot.timezone)
-        
-        with open("assets/json/config.json") as jsn:
-            message_id = load(jsn)["changelog_id"]
-        
-        g = self.bot.get_guild(675889958262931488)
-        if ctx.author in g.members:
-            embed.add_field(name=trn["emb_changelog"], value=f'[Link](https://discordapp.com/channels/675889958262931488/676520484820484096/{message_id})', inline=False)
-        
-        embed.add_field(name=trn["emb_notes"], value=self.bot.__commit__["commit"]["message"], inline=False)
-        embed.set_footer(text=trn["emb_footer"].format(author_name = ctx.author.name), icon_url=ctx.author.avatar_url)
-        embed.timestamp = hour
-        await ctx.send(embed=embed)
-
+    # @commands.command(aliases=['ver'])
+    # async def version(self, ctx):
+        #   raise NotImplementedError()
 
 def setup(bot): 
     bot.add_cog(BotCmds(bot))

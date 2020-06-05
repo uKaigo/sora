@@ -446,7 +446,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.description = trn["invalid_desc"].format(langs='\n'.join(langs))
             return await ctx.send(embed=embed)
 
-        actual = await ctx.lang
+        actual = await ctx.lang()
         if lang == actual:
             embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn["actual_desc"]

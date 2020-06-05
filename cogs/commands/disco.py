@@ -43,6 +43,7 @@ class Disco(commands.Cog, name='_disco_cog'):
     @commands.command(aliases=['ui'])
     async def userinfo(self, ctx, *, membro:discord.Member=None):
         trn = await ctx.trn
+        lang = await ctx.lang()
         membro = membro or ctx.author
         cor = membro.color if str(membro.color) != '#000000' else self.bot.color
 
@@ -68,7 +69,7 @@ class Disco(commands.Cog, name='_disco_cog'):
                 status += f'\n**{activity[membro.activity.type.value]}** {str(membro.activity.name)}'
 
         embed.add_field(name='Status:', value=status, inline=False)
-        with open(f'translation/{await ctx.lang}/commands.json', encoding='utf-8') as lng:
+        with open(f'translation/{lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
         embed.add_field(name=trn["emb_date"], value=trn["date_value"].format(
             created_at=membro.created_at.strftime("%d/%m/%Y %H:%M"), 
@@ -86,7 +87,6 @@ class Disco(commands.Cog, name='_disco_cog'):
         if roles:
             embed.add_field(name=trn["emb_roles"].format(roles=len(roles)), value=', '.join(roles), inline=False)
         
-        lang = await ctx.lang
         with open(f"translation/{lang}/perms.json", encoding='utf-8') as f:
             prms = load(f)
         perms = [prms[c[0]].capitalize() for c in membro.permissions_in(ctx.channel) if c[1]]
