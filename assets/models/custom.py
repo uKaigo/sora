@@ -6,8 +6,16 @@ from assets.models import menus
 import traceback
 
 class SoraContext(commands.Context):
-    async def lang(self) -> str:
-        return await self.bot.get_lang(self.guild.id)
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.__translation_cache__ = {}
+        self._lang = ''
+
+    @property
+    def lang(self) -> str:
+        if not hasattr(self, '_lang') or not self._lang:
+            raise RuntimeError('Linguagem não definida.')
+        return self._lang
 
     @property
     async def trn(self) -> Optional[dict]:
@@ -16,10 +24,33 @@ class SoraContext(commands.Context):
             return _trn_jsn['texts']
         except TypeError:
             return None
-
-    @property 
+        self.lang
     async def guild_prefix(self) -> Optional[str]:
         return await self.bot.db.get_prefix(self.guild.id)
+
+    # Futuro
+    def t(self, key, **fmt) -> str:
+        # Cache da tradução
+        key = str(key)
+        _file = fmt.pop('_file', 'commands')
+
+        if not _file in self.__translation_cache__:
+            with open(f'translation/{self.lang}/{_file}.json', encoding='utf-8') as jsn:
+                self.__translation_cache__[_file] = load(jsn)
+        trn = self.__translation_cache__[_file]
+
+        if _file == 'commands':
+            try:
+                trn = trn[self.command.qualified_name.replace(' ', '.')]
+            except KeyError:
+                return key
+
+        try:
+            for k in key.split('.'):
+                trn = trn[int(k) if k.isnumeric() else k]
+            return trn.format(**fmt)
+        except KeyError:
+            return key
 
 class HelpPaginator(menus.baseMenu):
     def __init__(self, page_trn, title, prefix, _index, pages):

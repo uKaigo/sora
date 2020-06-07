@@ -17,7 +17,7 @@ class Fun(commands.Cog, name='_fun_cog'):
         embed.description = trn['loading']
         msg = await ctx.send(embed=embed)
         
-        server = {"pt-br": "br.", "en-us": ""}.get(await ctx.lang(), "")
+        server = {"pt-br": "br.", "en-us": ""}.get(ctx.lang, "")
         
         res = await self.bot.session.get(f'https://{server}ifunny.co/page2')
         soup = BeautifulSoup(await res.text(), 'html.parser')

@@ -43,7 +43,7 @@ class Disco(commands.Cog, name='_disco_cog'):
     @commands.command(aliases=['ui'])
     async def userinfo(self, ctx, *, membro:discord.Member=None):
         trn = await ctx.trn
-        lang = await ctx.lang()
+        lang = ctx.lang
         membro = membro or ctx.author
         cor = membro.color if str(membro.color) != '#000000' else self.bot.color
 

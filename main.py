@@ -20,8 +20,11 @@ with open('assets/json/config.json') as cnf:
     config['prefix'] = config['prefix'] if is_heroku else 'sc.'
 
 async def get_prefix(bot, message):
-    prefix = await bot.db.guild_get(message.guild.id, 'prefix') or config['prefix']
-    return commands.when_mentioned_or(prefix)(bot, message)
+    if message.guild:
+        prefix = await bot.db.guild_get(message.guild.id, 'prefix') or config['prefix']
+        return commands.when_mentioned_or(prefix)(bot, message)
+    else:
+        return commands.when_mentioned_or(config['prefix'])
 
 
 class Sora(commands.AutoShardedBot):
@@ -79,7 +82,7 @@ class Sora(commands.AutoShardedBot):
         return await self.db.guild_get(guild_id, 'lang')
 
     async def get_translation(self, ctx) -> str:
-        lang = await ctx.lang()
+        lang = ctx.lang
         command_name = ctx.command.qualified_name.replace(' ', '.')
         with open(f'translation/{lang}/commands.json', encoding='utf-8') as trns:
             cmd = json.load(trns).get(command_name)
@@ -110,7 +113,7 @@ class Sora(commands.AutoShardedBot):
 
         emb = discord.Embed(color=color)
 
-        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as jsn:
+        with open(f'translation/{ctx.lang}/commands.json', encoding='utf-8') as jsn:
             trn = json.load(jsn)['_executed_by']
         
         emb.set_footer(text=trn.format(author_name=ctx.author.name),
@@ -120,7 +123,7 @@ class Sora(commands.AutoShardedBot):
         return emb
 
     async def erEmbed(self, ctx, error='_err_no_title') -> discord.Embed:
-        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as jsn:
+        with open(f'translation/{ctx.lang}/commands.json', encoding='utf-8') as jsn:
             loaded = json.load(jsn)
             title = loaded.get(error, error)
             trn = loaded['_executed_by']
@@ -154,6 +157,13 @@ async def blacklist(ctx):
         await ctx.send(embed=embed)
         return False
     return True
+
+@bot.before_invoke
+async def set_lang(ctx):
+    if not ctx.guild:
+        ctx._lang = 'en-us'
+    else:
+        ctx._lang = await bot.db.guild_get(ctx.guild.id, 'lang')
 
 if __name__ == '__main__':
     try:

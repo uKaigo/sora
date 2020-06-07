@@ -28,7 +28,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
     @commands.command(aliases=['stats'])
     async def botstats(self, ctx):
         trn = await ctx.trn
-        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as lng:
+        with open(f'translation/{ctx.lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
         embed = await self.bot.embed(ctx)
         embed.set_author(name=trn["emb_title"].format(bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
