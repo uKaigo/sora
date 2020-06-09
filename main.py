@@ -24,7 +24,7 @@ async def get_prefix(bot, message):
         prefix = await bot.db.guild_get(message.guild.id, 'prefix') or config['prefix']
         return commands.when_mentioned_or(prefix)(bot, message)
     else:
-        return commands.when_mentioned_or(config['prefix'])
+        return commands.when_mentioned_or(config['prefix'])(bot, message)
 
 
 class Sora(commands.AutoShardedBot):
@@ -87,24 +87,6 @@ class Sora(commands.AutoShardedBot):
         with open(f'translation/{lang}/commands.json', encoding='utf-8') as trns:
             cmd = json.load(trns).get(command_name)
         return cmd
-
-    async def get_error(self, error, ctx) -> Optional[str]:
-        # Para erros que são tratados como outros.
-        aliases = {
-            'NotOwner': 'CommandNotFound',
-            'UnexpectedQuoteError': 'ExpectedClosingQuoteError'
-        }
-        
-        error = error.__class__.__name__ # Nome do erro
-        
-        try:
-            lang = await ctx.lang()
-            with open(f'translation/{lang}/errors.json', encoding='utf-8') as trns:
-                loaded = json.load(trns)
-                return loaded.get(aliases.get(error, error), loaded['noError'])
-        except Exception as e:
-            print(e)
-            return None
 
     # Embeds
     async def embed(self, ctx, invisible=False) -> discord.Embed:

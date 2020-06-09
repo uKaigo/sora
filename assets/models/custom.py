@@ -13,10 +13,12 @@ class SoraContext(commands.Context):
 
     @property
     def lang(self) -> str:
+        """Retorna a linguagem do servidor"""
         if not hasattr(self, '_lang') or not self._lang:
             raise RuntimeError('Linguagem não definida.')
         return self._lang
 
+    # A ser descontinuado
     @property
     async def trn(self) -> Optional[dict]:
         _trn_jsn = await self.bot.get_translation(self)
@@ -24,24 +26,52 @@ class SoraContext(commands.Context):
             return _trn_jsn['texts']
         except TypeError:
             return None
-        self.lang
+
     async def guild_prefix(self) -> Optional[str]:
+        """Retorna a prefixo do servidor"""
         return await self.bot.db.get_prefix(self.guild.id)
 
-    # Futuro
+    # Substituir o ctx.trn
     def t(self, key, **fmt) -> str:
-        # Cache da tradução
-        key = str(key)
-        _file = fmt.pop('_file', 'commands')
+        """Retorna uma tradução.
+        
+        Configurações:
+            _e: Erro
+            _f: Arquivo
+            _nc: Nao é um comando
 
+        Keywords:  
+            Passado para um .format
+        """
+
+        key = str(key)
+
+        # Pega configurações
+        _error = fmt.pop('_e', None)
+        _file = fmt.pop('_f', None)
+        _nc = fmt.pop('_nc', False)
+
+        if _error and not _file: _file='errors'
+
+        if not _file:
+            _file = 'commands'
+
+        # Se o arquivo não estiver no cache (normal para primeira execução)
         if not _file in self.__translation_cache__:
             with open(f'translation/{self.lang}/{_file}.json', encoding='utf-8') as jsn:
                 self.__translation_cache__[_file] = load(jsn)
         trn = self.__translation_cache__[_file]
 
-        if _file == 'commands':
+        if _file == 'commands' and not _nc:
             try:
-                trn = trn[self.command.qualified_name.replace(' ', '.')]
+                # Já que o arquivo é um comando, ele pega sua tradução
+                trn = trn[self.command.qualified_name.replace(' ', '.')]['texts']
+            except KeyError:
+                return key
+
+        if _error:
+            try:
+                trn = trn[_error]
             except KeyError:
                 return key
 
@@ -55,7 +85,7 @@ class SoraContext(commands.Context):
 class HelpPaginator(menus.baseMenu):
     def __init__(self, page_trn, title, prefix, _index, pages):
         super().__init__(pages, title, '')
-        self.prefix = prefix
+        self._prefix = prefix
         self._pagec = page_trn
         if _index != -1:
             self._index = _index
@@ -78,7 +108,7 @@ class HelpPaginator(menus.baseMenu):
         embed.title = self._title.format(cog=cog)
         
         for cmd, description in commands:
-            embed.add_field(name=cmd.format(self.prefix), value=description, inline=False)
+            embed.add_field(name=cmd.format(self._prefix), value=description, inline=False)
         
         return embed
 

@@ -54,9 +54,5 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         embed.set_footer(text=trn["emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
-    # @commands.command(aliases=['ver'])
-    # async def version(self, ctx):
-        #   raise NotImplementedError()
-
 def setup(bot): 
     bot.add_cog(BotCmds(bot))

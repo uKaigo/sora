@@ -9,98 +9,75 @@ class CommandError(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        trn = await self.bot.get_error(error, ctx)
+    async def on_command_error(self, ctx, error): #pylint: disable=too-many-branches, too-many-statements
+        aliases = {'UnexpectedQuoteError': 'ExpectedCLosingQuoteError'}
+        if ctx.guild:
+            ctx._lang = await self.bot.db.guild_get(ctx.guild.id, 'lang')
+        else: 
+            ctx._lang = 'en-us'
 
-        if isinstance(error, commands.CommandNotFound) or isinstance(error, commands.NotOwner):
-            try:
-                await ctx.message.add_reaction('❌')
-            except:
-                pass
-            suggestions = []
+        name = aliases.get(error.__class__.__name__, error.__class__.__name__)
 
-            pat = '.*?'.join(map(re.escape, ctx.invoked_with))
-            regex = re.compile(pat, flags=re.IGNORECASE)
-
-            for c in self.bot.all_commands:
-                r = regex.search(c)
-                if r:
-                    if c.startswith(ctx.invoked_with):
-                        suggestions.append(f'`{self.bot.formatPrefix(ctx)}{c}`')
-            embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-            if suggestions and not isinstance(error, commands.NotOwner):
-                embed.description = trn["mean"]
-                embed.description += f'\n'.join(suggestions)
-                return await ctx.send(embed=embed)
+        if isinstance(error, (commands.CommandNotFound, commands.NotOwner)):
+            pass
 
         elif isinstance(error, commands.MissingRequiredArgument):
-            return await ctx.send_help(ctx.command)
+            await ctx.send_help(ctx.command)
 
-        elif isinstance(error, commands.ExpectedClosingQuoteError) or isinstance(error, commands.UnexpectedQuoteError):
+        elif isinstance(error, (commands.ExpectedClosingQuoteError, commands.UnexpectedQuoteError)):
             quote = error.quote if isinstance(error, commands.UnexpectedQuoteError) else error.close_quote
-            
-            embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-            embed.description = trn["emb_desc"].format(quote=quote)
-            return await ctx.send(embed=embed)
+
+            embed = await self.bot.erEmbed(ctx, ctx.t(f'emb_title', _e=name))
+            embed.description = ctx.t(f'emb_desc', quote=quote, _e=name)
+            await ctx.send(embed=embed)
 
         elif isinstance(error, commands.MissingPermissions):
-            lang = await ctx.lang()
-            with open(f'translation/{lang}/perms.json', encoding='utf-8') as lng:
-                prms = json.load(lng)
-            perms = [prms[c].title() for c in error.missing_perms]
-            embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-            embed.description= trn["emb_desc"].format(perms=", ".join(perms), s="s" if len(perms) > 1 else "", oes="ões" if len(perms) > 1 else "ão")
-            return await ctx.send(embed=embed)
+            perms = [ctx.t(c, _f='perms').title().replace('_', '') for c in error.missing_perms]
+            embed = await self.bot.erEmbed(ctx, ctx.t('emb_title', _e=name))
+            embed.description= ctx.t('emb_desc', _e=name, perms=', '.join(perms), s='s' if len(perms) > 1 else '', oes='ões' if len(perms) > 1 else 'ão')
+            await ctx.send(embed=embed)
 
         elif isinstance(error, commands.BotMissingPermissions):
-            lang = await ctx.lang()
-            with open(f'translation/{lang}/perms.json', encoding='utf-8') as lng:
-                prms = json.load(lng)
-            perms = [prms.get(c, c).title().replace('_', '') for c in error.missing_perms]
+            perms = [ctx.t(c, _f='perms').title().replace('_', '') for c in error.missing_perms]
 
-            embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-            embed.description = trn["emb_desc"].format(perms=', '.join(perms), s='s' if len(perms) > 1 else '', oes='ões' if len(perms) > 1 else 'ão')
-            return await ctx.send(embed=embed)
+            embed = await self.bot.erEmbed(ctx, ctx.t('emb_title', _e=name))
+            embed.description = ctx.t('emb_desc', _e=name, perms=', '.join(perms), s='s' if len(perms) > 1 else '', oes='ões' if len(perms) > 1 else 'ão')
+            await ctx.send(embed=embed)
 
         elif isinstance(error, commands.BadArgument):
-            if "Member" in error.args[0] and "not found" in error.args[0]:
-                trn = trn["memberNotFound"]
+            if 'Member' in error.args[0] and 'not found' in error.args[0]:
+                trn = ctx.t('memberNotFound.emb_title', _e=name)
                 member = error.args[0].split('"')[1]
 
-                embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-                embed.description = trn["emb_desc"].format(member=member)
-                return await ctx.send(embed=embed)
+                embed = await self.bot.erEmbed(ctx, ctx.t('memberNotFound.emb_title', _e=name))
+                embed.description = ctx.t('memberNotFound.emb_desc', _e=name, member=member)
+                await ctx.send(embed=embed)
+
             embed = await self.bot.erEmbed(ctx)
             embed.title = discord.Embed.Empty
-            embed.description = trn["invalid"].format(arg=error.args[0])
+            embed.description = ctx.t('invalid', _e=name, arg=error.args[0])
     
         elif isinstance(error, commands.NoPrivateMessage):
-            embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-            embed.description = trn['emb_desc']
-            return await ctx.send(embed=embed)
+            embed = await self.bot.erEmbed(ctx, ctx.t('emb_title', _e=name))
+            embed.description = ctx.t('emb_desc', _e=name)
+            await ctx.send(embed=embed)
 
         elif isinstance(error, commands.CheckFailure):
             return
 
         else:    
             if hasattr(error, 'original'):
-                try:
-                    trn = trn[type(error.original).__name__]
-                except:
-                    trn = trn
-                if isinstance(error.original, discord.Forbidden):
-                    embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-                    embed.description = trn["emb_desc"]
-                    if ctx.author.permissions_in(ctx.channel).manage_channels:
-                        embed.description += trn["desc_perm"].format(channel_mention = ctx.channel.mention)
-                    else:
-                        embed.description += trn["desc_noperm"].format(channel_mention=ctx.channel.mention)
-                    return await ctx.author.send(embed=embed)
+                name = 'noError'
+                er_name = type(error.original).__name__
 
-                if isinstance(error.original, NotImplementedError):
-                    embed = await self.bot.erEmbed(ctx, trn["emb_title"])
-                    embed.description = trn["emb_desc"]
-                    return await ctx.send(embed=embed)
+                if isinstance(error.original, discord.Forbidden):
+                    embed = await self.bot.erEmbed(ctx, ctx.t(f'{er_name}.emb_title', _e=name))
+                    embed.description = ctx.t(f'{er_name}.emb_desc', _e=name)
+                    if ctx.author.permissions_in(ctx.channel).manage_channels:
+                        embed.description += ctx.t(f'{er_name}.desc_perm', _e=name, channel_mention=ctx.channel.mention)
+                    else:
+                        embed.description += ctx.t(f'{er_name}.desc_noperm', _e=name, channel_mention=ctx.channel.mention)
+                    return await ctx.author.send(embed=embed)
 
             lines = traceback.format_exception(type(error), error, error.__traceback__, 2)
             trace_txt = ''.join(lines)
@@ -112,7 +89,7 @@ class CommandError(commands.Cog):
             await ch.send(embed=embed)
             
             embed = await self.bot.erEmbed(ctx)
-            embed.description = trn["emb_desc"]
+            embed.description = ctx.t('emb_desc', _e=name)
             await ctx.send(embed=embed)
 
 def setup(bot):

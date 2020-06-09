@@ -1,9 +1,4 @@
 {
-    "CommandNotFound": {
-        "emb_title": "Comando não encontrado!",
-        "mean": "Você quis dizer:\n"
-    },
-
     "ExpectedClosingQuoteError": {
         "emb_title": "Parâmetro inválido!",
         "emb_desc": "Exclua qualquer `{quote}` dos parâmetros"
@@ -39,11 +34,6 @@
             "emb_desc": "Desculpe por enviar uma mensagem privada, também não gosto disso!\n\n",
             "desc_perm": "Mas parece que você não me permitiu falar no {channel_mention}.\nDê-me essa permissão ou tente usar em outro canal.",
             "desc_noperm": "Mas eu não tenho permissão para falar no canal do comando. Peça a um superior para deixar-me falar no {channel_mention}! (ou apenas use outro canal)"
-        },
-
-        "NotImplementedError": {
-            "emb_title": "Comando em desenvolvimento!",
-            "emb_desc": "Esse comando ainda não foi desenvolvido ou está em manutenção. Aguarde futuras atualizações."
         },
 
         "emb_desc": "Ocorreu um erro desconhecido durante a execução do comando!"
