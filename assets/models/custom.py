@@ -65,7 +65,7 @@ class SoraContext(commands.Context):
         if _file == 'commands' and not _nc:
             try:
                 # Já que o arquivo é um comando, ele pega sua tradução
-                trn = trn[self.command.qualified_name.replace(' ', '.')]['texts']
+                trn = trn[self.command.qualified_name]['texts']
             except KeyError:
                 return key
 
@@ -78,20 +78,17 @@ class SoraContext(commands.Context):
         try:
             for k in key.split('.'):
                 trn = trn[int(k) if k.isnumeric() else k]
-            return trn.format(**fmt)
+            if fmt:
+                return trn.format(**fmt)
+            return trn
         except KeyError:
             return key
 
 class HelpPaginator(menus.baseMenu):
-    def __init__(self, page_trn, title, prefix, _index, pages):
+    def __init__(self, page_trn, title, prefix, pages):
         super().__init__(pages, title, '')
         self._prefix = prefix
         self._pagec = page_trn
-        if _index != -1:
-            self._index = _index
-            self.should_add_reactions = lambda: False
-        else:
-            self._index = _index+1
 
     @property
     async def embed(self):
@@ -114,7 +111,7 @@ class HelpPaginator(menus.baseMenu):
 
 class SoraHelp(commands.HelpCommand):
     def __init__(self):
-        super().__init__(command_attrs={"aliases": ['ajuda']})
+        super().__init__(command_attrs={'aliases': ['ajuda']})
         self._help_index = -1
 
     async def on_help_command_error(self, ctx, error):
@@ -123,122 +120,86 @@ class SoraHelp(commands.HelpCommand):
         print(trace_txt)
 
     async def prepare_help_command(self, ctx, command=None):
+        # Necessário para o sistema de tradução funcionar
         self.context.command = self.context.bot.get_command('help')
 
     async def send_error_message(self, error):
-        if error.isnumeric():
-            self._help_index = int(error)
-            await self.send_bot_help([])
-            return
         return await self.context.send(error)
 
     async def command_not_found(self, string):
-        # For Cogs
-        with open(f"translation/{await self.context.lang()}/commands.json", encoding='utf-8') as trns:
-            trns = load(trns)
-            translated = [trns["_cogs"][c].lower() for c in trns["_cogs"]]
-            translated.sort()
-            if string.lower() in translated or (string.isnumeric() and 0 <= int(string) <= len(translated)):
-                if string.isnumeric():
-                    return str(string)
-                return str(translated.index(string.lower()))
-
-        trn = await self.context.trn()
-        return trn['notfound'].format(cmd=string)
+        return self.context.t('notfound', cmd=string)
 
     async def subcommand_not_found(self, command, string):
-        trn = await self.context.trn()
         if isinstance(command, commands.Group):
-            return trn['sub_notfound'][0].format(cmd=command.name, sub=string) 
-        return trn['sub_notfound'][1].format(cmd=command.name)
+            return self.context.t('sub_notfound.0', cmd=command.name, sub=string) 
+        return self.context.t('sub_notfound.1', cmd=command.name)
 
     async def send_bot_help(self, mapping):
         ctx = self.context
-        trn = await ctx.trn
 
         def key(cmd):
-            return cmd.cog_name or trn['no_cat']
+            return cmd.cog_name or ctx.t('no_cat')
 
         cmds = await self.filter_commands(ctx.bot.commands, sort=True, key=key)
 
         pages = []
 
         _cogs = []
-        _cog_list = ["_bot_cog", "_disco_cog", "_fun_cog", "_mod_cog", "_music_cog", "_utils_cog"]
-        for cog, commands in itertools.groupby(cmds, key=key):
-            commands = sorted(commands, key = lambda m: m.name)
-            if not commands:
+        _cog_list = [cog[0] for cog in ctx.t('_cogs', _nc=1).items()]
+
+        for cog, _commands in itertools.groupby(cmds, key=key):
+            _commands = sorted(_commands, key = lambda m: m.name)
+            if not _commands:
                 continue
+            
+            cog = ctx.t(f'_cogs.{cog}', _nc=1)
+            _cmds = []
+            for cmd in _commands:
+                _cmd_name = cmd.qualified_name
+                _cmds.append([ctx.t(f'{_cmd_name}.usage', _nc=1), ctx.t(f'{_cmd_name}.description', _nc=1)])
 
-            with open(f"translation/{await ctx.lang()}/commands.json", encoding='utf-8') as trns:
-                trns = load(trns)
-                
-                _cogs.append(cog)
-                cog = trns["_cogs"][cog]
-                commands = [[trns[c.name]["usage"]] + [trns[c.name]["description"]] for c in commands]
+            pages.append((cog, _cmds))
 
-            pages.append((cog, commands))
-
-        if not self._help_index == -1:
-            try:
-                _pg = _cog_list[self._help_index]
-                if not _pg == _cogs[self._help_index]:
-                    self._help_index = -1
-            except:
-                self._help_index = -1
-        _index = self._help_index
-        self._help_index = -1
-
-        paginator = HelpPaginator(trn['page_c'], trn['emb_title'], self.clean_prefix, _index, pages)
+        paginator = HelpPaginator(ctx.t('page_c'), ctx.t('emb_title'), self.clean_prefix, pages)
         await paginator.start(ctx)
 
     async def send_command_help(self, command):
         ctx = self.context
-        trn = await ctx.trn
-        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as _trn:
-            _trn = load(_trn)
-            cmd_json = _trn[command.qualified_name.replace(' ', '.')]
+        cmd_name = command.qualified_name
 
         embed = await ctx.bot.embed(ctx)
-        embed.title = trn['cmd_title'].format(cmd=command.name.title())
-        embed.add_field(name=trn['cmd_usage'], value=cmd_json["usage"].format(self.clean_prefix), inline=False)
-        embed.add_field(name=trn['cmd_desc'], value=cmd_json["description"], inline=False)
+        embed.title = ctx.t('cmd_title', cmd=command.name.title())
+        embed.add_field(name=ctx.t('cmd_usage'), value=ctx.t(f'{cmd_name}.usage', _nc=1).format(self.clean_prefix), inline=False)
+        embed.add_field(name=ctx.t('cmd_desc'), value=ctx.t(f'{cmd_name}.description', _nc=1), inline=False)
         if command.aliases:
-            embed.add_field(name=trn['cmd_aliases'], value=', '.join(command.aliases), inline=False)
+            embed.add_field(name=ctx.t('cmd_aliases'), value=', '.join(command.aliases), inline=False)
 
         if command.parent:
-            embed.add_field(name=trn['cmd_parent'], value=f'{self.clean_prefix}`{command.parent.name}`', inline=False)
+            embed.add_field(name=ctx.t('cmd_parent'), value=f'{self.clean_prefix}`{command.parent.name}`', inline=False)
 
-        if cmd_json.get("perms"):
-            with open(f'translation/{await ctx.lang()}/perms.json') as prms:
-                prms = load(prms)
-                embed.add_field(name=trn['cmd_perms'], value=', '.join([prms[c].title() for c in cmd_json["perms"]]))
+        if ctx.t(f'{cmd_name}.perms', _nc=1) != f'{cmd_name}.perms':
+            embed.add_field(name=ctx.t('cmd_perms'), value=', '.join([ctx.t(c, _f='perms').title() for c in ctx.t(f'{cmd_name}.perms', _nc=1)]))
         return await ctx.send(embed=embed)
     
     async def send_group_help(self, group):
         ctx = self.context
-        trn = await ctx.trn
-        with open(f'translation/{await ctx.lang()}/commands.json', encoding='utf-8') as _trn:
-            _trn = load(_trn)
-            cmd_json = _trn[group.name]
+        cmd_name = group.name 
 
         embed = await ctx.bot.embed(ctx)
-        embed.title = trn['cmd_title'].format(cmd=group.name.title())
-        embed.add_field(name=trn['cmd_usage'], value=cmd_json["usage"].format(self.clean_prefix), inline=False)
-        embed.add_field(name=trn['cmd_desc'], value=cmd_json["description"], inline=False)
+        embed.title = ctx.t('cmd_title', cmd=group.name.title())
+        embed.add_field(name=ctx.t('cmd_usage'), value=ctx.t(f'{cmd_name}.usage', _nc=1).format(self.clean_prefix), inline=False)
+        embed.add_field(name=ctx.t('cmd_desc'), value=ctx.t(f'{cmd_name}.description', _nc=1), inline=False)
         if group.aliases:
-            embed.add_field(name=trn['cmd_aliases'], value=', '.join(group.aliases), inline=False)
+            embed.add_field(name=ctx.t('cmd_aliases'), value=', '.join(group.aliases), inline=False)
 
-        if cmd_json.get("perms"):
-            with open(f'translation/{await ctx.lang()}/perms.json') as prms:
-                prms = load(prms)
-                embed.add_field(name=trn['cmd_perms'], value=', '.join([prms[c].title() for c in cmd_json["perms"]]))
-
+        if ctx.t(f'{cmd_name}.perms', _nc=1) != f'{cmd_name}.perms':
+            embed.add_field(name=ctx.t('cmd_perms'), value=', '.join([ctx.t(c, _f='perms').title() for c in ctx.t(f'{cmd_name}.perms', _nc=1) ]))
+        
         if group.commands:
             sub = ''
             for cmd in group.commands:
-                _sub_jsn = _trn[cmd.qualified_name.replace(' ', '.')]
-                sub += f'{_sub_jsn["usage"].format(self.clean_prefix)} — {_sub_jsn["description"]}\n\n'
-            embed.add_field(name=trn['group_sub'], value=sub)
+                _sub_name = cmd.qualified_name
+                sub += f'{ctx.t(f"{_sub_name}.usage", _nc=1).format(self.clean_prefix)} — {ctx.t(f"{_sub_name}.description", _nc=1)}\n\n'
+            embed.add_field(name=ctx.t('group_sub'), value=sub)
 
         return await ctx.send(embed=embed)

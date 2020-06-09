@@ -32,7 +32,7 @@
     },
 
     "help": {
-        "usage": "{}help (comando|cog) (subcomando)",
+        "usage": "{}help (comando) (subcomando)",
         "description": "Exibe a lista de comandos ou informações sobre um comando.",
         "texts": {
             "notfound": "Nenhum comando chamado `{cmd}`!",
@@ -261,7 +261,7 @@
         }
     },
 
-    "qrcode.read": {
+    "qrcode read": {
         "usage": "{}qrcode read <url/imagem>",
         "description": "Lê um código QR.",
         "texts": {
@@ -344,7 +344,7 @@
         }
     },
 
-    "config.prefix": {
+    "config prefix": {
         "usage": "{}config prefix [novo-prefixo]",
         "description": "Altera o prefixo do servidor.",
         "texts": {
@@ -358,7 +358,7 @@
         }
     },
 
-    "config.lang": {
+    "config lang": {
         "usage": "{}config lang (linguagem)",
         "description": "Muda a linguagem do servidor.",
         "texts": {
@@ -372,7 +372,7 @@
         }
     },
 
-    "config.reports": {
+    "config reports": {
         "usage": "{}config reports [canal]",
         "description": "Altera o canal de reportes.",
         "texts": {

@@ -31,7 +31,8 @@ class DiscordEvents(commands.Cog, name=''):
                 await after.remove_reaction('❌', bctx.me)
         except:
             pass
-        await self.bot.process_commands(after)
+        ctx = await self.bot.get_context(after, cls=SoraContext)
+        await self.bot.invoke(ctx)
 
 def setup(bot):
     bot.add_cog(DiscordEvents(bot))
