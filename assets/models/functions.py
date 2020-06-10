@@ -5,17 +5,13 @@ def utc_to_timezone(date, timezone):
     return utc.localize(date, is_dst=None).astimezone(timezone)
 
 def sec2hours(secs):
-    anos = secs // 32140800
-    secs = secs - (anos*32140800)
-    meses = secs // 2678400
-    secs = secs - (meses*2678400)
-    dias = secs // 86400
-    secs = secs - (dias*86400)
-    horas = secs // 3600
-    secs = secs - (horas*3600)
-    minutos = secs // 60
-    secs = secs - (minutos*60)
-    return (int(anos), int(meses), int(dias), int(horas), int(minutos), int(secs))
+    secs = int(secs)
+    anos, meses = divmod(secs, 32140800)
+    meses, dias = divmod(meses, 2678400)
+    dias, horas = divmod(dias, 86400)
+    horas, minutos = divmod(horas, 3600)
+    minutos, segundos = divmod(minutos, 60)    
+    return anos, meses, dias, horas, minutos, segundos
 
 def formatTime(lang, a=None, me=None, d=None, h=None, m=None, s=0):
     if isinstance(a, tuple) and s == 0:
