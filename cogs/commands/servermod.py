@@ -456,7 +456,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         embed = await self.bot.embed(ctx)
         embed.title = trn["emb_def_title"]
         embed.description = trn['emb_success'].format(lang=lang)
-
+        return await ctx.send(embed=embed)
 
     @commands.has_permissions(manage_guild=True)
     @config.command()
