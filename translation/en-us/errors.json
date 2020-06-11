@@ -32,8 +32,8 @@
         "Forbidden": {
             "emb_title": "No permission!",
             "emb_desc": "Sorry for reaching out to you in DM's, I don't like it either!\n\n",
-            "desc_perm": "But it seems that you didn't allow me to speak in {channel_mention}.\nPlease give me this permission or try me in another channel.",
-            "desc_noperm": "But I'm not allowed to speak in the channel. Ask a admin to allow me to speak in {channel_mention}! (or just run me in another channel)"
+            "desc_perm": "But it seems that you didn't allow me to speak in {channel_mention} (or I don't have the `Embed Links` permission).\nPlease give me this permission or try me in another channel.",
+            "desc_noperm": "But I'm not allowed to speak in the channel. Ask a admin to allow me to speak in {channel_mention} (or maybe I don't have the `Embed Links` permission)! (or just run me in another channel)"
         },
 
         "emb_desc": "An error ocurred while executing this command!"

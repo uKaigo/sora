@@ -29,7 +29,7 @@ class Database:
 
         # Checar se a guild existe:
         try:
-            self.get_guild(_id)
+            await self.get_guild(_id)
         except NotFound:
             pass
         else:
@@ -46,7 +46,7 @@ class Database:
         """Retorna um servidor da database, raise NotFound se não existir."""
 
         # Procurar no cache e depois na database.
-        guild = self._guilds_cache.get(_id, await self.guilds.find_one({'_id': str(_id)}))
+        guild = self._guilds_cache.get(str(_id), await self.guilds.find_one({'_id': str(_id)}))
         
         if not _id in self._guilds_cache:
             self._guilds_cache[_id] = guild
@@ -57,11 +57,12 @@ class Database:
 
     async def update_guild(self, content) -> None:
         """Atualiza as informações de um servidor."""
+        old_content = content.copy()
 
-        await self.guilds.update_one({'_id': str(content['id'])}, {'$set': content})
-        
-        if content['_id'] in self._guilds_cache: # Se estiver no cache, atualizar
-            self._guilds_cache['_id'].update(content)
+        await self.guilds.update_one({'_id': str(content.pop('_id'))}, {'$set': content})
+
+        if str(old_content['_id']) in self._guilds_cache: # Se estiver no cache, atualizar
+            self._guilds_cache[str(old_content['_id'])].update(content)
 
     async def delete_guild(self, _id) -> None:
         """Deleta um servidor da database"""

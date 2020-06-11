@@ -453,23 +453,17 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             return await ctx.send(embed=embed)
 
         g = await self.bot.db.update_guild({'_id': ctx.guild.id, 'lang': lang.strip()})
-        if g:
-            embed = await self.bot.embed(ctx)
-            embed.title = trn["emb_def_title"]
-            embed.description = trn['emb_success'].format(lang=lang)
+        embed = await self.bot.embed(ctx)
+        embed.title = trn["emb_def_title"]
+        embed.description = trn['emb_success'].format(lang=lang)
 
-        else:
-            embed = await self.bot.erEmbed(ctx)
-            embed.description = trn['error']
-
-        await ctx.send(embed=embed)
 
     @commands.has_permissions(manage_guild=True)
     @config.command()
     async def prefix(self, ctx, prefix):
         trn = await ctx.trn
-        _prefix = await ctx.guild_prefix
-        prefix = prefix.lower()
+        _prefix = await ctx.guild_prefix()
+        _prefix = _prefix.lower()
         if prefix == _prefix: 
             embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn['err_equal']
@@ -480,18 +474,15 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             return await ctx.send(embed=embed)
         if prefix == "reset":
             prefix = None
-        g = await self.bot.db.update_guild({"_id": ctx.guild.id, "prefix": prefix})
-        if g:
-            embed = await self.bot.embed(ctx)
-            embed.title = trn['emb_success']
-            if prefix == None:
-                prefix = trn['none']
-            embed.description = trn['emb_prefix'].format(prefix = prefix)
-            return await ctx.send(embed=embed)
-        else:
-            embed = await self.bot.erEmbed(ctx)
-            embed.description = trn['error']
-            return await ctx.send(embed=embed)
+        
+        await self.bot.db.update_guild({"_id": ctx.guild.id, "prefix": prefix}) 
+
+        embed = await self.bot.embed(ctx)
+        embed.title = trn['emb_success']
+        if prefix == None:
+            prefix = trn['none']
+        embed.description = trn['emb_prefix'].format(prefix = prefix)
+        return await ctx.send(embed=embed)
 
     @commands.has_permissions(manage_guild=True)
     @config.command()

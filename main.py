@@ -23,8 +23,7 @@ async def get_prefix(bot, message):
     if message.guild:
         prefix = await bot.db.guild_get(message.guild.id, 'prefix') or config['prefix']
         return commands.when_mentioned_or(prefix)(bot, message)
-    else:
-        return commands.when_mentioned_or(config['prefix'])(bot, message)
+    return commands.when_mentioned_or(config['prefix'])(bot, message)
 
 
 class Sora(commands.AutoShardedBot):
@@ -83,7 +82,7 @@ class Sora(commands.AutoShardedBot):
 
     async def get_translation(self, ctx) -> str:
         lang = ctx.lang
-        command_name = ctx.command.qualified_name.replace(' ', '.')
+        command_name = ctx.command.qualified_name
         with open(f'translation/{lang}/commands.json', encoding='utf-8') as trns:
             cmd = json.load(trns).get(command_name)
         return cmd

@@ -49,7 +49,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
             host = f'Local `({ping}ms)`'
         embed.add_field(name=trn["emb_host"], value=host, inline=False)
 
-        embed.add_field(name=f'Links:', value=f'{trn["links_inv"]}(https://bit.ly/SoraBot)\n{trn["links_server"]}(https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
+        embed.add_field(name=f'Links:', value=f'{trn["links_inv"]}(https://is.gd/SoraBot)\n{trn["links_server"]}(https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
         
         embed.set_footer(text=trn["emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)

@@ -29,7 +29,7 @@ class SoraContext(commands.Context):
 
     async def guild_prefix(self) -> Optional[str]:
         """Retorna a prefixo do servidor"""
-        return await self.bot.db.get_prefix(self.guild.id)
+        return await self.bot.db.guild_get(self.guild.id, 'prefix')
 
     # Substituir o ctx.trn
     def t(self, key, **fmt) -> str:
