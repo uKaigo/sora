@@ -69,8 +69,8 @@ class Database:
 
         await self.guilds.delete_one({'_id': str(_id)})
 
-        if _id in self._guilds_cache:
-            del(self._guilds_cache[_id]) # Remover servidor do cache
+        if str(_id) in self._guilds_cache:
+            del(self._guilds_cache[str(_id)]) # Remover servidor do cache
     # --------------------------- #
     # -- Getters -- #
     async def guild_get(self, _id, attribute) -> Any:
