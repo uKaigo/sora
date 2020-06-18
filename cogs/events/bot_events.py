@@ -55,6 +55,7 @@ class BotEvents(commands.Cog):
         embed.description = f'Nome: `{guild.name}`\nId: `{guild.id}`\nDono: `{guild.owner}`\nRegiao: `{guild.region}`'
         await log.send(embed=embed)
         await self.bot.db.new_guild(guild.id)
+        await self.bot.db.update_guild({'_id': guild.id, 'lang': {'brazil': 'pt-br'}.get(guild.region, 'en-us')})
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):

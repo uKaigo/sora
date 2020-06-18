@@ -18,9 +18,11 @@ class DiscordEvents(commands.Cog, name=''):
 
         # Interpretar comandos
         ctx = await self.bot.get_context(message, cls=SoraContext)
-        if message.content.replace('!', '') == ctx.me.mention:
-            ctx.prefix = ctx.me.mention
-            return await ctx.send_help()
+        if message.content.replace('!', '') == ctx.me.mention and ctx.guild:
+            ctx._lang = await self.bot.db.guild_get(message.guild.id, 'lang')
+            prefix = await self.bot.get_prefix(ctx.message)
+            await ctx.send(ctx.t('_mention', prefix=prefix[-1], _nc=1))
+
         await self.bot.invoke(ctx)
 
     @commands.Cog.listener()

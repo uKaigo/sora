@@ -1,7 +1,9 @@
 {
     "_err_no_title": "Erro!",
     "_executed_by": "Executado por {author_name}",
-    
+
+    "_mention": "Olá! Sou o Sora, meu prefixo nesse servidor é `{prefix}`.\nVocê pode ver meus comandos digitando `{prefix}ajuda`\nVocê pode mudar a linguagem executando `{prefix}config lang [linguagem]`",
+
     "_time": [
         "ano",
         "mês",

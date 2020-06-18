@@ -1,7 +1,9 @@
 {
     "_err_no_title": "Error!",
     "_executed_by": "Executed by {author_name}",
-    
+
+    "_mention": "Hi! I'm Sora, my prefix in this guild is `{prefix}`.\nYou can see my commands typing `{prefix}help`\nYou can change the language running `{prefix} config lang [lang]`",
+
     "_time": [
         "year",
         "month",
