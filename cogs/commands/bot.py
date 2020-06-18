@@ -30,16 +30,17 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         trn = await ctx.trn
         with open(f'translation/{ctx.lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
+        process = psutil.Process()
         embed = await self.bot.embed(ctx)
         embed.set_author(name=trn["emb_title"].format(bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
         embed.description = trn["emb_desc"].format(author_name=ctx.author.name)
         embed.add_field(name=trn["emb_version"], value=f'`{self.bot.__version__}`')
-        embed.add_field(name=trn["emb_uptime"], value=f'`{"".join(self.bot.formatTime(time_lang, self.bot.uptime))}`', inline=False)
+        embed.add_field(name=trn["emb_uptime"], value=f'`{self.bot.formatTime(time_lang, self.bot.uptime)}`', inline=False)
         embed.add_field(name=trn["emb_created"], value=f'`{ctx.me.created_at.strftime("%d/%m/%Y %H:%M")}`\n`({"".join(self.bot.getTime(time_lang, ctx.me.created_at))})`', inline=False)
         embed.add_field(name=f'Fui criado por:', value=f'`Kaigo#0833`\nEm: `discord.py {discord.__version__}`')
         mem = psutil.virtual_memory()
         embed.add_field(name=trn["emb_techinfo"], 
-        value=f'{trn["techinfo_cpu"]} `{psutil.cpu_percent()}%`\n{trn["techinfo_ram"]} `{mem.used//1024//1024/1024:.1f}/{mem.total//1024//1024/1024:.1f} GB`  ({mem.percent}%)\n{trn["techinfo_hd"]} `{psutil.disk_usage(".").percent}%`',
+        value=f'{trn["techinfo_cpu"]} `{process.cpu_percent()}%`\n{trn["techinfo_ram"]} `{process.memory_info().rss//1024//1024/1024*1000:.1f} MB/{mem.total//1024//1024/1024:.1f} GB`  ({process.memory_percent():.2f}%)\n{trn["techinfo_hd"]} `{psutil.disk_usage(".").percent}%`',
         inline=False)
 
         ping = f'{self.bot.latency*1000:.1f}'

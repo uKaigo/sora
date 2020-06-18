@@ -39,6 +39,7 @@ class Sora(commands.AutoShardedBot):
         # Variáveis internas
         self.__started_in__ = None
         self.is_heroku = is_heroku
+        self._translation_cache = dict()
         self.session = ClientSession(loop=self.loop)
         self.emotes = dict()
         self.config = config
@@ -48,9 +49,8 @@ class Sora(commands.AutoShardedBot):
         self.sec2hours = functions.sec2hours
         self.formatTime = functions.formatTime
         self.sec2time = functions.sec2time
-        self.getTime = functions.getTime
         self.paginator = functions.paginator
-        self.utc_to_timezone = functions.utc_to_timezone
+        self.getTime = functions.getTime
 
         # Versão do bot
         self.__version__ = self.config['version']

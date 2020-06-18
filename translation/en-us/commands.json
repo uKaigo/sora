@@ -2,17 +2,16 @@
     "_err_no_title": "Error!",
     "_executed_by": "Executed by {author_name}",
     
-    "_time": {
-        "year": "year",
-        "month": "month",
-        "months": "months",
-        "day": "day",
-        "hour": "hours",
-        "minute": "minutes",
-        "second": "seconds",
-        "and": "and"
-    },
-
+    "_time": [
+        "year",
+        "month",
+        "day",
+        "hour",
+        "minute",
+        "second",
+        "months",
+        " and "
+    ],
     "_cogs": {
         "_bot_cog": "Bot",
         "_disco_cog": "Discord",

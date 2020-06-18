@@ -8,7 +8,6 @@ import traceback
 class SoraContext(commands.Context):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.__translation_cache__ = {}
         self._lang = ''
 
     @property
@@ -53,15 +52,18 @@ class SoraContext(commands.Context):
 
         if _error and not _file: _file='errors'
 
-        if not _file:
-            _file = 'commands'
+        if not _file: _file = 'commands'
 
-        # Se o arquivo não estiver no cache (normal para primeira execução)
-        if not _file in self.__translation_cache__:
+        # Se o arquivo não estiver no cache do bot, ele salvará
+        if not _file in self.bot._translation_cache.get(self.lang, {}):    
+            # Salvar a linguagem antes de salvar o arquivo
+            if not self.lang in self.bot._translation_cache: 
+                self.bot._translation_cache[self.lang] = dict()
+            
             with open(f'translation/{self.lang}/{_file}.json', encoding='utf-8') as jsn:
-                self.__translation_cache__[_file] = load(jsn)
-        trn = self.__translation_cache__[_file]
-
+                self.bot._translation_cache[self.lang][_file] = load(jsn)
+        
+        trn = self.bot._translation_cache[self.lang][_file]
         if _file == 'commands' and not _nc:
             try:
                 # Já que o arquivo é um comando, ele pega sua tradução

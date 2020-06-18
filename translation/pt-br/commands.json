@@ -2,16 +2,16 @@
     "_err_no_title": "Erro!",
     "_executed_by": "Executado por {author_name}",
     
-    "_time": {
-        "year": "ano",
-        "month": "mês",
-        "months": "meses",
-        "day": "dia",
-        "hour": "hora",
-        "minute": "minuto",
-        "second": "segundo",
-        "and": "e"
-    },
+    "_time": [
+        "ano",
+        "mês",
+        "dia",
+        "hora",
+        "minuto",
+        "segundo",
+        "meses",
+        " e "
+    ],
 
     "_cogs": {
         "_bot_cog": "Bot",

@@ -463,8 +463,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     async def prefix(self, ctx, prefix):
         trn = await ctx.trn
         _prefix = await ctx.guild_prefix()
-        _prefix = _prefix.lower()
-        if prefix == _prefix: 
+        if _prefix and prefix.lower() == _prefix.lower(): 
             embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn['err_equal']
             return await ctx.send(embed=embed)
