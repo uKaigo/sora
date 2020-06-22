@@ -1,12 +1,13 @@
 import discord
+from os import getenv
 from itertools import cycle
 from discord.ext import tasks, commands
-
+from dbl import DBLClient
 
 class Tasks(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        
+        self.dblpy = DBLClient(self.bot, getenv('dbl_token'), autopost=True)
 
         # Todas as presenças e o número delas.
         self.presences = cycle([
@@ -15,7 +16,7 @@ class Tasks(commands.Cog):
             (1, 'prefixo so.') 
         ])
 
-        self.ch_presence.start()
+        self.ch_presence.start() # pylint: disable=no-member
 
     @tasks.loop(minutes=2)
     async def ch_presence(self):

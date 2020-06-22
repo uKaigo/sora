@@ -55,7 +55,8 @@ class BotEvents(commands.Cog):
         embed.description = f'Nome: `{guild.name}`\nId: `{guild.id}`\nDono: `{guild.owner}`\nRegiao: `{guild.region}`'
         await log.send(embed=embed)
         await self.bot.db.new_guild(guild.id)
-        await self.bot.db.update_guild({'_id': guild.id, 'lang': {'brazil': 'pt-br'}.get(guild.region, 'en-us')})
+        if guild.region == 'brazil':
+            await self.bot.db.update_guild({'_id': guild.id, 'lang': 'pt-br'})
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
@@ -65,6 +66,11 @@ class BotEvents(commands.Cog):
         embed.description = f'Nome: `{guild.name}`\nId: `{guild.id}`\nDono: `{guild.owner}`'
         await log.send(embed=embed)
         await self.bot.db.delete_guild(guild.id)
+
+    @commands.Cog.listener()
+    async def on_guild_post(self):
+        time = datetime.now().strftime('%H:%M:%S')
+        print(f'[TOP.GG] {time} - Guilds atualizados: {len(self.bot.guilds)}')
 
 def setup(bot):
     bot.add_cog(BotEvents(bot))
