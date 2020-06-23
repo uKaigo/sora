@@ -363,7 +363,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
     @commands.command(aliases=['votar'])
     @commands.has_permissions(manage_messages=True)
-    async def vote(self, ctx, canal:typing.Optional[discord.TextChannel], mensagem):
+    async def vote(self, ctx, canal:typing.Optional[discord.TextChannel], *, mensagem):
         trn = await ctx.trn
         canal = canal if canal else ctx.channel
         try:

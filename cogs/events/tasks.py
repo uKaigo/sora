@@ -7,7 +7,8 @@ from dbl import DBLClient
 class Tasks(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.dblpy = DBLClient(self.bot, getenv('dbl_token'), autopost=True)
+        if getenv('DYNO'):
+            self.dblpy = DBLClient(self.bot, getenv('dbl_token'), autopost=True)
 
         # Todas as presenças e o número delas.
         self.presences = cycle([
