@@ -382,6 +382,8 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         if '@everyone' in mensagem:
             mentions.append('@everyone')
+        elif '@here' in mensagem: # Everyone vale mais que o here, por isso o elif.
+            mentions.append('@here')
 
         msg = await canal.send(embed=embed, content=' '.join(mentions))
         if canal != ctx.channel:
