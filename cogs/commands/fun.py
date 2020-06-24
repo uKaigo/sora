@@ -11,14 +11,12 @@ class Fun(commands.Cog, name='_fun_cog'):
 
     @commands.command()
     async def meme(self, ctx):
-        trn = await ctx.trn
-
         embed = await self.bot.embed(ctx, invisible=True)
-        embed.description = trn['loading']
+        embed.description = ctx.t('loading')
         msg = await ctx.send(embed=embed)
         
-        server = {"pt-br": "br.", "en-us": ""}.get(ctx.lang, "")
-        
+        server = 'br.' if ctx.lang == 'pt-br' else ''
+
         res = await self.bot.session.get(f'https://{server}ifunny.co/page2')
         soup = BeautifulSoup(await res.text(), 'html.parser')
         
@@ -27,8 +25,8 @@ class Fun(commands.Cog, name='_fun_cog'):
         to_choice = [c.find('img') for c in to_choice]
 
         if not to_choice:
-            embed = await self.bot.erEmbed(ctx, trn['err_notfound'])
-            embed.description = trn['notfound_desc']
+            embed = await self.bot.erEmbed(ctx, ctx.t('err_notfound'))
+            embed.description = ctx.t('notfound_desc')
             return await msg.edit(embed=embed)
 
         meme = choice(to_choice)
