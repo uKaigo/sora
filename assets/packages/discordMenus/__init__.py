@@ -552,10 +552,13 @@ class Menu(metaclass=_MenuMeta):
             # Ensure the name exists for the cancellation handling
             tasks = []
             while self._running:
-                tasks = [
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check))
-                    # asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
-                ]
+                # O bot sempre vai olhar se a reação foi adicionada.
+                tasks = [asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check))]
+
+                # Mas se ele não puder remover essa reação, ele vai verificar se ela foi removida
+                if not self._can_remove_reactions:
+                    tasks.append(asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check)))    
+
                 done, pending = await asyncio.wait(tasks, timeout=self.timeout, return_when=asyncio.FIRST_COMPLETED)
                 for task in pending:
                     task.cancel()
@@ -568,7 +571,8 @@ class Menu(metaclass=_MenuMeta):
                 loop.create_task(self.update(payload))
 
                 try:
-                    await self.message.remove_reaction(payload.emoji, discord.Object(payload.user_id))
+                    if self._can_remove_reactions:
+                        await self.message.remove_reaction(payload.emoji, discord.Object(payload.user_id))
                 except Exception as e:
                     print(e)
     

@@ -93,13 +93,13 @@ class HelpPaginator(menus.baseMenu):
         self._pagec = page_trn
 
     @property
-    async def embed(self):
+    def embed(self):
         current = self.pages[self._index]
 
         cog = current[0]
         commands = current[1]
 
-        embed = await self.bot.embed(self.ctx)
+        embed = self.bot.embed(self.ctx)
         
         if self.should_add_reactions():
             embed.set_author(name=self._pagec.format(page=self._index+1, max=len(self.pages)))
