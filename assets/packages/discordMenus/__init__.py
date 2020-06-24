@@ -553,8 +553,8 @@ class Menu(metaclass=_MenuMeta):
             tasks = []
             while self._running:
                 tasks = [
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check)),
-                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
+                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check))
+                    # asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
                 ]
                 done, pending = await asyncio.wait(tasks, timeout=self.timeout, return_when=asyncio.FIRST_COMPLETED)
                 for task in pending:
@@ -567,10 +567,10 @@ class Menu(metaclass=_MenuMeta):
                 payload = done.pop().result()
                 loop.create_task(self.update(payload))
 
-                # try:
-                #     await self.message.remove_reaction(payload.emoji, discord.Object(payload.user_id))
-                # except Exception as e:
-                #     print(e)
+                try:
+                    await self.message.remove_reaction(payload.emoji, discord.Object(payload.user_id))
+                except Exception as e:
+                    print(e)
     
                 # NOTE: Removing the reaction ourselves after it's been done when
                 # mixed with the checks above is incredibly racy.

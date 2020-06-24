@@ -2,11 +2,19 @@ import discord
 from assets.models import functions
 from os import getenv, listdir
 import json
+import logging
 from aiohttp import ClientSession
 from assets.models.database import Database
 from typing import Optional
 from pathlib import Path
 from discord.ext import commands
+
+# Configurando o logger
+logger = logging.getLogger('discord')
+logger.setLevel(logging.DEBUG)
+handler = logging.FileHandler(filename='sorabot.log', encoding='utf-8', mode='w')
+handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+logger.addHandler(handler)
 
 is_heroku = bool(getenv('DYNO'))
 
