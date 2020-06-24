@@ -144,7 +144,7 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         jsn[member] = reason
         with open("assets/json/users_banned.json", "w") as f:
             f.write(json.dumps(jsn, indent=4))
-        embed = await self.bot.embed(ctx, invisible=True)
+        embed = self.bot.embed(ctx, invisible=True)
         embed.title = f'{member} foi banido!'
         await ctx.send(embed=embed)
 
@@ -156,7 +156,7 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
         del(jsn[member])
         with open("assets/json/users_banned.json", "w") as f:
             f.write(json.dumps(jsn, indent=4))
-        embed = await self.bot.embed(ctx, invisible=True)
+        embed = self.bot.embed(ctx, invisible=True)
         embed.title = f'{member} foi desbanido!'
         await ctx.send(embed=embed)
 

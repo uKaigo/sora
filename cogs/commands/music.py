@@ -17,10 +17,10 @@ class LyricsMenu(baseMenu):
         return self._obj
 
     @property 
-    async def embed(self):
+    def embed(self):
         msg = self.pages[self._index].strip()
         msg += '...' if not self._index == len(self.pages)-1 and self.should_add_reactions() else ''
-        embed = await self.bot.embed(self.ctx)
+        embed = self.bot.embed(self.ctx)
         embed.description = msg 
         embed.set_author(name=self._title, icon_url=self._song.image_url, url=self._song.url)
         return embed
@@ -41,7 +41,7 @@ class Music(commands.Cog, name='_music_cog'):
 
         op = [f'- **{i}**: [{s.artist} - {s}]({s.url})' for i, s in enumerate(_results, 1)]
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = 'Sora | Lyrics'
         embed.description = trn['opts_desc'] + '\n\n' + '\n'.join(op)
         embed.set_footer(text=trn['opts_footer'].format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)

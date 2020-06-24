@@ -19,7 +19,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
 
     @commands.command(aliases=['pong'])
     async def ping(self, ctx):
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_title')
         embed.description = ctx.t('emb_desc', ping=self.bot.latency*1000)
         await ctx.send(embed=embed)
@@ -29,7 +29,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         time_lang = ctx.t('_time', _nc=1)
 
         process = psutil.Process()
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.set_author(name=ctx.t('emb_title', bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
         embed.description = ctx.t('emb_desc', author_name=ctx.author.name)
         embed.add_field(name=ctx.t('emb_version'), value=f'`{self.bot.__version__}`')

@@ -28,7 +28,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.description = trn["err_or_desc"].format(high_low=high_low)
             return await ctx.send(embed=embed)
 
-        loading = await self.bot.embed(ctx, invisible=True)
+        loading = self.bot.embed(ctx, invisible=True)
         loading.title = trn['deleting']
         msg = await ctx.send(embed=loading)
         msg_ids = [msg.id, ctx.message.id]
@@ -38,7 +38,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             check = lambda m: m.author == membro and not m.id in msg_ids
 
         prg = await ctx.channel.purge(limit=quantidade+2, check=check)
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn['emb_title']
         embed.description = trn["emb_desc"].format(len_deleted=len(prg), of_member=f'{trn["of"] if membro else ""}{membro.mention if membro else ""}')
         await msg.edit(embed=embed, delete_after=15)
@@ -56,7 +56,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         trn = await ctx.trn
         reason = trn.get(reason, reason)
         async def ban_embed(member):
-            embed = await self.bot.embed(ctx)
+            embed = self.bot.embed(ctx)
             embed.title = trn["emb_title"].format(emote=self.bot.emotes["sora_ban"])
             embed.add_field(name=trn["emb_user"], value=trn["user_value"].format(member=str(member), member_id=member.id), inline=False)
             embed.add_field(name=trn["emb_staff"], value=trn["staff_value"].format(staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
@@ -96,7 +96,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
             member = discord.Object(id=membro)
 
-            loading = await self.bot.embed(ctx, invisible=True)
+            loading = self.bot.embed(ctx, invisible=True)
             loading.description = trn["banning"]
             m = await ctx.send(embed=loading)
 
@@ -143,7 +143,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         await membro.ban(reason=trn['ban_reason'].format(author=ctx.author, reason=reason))
         await membro.unban(reason=trn['ban_reason'].format(author=ctx.author, reason=reason))
         
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn['emb_title'].replace('ban', 'soft-ban').format(emote=self.bot.emotes['sora_ban'])
         embed.add_field(name=trn['emb_user'], value=trn['user_value'].format(member=str(membro), member_id=str(membro.id)), inline=False)
         embed.add_field(name=trn['emb_staff'], value=trn['staff_value'].format(staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
@@ -176,7 +176,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         await membro.kick(reason=trn['kick_reason'].format(author=str(ctx.author), reason=reason))
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn["emb_title"].format(emote=self.bot.emotes['sora_ban'])
         embed.description = trn["emb_desc"].format(member=membro, reason=reason)
         return await ctx.send(embed=embed)
@@ -197,7 +197,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         await ctx.channel.set_permissions(ctx.guild.default_role, reason=trn["reason"].format(author=str(ctx.author)), send_messages=unlock, read_messages=rms)
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn["emb_title"]
         embed.description = trn["emb_desc"].format(un=trn["_un"] if unlock is None else "", role=ctx.guild.default_role.name)
         await ctx.send(embed=embed)
@@ -232,7 +232,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         else:
             await ctx.channel.set_permissions(membro, reason=trn["reason"], send_messages=allow, read_messages=allow)
         
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn["emb_title"]
         embed.description = trn["emb_desc"].format(member_mention=membro.mention, no=no)
         await ctx.send(embed=embed)
@@ -374,7 +374,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         mentions = re.findall('<@(!|&)?([0-9]*)>', mensagem)
         mentions = [c for c in mentions if c]
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn["title"]
         embed.description = mensagem
         if mentions:
@@ -387,7 +387,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         msg = await canal.send(embed=embed, content=' '.join(mentions))
         if canal != ctx.channel:
-            embed = await self.bot.embed(ctx, invisible=True)
+            embed = self.bot.embed(ctx, invisible=True)
             embed.description = trn["sended"].format(channel_mention=canal.mention, msg_link=msg.jump_url)
             await ctx.send(embed=embed)
         await msg.add_reaction('✅')
@@ -400,7 +400,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             trn = await ctx.trn
             _guild = await self.bot.db.get_guild(ctx.guild.id)
 
-            embed = await self.bot.embed(ctx)
+            embed = self.bot.embed(ctx)
             embed.set_author(name=trn['emb_title'].format(guild_name=ctx.guild.name), icon_url=ctx.guild.icon_url)
 
 
@@ -436,7 +436,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             langs = lng.read().split('\n')
 
         if not lang:
-            embed = await self.bot.embed(ctx)
+            embed = self.bot.embed(ctx)
             embed.title = trn["emb_def_title"]
             langs = [f'`{c}`\n' for c in langs]
             embed.description = trn["emb_def_desc"].format(langs="".join(langs))
@@ -455,7 +455,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             return await ctx.send(embed=embed)
 
         g = await self.bot.db.update_guild({'_id': ctx.guild.id, 'lang': lang.strip()})
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn["emb_def_title"]
         embed.description = trn['emb_success'].format(lang=lang)
         return await ctx.send(embed=embed)
@@ -478,7 +478,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         
         await self.bot.db.update_guild({"_id": ctx.guild.id, "prefix": prefix}) 
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn['emb_success']
         if prefix == None:
             prefix = trn['none']
@@ -494,7 +494,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         if channel == "reset":
             if _guild.get('report'):
                 await self.bot.db.update_guild({"_id": ctx.guild.id, "report": None})
-            embed = await self.bot.embed(ctx)
+            embed = self.bot.embed(ctx)
             embed.title = trn['emb_disabled']
             embed.description = trn['disabled_desc']
             return await ctx.send(embed=embed)
@@ -520,7 +520,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         await self.bot.db.update_guild({"_id": ctx.guild.id, "report": _channel.id})
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.description = trn['emb_title'].format(channel=_channel.mention)
         return await ctx.send(embed=embed)
 

@@ -12,10 +12,10 @@ class OldMembersMenu(baseMenu):
         self.author_page = author_page
 
     @property 
-    async def embed(self):
+    def embed(self):
         msg = self._msg
         msg += self.pages[self._index]
-        embed = await self.bot.embed(self.ctx)
+        embed = self.bot.embed(self.ctx)
         embed.title = self._title.format(page=str(self._index+1), pages=str(len(self.pages)))
         embed.description = msg
         return embed
@@ -23,7 +23,7 @@ class OldMembersMenu(baseMenu):
     @menus.button('👨')
     async def ath_page(self, _):
         self._index = self.author_page
-        await self.message.edit(embed=await self.embed)
+        await self.message.edit(embed=self.embed)
 
 class Disco(commands.Cog, name='_disco_cog'):
     def __init__(self, bot):
@@ -32,7 +32,7 @@ class Disco(commands.Cog, name='_disco_cog'):
     @commands.command()
     async def avatar(self, ctx, membro:discord.Member=None):
         member = membro or ctx.author 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_title', member_name=member.name)
         if not membro:
             embed.description = ctx.t('emb_author', author_mention=member.mention)
@@ -46,7 +46,7 @@ class Disco(commands.Cog, name='_disco_cog'):
         membro = membro or ctx.author
         cor = membro.color if str(membro.color) != '#000000' else self.bot.color
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_title', member_name=membro.name)
         embed.color = cor
 

@@ -11,7 +11,7 @@ class Fun(commands.Cog, name='_fun_cog'):
 
     @commands.command()
     async def meme(self, ctx):
-        embed = await self.bot.embed(ctx, invisible=True)
+        embed = self.bot.embed(ctx, invisible=True)
         embed.description = ctx.t('loading')
         msg = await ctx.send(embed=embed)
         
@@ -31,7 +31,7 @@ class Fun(commands.Cog, name='_fun_cog'):
 
         meme = choice(to_choice)
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.set_image(url=meme.attrs['data-src'])
         await msg.edit(embed=embed)
 

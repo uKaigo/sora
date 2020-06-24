@@ -96,31 +96,21 @@ class Sora(commands.AutoShardedBot):
         return cmd
 
     # Embeds
-    async def embed(self, ctx, invisible=False) -> discord.Embed:
+    def embed(self, ctx, invisible=False) -> discord.Embed:
         # Cor do embed
         color = self.neutral if invisible else self.color
 
         emb = discord.Embed(color=color)
 
-        with open(f'translation/{ctx.lang}/commands.json', encoding='utf-8') as jsn:
-            trn = json.load(jsn)['_executed_by']
-        
-        emb.set_footer(text=trn.format(author_name=ctx.author.name),
+        emb.set_footer(text=ctx.t('_executed_by', author_name=ctx.author.name, _nc=1),
                        icon_url=ctx.author.avatar_url)
         
-        emb.timestamp = ctx.message.created_at
         return emb
 
-    async def erEmbed(self, ctx, error='_err_no_title') -> discord.Embed:
-        with open(f'translation/{ctx.lang}/commands.json', encoding='utf-8') as jsn:
-            loaded = json.load(jsn)
-            title = loaded.get(error, error)
-            trn = loaded['_executed_by']
-        
-        emb = discord.Embed(title=f':x: | {title}', color=self.ecolor)
-        emb.set_footer(text=trn.format(author_name=ctx.author.name),
+    def erEmbed(self, ctx, error='_err_no_title') -> discord.Embed:
+        emb = discord.Embed(title=f':x: | {error}', color=self.ecolor)
+        emb.set_footer(text=ctx.t('_executed_by', author_name=ctx.author.name, _nc=1),
                        icon_url=ctx.author.avatar_url)
-        emb.timestamp = ctx.message.created_at
         return emb
 
     async def on_message(self, message):
@@ -133,19 +123,6 @@ class Sora(commands.AutoShardedBot):
 
 
 bot = Sora()
-
-
-@bot.check
-async def blacklist(ctx):
-    with open('assets/json/users_banned.json') as bn:
-        jsn = json.load(bn)
-    if str(ctx.author.id) in jsn and not ctx.author.id == bot.owner_id:
-        reason = jsn[str(ctx.author.id)]
-        embed = await bot.embed(ctx, "Sem permissão!")
-        embed.description = f'Você foi banido de usar qualquer comando meu!\nMotivo: `{reason}`'
-        await ctx.send(embed=embed)
-        return False
-    return True
 
 @bot.before_invoke
 async def set_lang(ctx):

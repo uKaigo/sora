@@ -17,7 +17,7 @@ class Utils(commands.Cog, name='_utils_cog'):
     @commands.command(name='ascii')
     async def _ascii(self, ctx, fonte, *, texto):
         trn = await ctx.trn
-        embed = await self.bot.embed(ctx, invisible=True)
+        embed = self.bot.embed(ctx, invisible=True)
         embed.description = trn['loading']
         msg = await ctx.send(embed=embed)
         try:
@@ -44,14 +44,14 @@ class Utils(commands.Cog, name='_utils_cog'):
             except:
                 cor = 'cccccc'
 
-            embed = await self.bot.embed(ctx, invisible=True)
+            embed = self.bot.embed(ctx, invisible=True)
             embed.description = trn['loading']
 
             m = await ctx.send(embed=embed)
             
             qrcode = await self.bot.session.get(f'http://api.qrserver.com/v1/create-qr-code/?data={texto}&size=500x500&color={cor}&bgcolor=2F3136')
             
-            embed = await self.bot.embed(ctx)
+            embed = self.bot.embed(ctx)
             embed.title = trn['title']
             embed.set_image(url=qrcode.url)
 
@@ -70,7 +70,7 @@ class Utils(commands.Cog, name='_utils_cog'):
 
         response = await self.bot.session.get(f'http://api.qrserver.com/v1/read-qr-code/?fileurl={url}')
 
-        embed = await self.bot.embed(ctx, invisible=True)
+        embed = self.bot.embed(ctx, invisible=True)
         embed.description = trn["loading"]
         m = await ctx.send(embed=embed)
         try:
@@ -85,7 +85,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             embed.description = trn["invalid_desc"]
             return await m.edit(embed=embed)
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn['title']
         embed.add_field(name=trn["exit"], value=response["symbol"][0]["data"], inline=False)
         embed.add_field(name=trn["type"], value=response["type"])
@@ -107,7 +107,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             embed.description = trn["error"]
             return await ctx.send(embed=embed)
         
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn["title"]
         embed.set_image(url=barcode.url)
         await ctx.send(embed=embed)
@@ -116,7 +116,7 @@ class Utils(commands.Cog, name='_utils_cog'):
     async def skin(self, ctx, nick):
         trn = await ctx.trn
         nick = nick[:200]
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.description = f'[{trn["download"]}](https://minecraft.tools/download-skin/{nick}) | [{trn["model"]}](https://mc-heads.net/body/{nick})'
         embed.set_author(name=trn["emb_title"].format(nick=nick), icon_url=f'https://minotar.net/helm/{nick}/300.png')
         embed.set_image(url=f'https://mc-heads.net/body/{nick}')
@@ -143,7 +143,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         
         user = await user.json()
 
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.description = user.get("bio", discord.Embed.Empty)
 
         nome = user["name"] if user["name"] else user["login"]
@@ -192,7 +192,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn["invalid_desc"]
             return await ctx.send(embed=embed)  
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn["emb_title"].format(name=user.name)
         embed.description = f'{base_url.format(user.id, permissions)}\n\n{trn["perm_inv"] if invalid else ""}'
         await ctx.send(embed=embed)
@@ -200,7 +200,7 @@ class Utils(commands.Cog, name='_utils_cog'):
     @commands.command(name='ffz')
     async def _ffz(self, ctx, emote):
         trn = await ctx.trn
-        loading = await self.bot.embed(ctx, True)
+        loading = self.bot.embed(ctx, True)
         loading.description = trn['loading']
         m = await ctx.send(embed=loading)
         em = await ffz.search(emote)
@@ -209,7 +209,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             embed.description = trn['notfound_desc']
             embed.description += trn['notfound_ath'] if '.' in emote else ''
             return await m.edit(embed=embed)
-        embed = await self.bot.embed(ctx)
+        embed = self.bot.embed(ctx)
         embed.title = trn['emb_title'].format(name=em.name)
         embed.description = trn['emb_desc'].format(creator_name=em.creator.name, creator_twitch=em.creator.twitch, usage=em.usage, emote_link=em.url)
         embed.set_image(url=em.image)
@@ -231,7 +231,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             active = int(counters[0]-(counters[1]+counters[2]))
             active_fmt = f'{active:,}'.replace(',', '.')
 
-            embed = await self.bot.embed(ctx)
+            embed = self.bot.embed(ctx)
             embed.title = trn['emb_title']
 
             stats = trn['stats_cases'].format(cases=fmt_counters[0])
@@ -266,7 +266,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         if not channel:
             await invalid_report()
 
-        _rep = await self.bot.embed(ctx)
+        _rep = self.bot.embed(ctx)
         _rep.title = trn['rep_title']
         _rep.description = trn['rep_desc'].format(author_mention=ctx.author.mention, member_mention=member.mention, reason=msg)
         
