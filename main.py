@@ -108,7 +108,7 @@ class Sora(commands.AutoShardedBot):
         return emb
 
     def erEmbed(self, ctx, error='_err_no_title') -> discord.Embed:
-        emb = discord.Embed(title=f':x: | {error}', color=self.ecolor)
+        emb = discord.Embed(title=f':x: | {ctx.t(error, _nc=1)}', color=self.ecolor)
         emb.set_footer(text=ctx.t('_executed_by', author_name=ctx.author.name, _nc=1),
                        icon_url=ctx.author.avatar_url)
         return emb
