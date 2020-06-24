@@ -21,15 +21,14 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def clear(self, ctx, membro:typing.Optional[discord.Member], quantidade:typing.Optional[int]=100):
-        trn = await ctx.trn
         if quantidade not in range(2, 501): # Out Range (or)
-            high_low = trn["high_low"][quantidade<2]
-            embed = self.bot.erEmbed(ctx, trn["err_or_title"])
-            embed.description = trn["err_or_desc"].format(high_low=high_low)
+            high_low = ctx.t(f'high_low.{int(quantidade<2)}')
+            embed = self.bot.erEmbed(ctx, ctx.t('err_or_title'))
+            embed.description = ctx.t('err_or_desc', high_low=high_low)
             return await ctx.send(embed=embed)
 
         loading = self.bot.embed(ctx, invisible=True)
-        loading.title = trn['deleting']
+        loading.title = ctx.t('deleting')
         msg = await ctx.send(embed=loading)
         msg_ids = [msg.id, ctx.message.id]
         check = lambda m: m.id not in msg_ids
@@ -39,8 +38,8 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         prg = await ctx.channel.purge(limit=quantidade+2, check=check)
         embed = self.bot.embed(ctx)
-        embed.title = trn['emb_title']
-        embed.description = trn["emb_desc"].format(len_deleted=len(prg), of_member=f'{trn["of"] if membro else ""}{membro.mention if membro else ""}')
+        embed.title = ctx.t('emb_title')
+        embed.description = ctx.t('emb_desc', len_deleted=len(prg), of_member=f'{ctx.t("of") if membro else ""}{membro.mention if membro else ""}')
         await msg.edit(embed=embed, delete_after=15)
         await sleep(10)
         try:
@@ -52,62 +51,62 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.command(aliases=['banir'])
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def ban(self, ctx, membro:typing.Union[discord.Member, str], *, reason="_no_reason"):
+    async def ban(self, ctx, membro:typing.Union[discord.Member, str], *, reason='_no_reason'):
         trn = await ctx.trn
         reason = trn.get(reason, reason)
-        async def ban_embed(member):
+        def ban_embed(member):
             embed = self.bot.embed(ctx)
-            embed.title = trn["emb_title"].format(emote=self.bot.emotes["sora_ban"])
-            embed.add_field(name=trn["emb_user"], value=trn["user_value"].format(member=str(member), member_id=member.id), inline=False)
-            embed.add_field(name=trn["emb_staff"], value=trn["staff_value"].format(staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
-            embed.add_field(name=trn["emb_reason"], value=reason, inline=False)
-            embed.set_footer(text=trn["emb_footer"].format(member_name=member.name), icon_url=member.avatar_url)
+            embed.title = ctx.t('emb_title', emote=self.bot.emotes['sora_ban'])
+            embed.add_field(name=ctx.t('emb_user'), value=ctx.t('user_value', member=str(member), member_id=member.id), inline=False)
+            embed.add_field(name=ctx.t('emb_staff'), value=ctx.t('staff_value', staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
+            embed.add_field(name=ctx.t('emb_reason'), value=reason, inline=False)
+            embed.set_footer(text=ctx.t('emb_footer', member_name=member.name), icon_url=member.avatar_url)
             return embed
 
         if isinstance(membro, discord.Member):
-            erro = self.bot.erEmbed(ctx, trn['err_np_title'])
+            erro = self.bot.erEmbed(ctx, ctx.t('err_np_title'))
 
             if membro == ctx.author:
-                erro.description = trn['np_selfban'].format(member_name=membro.name)
+                erro.description = ctx.t('np_selfban', member_name=membro.name)
 
             elif membro == ctx.me:
-                erro.description = trn['np_botban'].format(member_name=membro.name)
+                erro.description = ctx.t('np_botban', member_name=membro.name)
 
             elif (membro.top_role.position >= ctx.author.top_role.position and not ctx.author == ctx.guild.owner) or membro == ctx.guild.owner:
-                erro.description = trn['np_ath_lower'].format(member_name=membro.name)
+                erro.description = ctx.t('np_ath_lower', member_name=membro.name)
 
             elif membro.top_role.position >= ctx.me.top_role.position:
-                erro.description = trn['np_bot_lower'].format(member_name=membro.name)
+                erro.description = ctx.t('np_bot_lower', member_name=membro.name)
 
             if not isinstance(erro.description, type(discord.Embed.Empty)):
                 return await ctx.send(embed=erro)
 
-            await membro.ban(reason=trn['ban_reason'].format(author=str(ctx.author), reason=reason))
+            await membro.ban(reason=ctx.t('ban_reason', author=str(ctx.author), reason=reason))
 
-            embed = await ban_embed(membro)
+            embed = ban_embed(membro)
 
             return await ctx.send(embed=embed)
 
         else:
             if not membro.isdigit():
-                embed = self.bot.erEmbed(ctx, trn["err_invalid"])
-                embed.description = trn["invalid_desc"]
+                embed = self.bot.erEmbed(ctx, ctx.t('err_invalid'))
+                embed.description = ctx.t('invalid_desc')
                 return await ctx.send(embed=embed)
 
             member = discord.Object(id=membro)
 
             loading = self.bot.embed(ctx, invisible=True)
-            loading.description = trn["banning"]
+            loading.description = ctx.t('banning')
             m = await ctx.send(embed=loading)
 
             try:
-                await ctx.guild.ban(member, reason=trn['ban_reason'].format(author=str(ctx.author), reason=reason))
+                await ctx.guild.ban(member, reason=ctx.t('ban_reason', author=str(ctx.author), reason=reason))
             except discord.NotFound:
-                embed = self.bot.erEmbed(ctx, trn["err_notfound"])
-                embed.description = trn["notfound_value"].format(id=member.id)
+                embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
+                embed.description = ctx.t('notfound_value', id=member.id)
                 return await m.edit(embed=embed)
 
-            loading.description = trn["member_banned"]
+            loading.description = ctx.t('member_banned')
             await m.edit(embed=loading)
 
             member = await self.bot.fetch_user(member.id)
