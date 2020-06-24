@@ -19,40 +19,38 @@ class BotCmds(commands.Cog, name='_bot_cog'):
 
     @commands.command(aliases=['pong'])
     async def ping(self, ctx):
-        trn = await ctx.trn
         embed = await self.bot.embed(ctx)
-        embed.title = trn["emb_title"]
-        embed.description = trn["emb_desc"].format(ping=self.bot.latency*1000)
+        embed.title = ctx.t('emb_title')
+        embed.description = ctx.t('emb_desc', ping=self.bot.latency*1000)
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['stats'])
     async def botstats(self, ctx):
-        trn = await ctx.trn
-        with open(f'translation/{ctx.lang}/commands.json', encoding='utf-8') as lng:
-            time_lang = load(lng)["_time"]
+        time_lang = ctx.t('_time', _nc=1)
+
         process = psutil.Process()
         embed = await self.bot.embed(ctx)
-        embed.set_author(name=trn["emb_title"].format(bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
-        embed.description = trn["emb_desc"].format(author_name=ctx.author.name)
-        embed.add_field(name=trn["emb_version"], value=f'`{self.bot.__version__}`')
-        embed.add_field(name=trn["emb_uptime"], value=f'`{self.bot.formatTime(time_lang, self.bot.uptime)}`', inline=False)
-        embed.add_field(name=trn["emb_created"], value=f'`{ctx.me.created_at.strftime("%d/%m/%Y %H:%M")}`\n`({"".join(self.bot.getTime(time_lang, ctx.me.created_at))})`', inline=False)
-        embed.add_field(name=f'Fui criado por:', value=f'`Kaigo#0833`\nEm: `discord.py {discord.__version__}`')
+        embed.set_author(name=ctx.t('emb_title', bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
+        embed.description = ctx.t('emb_desc', author_name=ctx.author.name)
+        embed.add_field(name=ctx.t('emb_version'), value=f'`{self.bot.__version__}`')
+        embed.add_field(name=ctx.t('emb_uptime'), value=f'`{self.bot.formatTime(time_lang, self.bot.uptime)}`', inline=False)
+        embed.add_field(name=ctx.t('emb_created'), value=f'`{ctx.me.created_at.strftime("%d/%m/%Y %H:%M")}`\n`({"".join(self.bot.getTime(time_lang, ctx.me.created_at))})`', inline=False)
+        embed.add_field(name=f'Fui criado por:', value=f'`Kaigo#0833`\n`discord.py {discord.__version__}`')
         mem = psutil.virtual_memory()
-        embed.add_field(name=trn["emb_techinfo"], 
-        value=f'{trn["techinfo_cpu"]} `{process.cpu_percent()}%`\n{trn["techinfo_ram"]} `{process.memory_info().rss//1024//1024/1024*1000:.1f} MB/{mem.total//1024//1024/1024:.1f} GB`  ({process.memory_percent():.2f}%)\n{trn["techinfo_hd"]} `{psutil.disk_usage(".").percent}%`',
+        embed.add_field(name=ctx.t('emb_techinfo'), 
+        value=f'{ctx.t("techinfo_cpu")} `{process.cpu_percent()}%`\n{ctx.t("techinfo_ram")} `{process.memory_info().rss//1024//1024/1024*1000:.1f} MB/{mem.total//1024//1024/1024:.1f} GB`  ({process.memory_percent():.2f}%)\n{ctx.t("techinfo_hd")} `{psutil.disk_usage(".").percent}%`',
         inline=False)
 
         ping = f'{self.bot.latency*1000:.1f}'
-        if getenv("DYNO"):
+        if self.bot.is_heroku:
             host = f'Heroku `({ping}ms)`'
         else:
             host = f'Local `({ping}ms)`'
-        embed.add_field(name=trn["emb_host"], value=host, inline=False)
+        embed.add_field(name=ctx.t('emb_host'), value=host, inline=False)
 
-        embed.add_field(name=f'Links:', value=f'{trn["links_inv"]}(https://is.gd/SoraBot)\n{trn["links_server"]}(https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
+        embed.add_field(name=f'Links:', value=f'{ctx.t("links_inv")}(https://is.gd/SoraBot)\n{ctx.t("links_server")}(https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
         
-        embed.set_footer(text=trn["emb_footer"].format(author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
+        embed.set_footer(text=ctx.t('emb_footer', author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
 def setup(bot): 
