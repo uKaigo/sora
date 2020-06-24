@@ -24,7 +24,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         trn = await ctx.trn
         if quantidade not in range(2, 501): # Out Range (or)
             high_low = trn["high_low"][quantidade<2]
-            embed = await self.bot.erEmbed(ctx, trn["err_or_title"])
+            embed = self.bot.erEmbed(ctx, trn["err_or_title"])
             embed.description = trn["err_or_desc"].format(high_low=high_low)
             return await ctx.send(embed=embed)
 
@@ -65,7 +65,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             return embed
 
         if isinstance(membro, discord.Member):
-            erro = await self.bot.erEmbed(ctx, trn['err_np_title'])
+            erro = self.bot.erEmbed(ctx, trn['err_np_title'])
 
             if membro == ctx.author:
                 erro.description = trn['np_selfban'].format(member_name=membro.name)
@@ -90,7 +90,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         else:
             if not membro.isdigit():
-                embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+                embed = self.bot.erEmbed(ctx, trn["err_invalid"])
                 embed.description = trn["invalid_desc"]
                 return await ctx.send(embed=embed)
 
@@ -103,7 +103,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             try:
                 await ctx.guild.ban(member, reason=trn['ban_reason'].format(author=str(ctx.author), reason=reason))
             except discord.NotFound:
-                embed = await self.bot.erEmbed(ctx, trn["err_notfound"])
+                embed = self.bot.erEmbed(ctx, trn["err_notfound"])
                 embed.description = trn["notfound_value"].format(id=member.id)
                 return await m.edit(embed=embed)
 
@@ -123,7 +123,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         ctx.command = self.bot.get_command('ban') # Perigoso, util para tradução
         reason = trn.get(reason, reason)
 
-        erro = await self.bot.erEmbed(ctx, trn['err_np_title'])
+        erro = self.bot.erEmbed(ctx, trn['err_np_title'])
 
         if membro == ctx.author:
             erro.description = trn['np_selfban']
@@ -156,7 +156,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.bot_has_permissions(kick_members=True)
     async def kick(self, ctx, membro:discord.Member, *, reason="_no_reason"):
         trn = await ctx.trn
-        erro = await self.bot.erEmbed(ctx, trn["err_np_title"])
+        erro = self.bot.erEmbed(ctx, trn["err_np_title"])
         reason = trn.get(reason, reason)
 
         if membro == ctx.author:
@@ -209,7 +209,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         trn = await ctx.trn
         no = ""
         allow = True
-        erro = await self.bot.erEmbed(ctx)
+        erro = self.bot.erEmbed(ctx)
         try:
             if membro in ctx.channel.members:
                 # Caso ele possa ver o canal, vai mudar para não ver
@@ -255,7 +255,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         try:
             jsn = loads(json)
         except Exception as e:
-            embed = await self.bot.erEmbed(ctx)
+            embed = self.bot.erEmbed(ctx)
             embed.description = trn["err_invalid"]
             return await ctx.send(embed=embed)
         msg = jsn.get('content', None)
@@ -267,7 +267,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         try:
             jsn_emb = jsn['embed']
         except:
-            error = await self.bot.erEmbed(ctx)
+            error = self.bot.erEmbed(ctx)
             error.description = trn["err_noemb"]
             return await ctx.send(embed=error)
     
@@ -443,14 +443,14 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             return await ctx.send(embed=embed)
 
         if lang not in langs:
-            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed = self.bot.erEmbed(ctx, trn["err_invalid"])
             langs = [f'`{c}`\n' for c in langs]
             embed.description = trn["invalid_desc"].format(langs='\n'.join(langs))
             return await ctx.send(embed=embed)
 
         actual = ctx.lang
         if lang == actual:
-            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed = self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn["actual_desc"]
             return await ctx.send(embed=embed)
 
@@ -466,11 +466,11 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         trn = await ctx.trn
         _prefix = await ctx.guild_prefix()
         if _prefix and prefix.lower() == _prefix.lower(): 
-            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed = self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn['err_equal']
             return await ctx.send(embed=embed)
         if len(prefix) > 5 and not prefix == "reset":
-            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed = self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn['err_five']
             return await ctx.send(embed=embed)
         if prefix == "reset":
@@ -502,11 +502,11 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         _channel = await commands.TextChannelConverter().convert(ctx, channel)
         
         if not _channel:
-            embed = await self.bot.erEmbed(ctx, trn['err_notfound'])
+            embed = self.bot.erEmbed(ctx, trn['err_notfound'])
             return await ctx.send(embed=embed)
 
         if _channel.id == _guild.get("report"):
-            embed = await self.bot.erEmbed(ctx, trn['err_invalid'])
+            embed = self.bot.erEmbed(ctx, trn['err_invalid'])
             embed.description = trn['err_equal']
             return await ctx.send(embed=embed)
 
@@ -514,7 +514,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             m = await _channel.send('.')
             await m.delete()
         except discord.HTTPException:
-            embed = await self.bot.erEmbed(ctx, trn['err_invalid'])
+            embed = self.bot.erEmbed(ctx, trn['err_invalid'])
             embed.description = trn['err_forbidden']
             return await ctx.send(embed=embed)
 

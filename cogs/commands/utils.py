@@ -23,13 +23,13 @@ class Utils(commands.Cog, name='_utils_cog'):
         try:
             fnt = pyfiglet.Figlet(font=fonte)
         except pyfiglet.FontNotFound:
-            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed = self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn["invalid_desc"]
             return await msg.edit(embed=embed)
 
         txt = fnt.renderText(texto)
         if len(txt) > 2000-10:
-            embed = await self.bot.erEmbed(ctx, trn["err_big"])
+            embed = self.bot.erEmbed(ctx, trn["err_big"])
             embed.description = trn["big_desc"]
             return await msg.edit(embed=embed)
 
@@ -60,7 +60,7 @@ class Utils(commands.Cog, name='_utils_cog'):
     @qrcode.command()
     async def read(self, ctx, *, url=None):
         trn = await ctx.trn
-        nofile = await self.bot.erEmbed(ctx, trn["err_nofile"])
+        nofile = self.bot.erEmbed(ctx, trn["err_nofile"])
         nofile.description = trn["nofile_desc"]
         if not url:
             try:
@@ -81,7 +81,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         except:
             return await m.edit(embed=nofile)
         if response["symbol"][0]["error"]:
-            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed = self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn["invalid_desc"]
             return await m.edit(embed=embed)
 
@@ -103,7 +103,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             pass
     
         if text.startswith("Error:"):
-            embed = await self.bot.erEmbed(ctx)
+            embed = self.bot.erEmbed(ctx)
             embed.description = trn["error"]
             return await ctx.send(embed=embed)
         
@@ -132,7 +132,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         user = await self.bot.session.get(base_url, auth=auth)
 
         if user.status != 200:
-            erro = await self.bot.erEmbed(ctx)
+            erro = self.bot.erEmbed(ctx)
             erro.description = trn[f'err_{user.status}']
            
             if user.status == 404:
@@ -189,7 +189,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         base_url = 'https://discordapp.com/oauth2/authorize?scope=bot&client_id={}&permissions={}'     
         user = await self.bot.fetch_user(id) 
         if not user.bot:
-            embed = await self.bot.erEmbed(ctx, trn["err_invalid"])
+            embed = self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn["invalid_desc"]
             return await ctx.send(embed=embed)  
         embed = self.bot.embed(ctx)
@@ -205,7 +205,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         m = await ctx.send(embed=loading)
         em = await ffz.search(emote)
         if not em:
-            embed = await self.bot.erEmbed(ctx, trn['err_notfound'])
+            embed = self.bot.erEmbed(ctx, trn['err_notfound'])
             embed.description = trn['notfound_desc']
             embed.description += trn['notfound_ath'] if '.' in emote else ''
             return await m.edit(embed=embed)

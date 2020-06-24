@@ -25,7 +25,7 @@ class Fun(commands.Cog, name='_fun_cog'):
         to_choice = [c.find('img') for c in to_choice]
 
         if not to_choice:
-            embed = await self.bot.erEmbed(ctx, ctx.t('err_notfound'))
+            embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
             embed.description = ctx.t('notfound_desc')
             return await msg.edit(embed=embed)
 

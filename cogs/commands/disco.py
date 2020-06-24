@@ -22,8 +22,9 @@ class OldMembersMenu(baseMenu):
 
     @menus.button('👨')
     async def ath_page(self, _):
-        self._index = self.author_page
-        await self.message.edit(embed=self.embed)
+        if self._index != self.author_page: # pylint: disable=access-member-before-definition
+            self._index = self.author_page
+            await self.message.edit(embed=self.embed)
 
 class Disco(commands.Cog, name='_disco_cog'):
     def __init__(self, bot):

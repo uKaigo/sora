@@ -2,6 +2,7 @@ from discord.ext import commands
 from json import load
 import itertools
 from typing import Optional
+from assets.packages import discordMenus as dMenus 
 from assets.models import menus
 import traceback
 
@@ -110,6 +111,18 @@ class HelpPaginator(menus.baseMenu):
             embed.add_field(name=cmd.format(self._prefix), value=description, inline=False)
         
         return embed
+
+    @dMenus.button('⏪', position=dMenus.First())
+    async def fast_back(self, _):
+        if self._index != 0:
+            self._index = 0
+            await self.message.edit(embed=self.embed)
+
+    @dMenus.button('⏩')
+    async def fast_foward(self, _):
+        if self._index != len(self.pages)-1: # pylint: disable=access-member-before-definition
+            self._index = len(self.pages)-1
+            await self.message.edit(embed=self.embed)
 
 class SoraHelp(commands.HelpCommand):
     def __init__(self):

@@ -32,19 +32,18 @@ class Music(commands.Cog, name='_music_cog'):
 
     @commands.command(aliases=['letra', 'l'])
     async def lyrics(self, ctx, *, query):
-        trn = await ctx.trn
         _results = await self.genius.search(query)
         if not _results:
-            embed = await self.bot.erEmbed(ctx, trn['err_notfound'])
-            embed.description = trn['notfound_desc']
+            embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
+            embed.description = ctx.t('notfound_desc')
             return await ctx.send(embed=embed)
 
         op = [f'- **{i}**: [{s.artist} - {s}]({s.url})' for i, s in enumerate(_results, 1)]
 
         embed = self.bot.embed(ctx)
         embed.title = 'Sora | Lyrics'
-        embed.description = trn['opts_desc'] + '\n\n' + '\n'.join(op)
-        embed.set_footer(text=trn['opts_footer'].format(author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
+        embed.description = ctx.t('opts_desc') + '\n\n' + '\n'.join(op)
+        embed.set_footer(text=ctx.t('opts_footer', author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
 
         msg = await ctx.send(embed=embed)
 
@@ -63,8 +62,8 @@ class Music(commands.Cog, name='_music_cog'):
         song = _results[int(res.content) - 1]
         lyrics = await self.genius.get_lyrics(song)
         if not lyrics:
-            embed = await self.bot.erEmbed(ctx, trn['err_nolyric'])
-            embed.description = trn['nolyric_desc']
+            embed = self.bot.erEmbed(ctx, ctx.t('err_nolyric'))
+            embed.description = ctx.t('nolyric_desc')
             return await msg.edit(embed=embed)
 
         pages = self.bot.paginator(lyrics, 2045)
