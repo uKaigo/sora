@@ -33,20 +33,6 @@ class BotEvents(commands.Cog):
 
         self.bot.__started_in__ = datetime.utcnow()
 
-        # Embaixo do uptime, pq isso não é necessário antes.
-        # Função para o so.version
-        git_name, git_token = getenv("git_token").split(":")
-        auth = aiohttp.BasicAuth(git_name, git_token, 'utf-8')
-        aux = "Merge"
-        index = 0
-        while aux.split(" ")[0] in ["Merge", "setver"]:
-            s = await self.bot.session.get("https://api.github.com/repos/uKaigo/Sora-Bot/commits", auth=auth)
-            j = await s.json()
-            j = j[index]
-            aux = j["commit"]["message"]
-            index += 1
-        self.bot.__commit__ = j
-
     @commands.Cog.listener()
     async def on_guild_join(self, guild):
         log = self.bot.get_guild(675889958262931488).get_channel(697240163050586203)

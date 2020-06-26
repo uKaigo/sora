@@ -2,6 +2,7 @@ import discord
 import pyfiglet
 import ffz
 import re
+from typing import Union
 from bs4 import BeautifulSoup
 from json import load
 from discord.ext import commands
@@ -157,12 +158,11 @@ class Utils(commands.Cog, name='_utils_cog'):
             embed.add_field(name=trn["emb_email"], value=user["email"])
 
         created = datetime.strptime(user["created_at"], "%Y-%m-%dT%H:%M:%SZ")
-        created_tz = self.bot.utc_to_timezone(created, self.bot.timezone)
         with open(f'translation/{ctx.lang}/commands.json', encoding='utf-8') as lng:
             time_lang = load(lng)["_time"]
-        embed.add_field(name=trn["emb_created"], value=trn["created_desc"].format(created=created_tz.strftime("%d/%m/%Y %H:%M GMT-03"), 
-        relative="".join(self.bot.getTime(time_lang, created)[0].replace(", ", "").replace("e ", ""))), 
-        inline=False)
+
+        embed.set_footer(text=f'Conta criada em:', icon_url=ctx.author.avatar_url)
+        embed.timestamp = created
 
         m = await ctx.send(embed=embed)
 
@@ -180,14 +180,16 @@ class Utils(commands.Cog, name='_utils_cog'):
         await m.edit(embed=embed)
 
     @commands.command()
-    async def addbot(self, ctx, id, permissions='8'):
+    async def addbot(self, ctx, _id: Union[discord.Member, discord.Object], permissions='8'):
+        _id = _id.id
         trn = await ctx.trn
         invalid = False
+
         if not permissions.isdigit():
             invalid = True
             permissions = '8'
         base_url = 'https://discordapp.com/oauth2/authorize?scope=bot&client_id={}&permissions={}'     
-        user = await self.bot.fetch_user(id) 
+        user = await self.bot.fetch_user(_id) 
         if not user.bot:
             embed = self.bot.erEmbed(ctx, trn["err_invalid"])
             embed.description = trn["invalid_desc"]

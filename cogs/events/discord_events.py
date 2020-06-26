@@ -2,11 +2,9 @@ import discord
 from assets.models.custom import SoraContext
 from discord.ext import commands
 
-
 class DiscordEvents(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        self.cooldown = []
     
     @commands.Cog.listener()
     async def on_message(self, message):

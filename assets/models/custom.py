@@ -182,7 +182,7 @@ class SoraHelp(commands.HelpCommand):
         ctx = self.context
         cmd_name = command.qualified_name
 
-        embed = await ctx.bot.embed(ctx)
+        embed = ctx.bot.embed(ctx)
         embed.title = ctx.t('cmd_title', cmd=command.name.title())
         embed.add_field(name=ctx.t('cmd_usage'), value=ctx.t(f'{cmd_name}.usage', _nc=1).format(self.clean_prefix), inline=False)
         embed.add_field(name=ctx.t('cmd_desc'), value=ctx.t(f'{cmd_name}.description', _nc=1), inline=False)
@@ -200,7 +200,7 @@ class SoraHelp(commands.HelpCommand):
         ctx = self.context
         cmd_name = group.name 
 
-        embed = await ctx.bot.embed(ctx)
+        embed = ctx.bot.embed(ctx)
         embed.title = ctx.t('cmd_title', cmd=group.name.title())
         embed.add_field(name=ctx.t('cmd_usage'), value=ctx.t(f'{cmd_name}.usage', _nc=1).format(self.clean_prefix), inline=False)
         embed.add_field(name=ctx.t('cmd_desc'), value=ctx.t(f'{cmd_name}.description', _nc=1), inline=False)

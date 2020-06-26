@@ -552,12 +552,10 @@ class Menu(metaclass=_MenuMeta):
             # Ensure the name exists for the cancellation handling
             tasks = []
             while self._running:
-                # O bot sempre vai olhar se a reação foi adicionada.
-                tasks = [asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check))]
-
-                # Mas se ele não puder remover essa reação, ele vai verificar se ela foi removida
-                if not self._can_remove_reactions:
-                    tasks.append(asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check)))    
+                tasks = [
+                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_add', check=self.reaction_check)),
+                    asyncio.ensure_future(self.bot.wait_for('raw_reaction_remove', check=self.reaction_check))
+                ]
 
                 done, pending = await asyncio.wait(tasks, timeout=self.timeout, return_when=asyncio.FIRST_COMPLETED)
                 for task in pending:
@@ -570,12 +568,6 @@ class Menu(metaclass=_MenuMeta):
                 payload = done.pop().result()
                 loop.create_task(self.update(payload))
 
-                try:
-                    if self._can_remove_reactions:
-                        await self.message.remove_reaction(payload.emoji, discord.Object(payload.user_id))
-                except Exception as e:
-                    print(e)
-    
                 # NOTE: Removing the reaction ourselves after it's been done when
                 # mixed with the checks above is incredibly racy.
                 # There is no guarantee when the MESSAGE_REACTION_REMOVE event will
