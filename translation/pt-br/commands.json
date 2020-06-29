@@ -73,7 +73,7 @@
             "links_inv": "Convite: [Clique]",
             "links_server": "Servidor: [Entre]",
             "emb_total": "Atualmente eu tenho:",
-            "total_value": "**{guilds}** servidores e **{users}** usuários",
+            "total_value": "**{guilds}** servidores e **{users}** usuários"
         }
     },
 
