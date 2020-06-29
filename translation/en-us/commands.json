@@ -279,7 +279,6 @@
         "usage": "{}qrcode [text] (#color:hex)",
         "description": "Generates a QR Code\n||If the text starts with `read`, put it in quotes.||",
         "texts": {
-            "loading": "Loading...",
             "title": "QR Code"
         }
     },
@@ -348,6 +347,7 @@
         "description": "Sends a bot invite.",
         "texts": {
             "err_invalid": "Invalid user!",
+            "not_member": "This is not a valid user.",
             "invalid_desc": "This user isn't a bot!",
             "emb_title": "Here's the invite of the bot {name}:",
             "perm_inv": "The permission you typed was invalid, using 8."
@@ -438,23 +438,6 @@
             "opts_footer": "{author_name} • Type \"exit\" to exit.",
             "err_nolyric": "Lyrics not found!",
             "nolyric_desc": "No lyrics were found for this song."
-        }
-    },
-
-    "ncov": {
-        "usage": "{}ncov",
-        "description": "Information about COVID-19",
-        "texts": {
-            "emb_title": "Info | New Corona Virus",
-            "emb_stats": "COVID-19 has:",
-            "stats_cases": "**{cases}** cases.\n",
-            "stats_deaths": "**{deaths}** deaths `({pcent:.2f}%)`\n",
-            "stats_recov": "**{recovered}** recovers `({pcent:.2f}%)`\n",
-            "stats_activ": "**{active}** active cases `({pcent:.2f}%)\n`",
-            "emb_p_stats": "Of the active cases:",
-            "p_stats_mild": "**{mild}** are in mild state `({pcent:.2f}%)`\n",
-            "p_stats_crit": "**{critical}** are in critical state `({pcent:.2f}%)`",
-            "emb_footer": "{author_name} • Updated:"
         }
     },
 

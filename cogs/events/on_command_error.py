@@ -47,7 +47,7 @@ class CommandError(commands.Cog):
 
                 embed = self.bot.erEmbed(ctx, ctx.t('memberNotFound.emb_title', _e=name))
                 embed.description = ctx.t('memberNotFound.emb_desc', _e=name, member=member)
-                await ctx.send(embed=embed)
+                return await ctx.send(embed=embed)
 
             embed = self.bot.erEmbed(ctx)
             embed.title = discord.Embed.Empty

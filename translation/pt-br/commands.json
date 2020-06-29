@@ -278,7 +278,6 @@
         "usage": "{}qrcode [texto] (#cor:hex)",
         "description": "Gera um código QR\n||Se o texto começar com `read`, coloque tudo entre aspas.||",
         "texts": {
-            "loading": "Carregando...",
             "title": "QR Code"
         }
     },
@@ -345,6 +344,7 @@
         "description": "Envia o convite de um bot.",
         "texts": {
             "err_invalid": "Usuário inválido!",
+            "not_member": "Isso não é um usuário válido.",
             "invalid_desc": "Este usuário não é um bot!",
             "emb_title": "Aqui está o convite de {name}:",
             "perm_inv": "A permissão que você digitou estava inválida, 8 no lugar."
@@ -432,23 +432,6 @@
             "opts_footer": "{author_name} • Digite \"exit\" para sair.",
             "err_nolyric": "Letra não encontrada!",
             "nolyric_desc": "Não foi encontrada uma letra para essa música."
-        }
-    },
-
-    "ncov": {
-        "usage": "{}ncov",
-        "description": "Informações sobre o COVID-19",
-        "texts": {
-            "emb_title": "Info | Novo Corona Virus",
-            "emb_stats": "O COVID-19 tem atualmente:",
-            "stats_cases": "**{cases}** casos.\n",
-            "stats_deaths": "**{deaths}** mortes `({pcent:.2f}%)`\n",
-            "stats_recov": "**{recovered}** recuperações `({pcent:.2f}%)`\n",
-            "stats_activ": "**{active}** casos ativos `({pcent:.2f}%)\n`",
-            "emb_p_stats": "Dos casos ativos:",
-            "p_stats_mild": "**{mild}** estão em estado leve `({pcent:.2f}%)`\n",
-            "p_stats_crit": "**{critical}** estão em estado crítico `({pcent:.2f}%)`",
-            "emb_footer": "{author_name} • Atualizado:"
         }
     },
 

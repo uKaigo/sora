@@ -40,9 +40,9 @@ class BotEvents(commands.Cog):
         embed.title = 'Novo servidor!'
         embed.description = f'Nome: `{guild.name}`\nId: `{guild.id}`\nDono: `{guild.owner}`\nRegiao: `{guild.region}`'
         await log.send(embed=embed)
-        await self.bot.db.new_guild(guild.id)
-        if guild.region == 'brazil':
-            await self.bot.db.update_guild({'_id': guild.id, 'lang': 'pt-br'})
+        await self.bot.db.guilds.new(guild.id)
+        if guild.region.value == 'brazil':
+            await self.bot.db.guilds.update({'_id': guild.id, 'lang': 'pt-br'})
 
     @commands.Cog.listener()
     async def on_guild_remove(self, guild):
@@ -51,7 +51,7 @@ class BotEvents(commands.Cog):
         embed.title = 'Removido de um servidor!'
         embed.description = f'Nome: `{guild.name}`\nId: `{guild.id}`\nDono: `{guild.owner}`'
         await log.send(embed=embed)
-        await self.bot.db.delete_guild(guild.id)
+        await self.bot.db.guilds.delete(guild.id)
 
     @commands.Cog.listener()
     async def on_guild_post(self):
