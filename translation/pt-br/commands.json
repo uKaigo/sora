@@ -149,10 +149,12 @@
             "_no_reason": "Não informado.",
             "ban_reason": "Por {author} | {reason}",
             "err_np_title": "Sem permissão.",
-            "np_selfban": "Você não pode se banir, bobinho!",
-            "np_botban": "Não posso me banir...",
-            "np_ath_lower": "Você não tem permissão para banir **{member_name}**! (Seu cargo é menor ou igual ao dele)",
-            "np_bot_lower": "Eu não tenho permissão para banir **{member_name}**! (Meu cargo é menor ou igual ao dele)",
+            "cant_ban": [
+                "Você não pode se banir.",
+                "Não posso me banir...",
+                "Você não tem permissão para banir **{member_name}**! (Seu cargo é menor ou igual ao dele)",
+                "Eu não tenho permissão para banir **{member_name}**! (Meu cargo é menor ou igual ao dele)"
+            ],
             "emb_title": "{emote} | Membro banido!",
             "emb_user": "Usuário:",
             "user_value": "Tag: {member}\nID: {member_id}",
@@ -186,10 +188,12 @@
             "_no_reason": "Não informado.",
             "kick_reason": "Por {author} | {reason}",
             "err_np_title": "Sem permissão.",
-            "np_selfkick": "Você não pode se expulsar, bobinho!",
-            "np_botkick": "Não posso me expulsar...",
-            "np_ath_lower": "Você não tem permissão para expulsar **{member_name}**! (Seu cargo é menor ou igual ao dele)",
-            "np_bot_lower": "Eu não tenho permissão para expulsar **{member_name}**! (Meu cargo é menor ou igual ao dele)",
+            "cant_kick": [
+                "Você não pode se expulsar, bobinho!",
+                "Não posso me expulsar...",
+                "Você não tem permissão para expulsar **{member_name}**! (Seu cargo é menor ou igual ao dele)",
+                "Eu não tenho permissão para expulsar **{member_name}**! (Meu cargo é menor ou igual ao dele)"
+            ],
             "emb_title": "{emote} | Kick",
             "emb_desc": "{member} foi banido por:\n`{reason}`"
         }
@@ -381,6 +385,7 @@
             "emb_disabled": "Reportes desativados!",
             "disabled_desc": "O comando de reporte foi desativado.",
             "err_notfound": "Canal não encontrado!",
+            "notfound_desc": "O canal \"{channel}\" não foi encontrado.",
             "err_invalid": "Canal inválido!",
             "err_equal": "Este canal já foi definido.",
             "err_forbidden": "Eu não consigo enviar mensagens nesse canal.",

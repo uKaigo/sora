@@ -56,7 +56,8 @@ class CommandError(commands.Cog):
             embed = self.bot.erEmbed(ctx)
             embed.title = discord.Embed.Empty
             embed.description = ctx.t('invalid', _e=name, arg=error.args[0])
-    
+            return await ctx.send(embed=embed)
+
         elif isinstance(error, commands.NoPrivateMessage):
             embed = self.bot.erEmbed(ctx, ctx.t('emb_title', _e=name))
             embed.description = ctx.t('emb_desc', _e=name)

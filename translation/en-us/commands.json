@@ -149,10 +149,12 @@
             "_no_reason": "Uninformed.",
             "ban_reason": "By {author} | {reason}",
             "err_np_title": "No permission.",
-            "np_selfban": "You can't ban yourself, silly!",
-            "np_botban": "I can't ban myself...",
-            "np_ath_lower": "You don't have permission to ban **{member_name}**! (Your role is lower or equal to him)",
-            "np_bot_lower": "I don't have permission to ban **{member_name}**! (My role is lower or equal to him)",
+            "cant_ban": [
+                "You can't ban yourself.",
+                "I can't ban me...",
+                "You don't have permission to ban **{member_name}**! (Your role is lower or equal to him)",
+                "I don't have permission to ban **{member_name}**! (My role is lower or equal to him)"
+            ],
             "emb_title": "{emote} | Member banned!",
             "emb_user": "User:",
             "user_value": "Tag: {member}\nID: {member_id}",
@@ -186,10 +188,12 @@
             "_no_reason": "Uninformed.",
             "kick_reason": "By {author} | {reason}",
             "err_np_title": "No permission.",
-            "np_selfkick": "You can't kick yourself, silly!",
-            "np_botkick": "I can't kick myself...",
-            "np_ath_lower": "You don't have permission to kick **{member_name}**! (Your role is lower or equal to him)",
-            "np_bot_lower": "I don't have permission to kick **{member_name}**! (My role is lower or equal to him)",
+            "cant_kick": [
+                "You can't kick yourself, silly!",
+                "I can't kick myself...",
+                "You don't have permission to kick **{member_name}**! (Your role is lower or equal to him)",
+                "I don't have permission to kick **{member_name}**! (My role is lower or equal to him)"
+            ],
             "emb_title": "{emote} | Kick",
             "emb_desc": "{member} was banned by:\n`{reason}`"
         }
@@ -385,6 +389,7 @@
             "emb_disabled": "Reports disabled!",
             "disabled_desc": "The report command is disabled.",
             "err_notfound": "Channel not found!",
+            "notfound_desc": "The channel \"{channel}\" wasn't found.",
             "err_invalid": "Invalid channel!",
             "err_equal": "This channel is already defined.",
             "err_forbidden": "I can't send messages in this channel.",

@@ -32,7 +32,7 @@ class SoraContext(commands.Context):
         return await self.bot.db.guild_get(self.guild.id, 'prefix')
 
     # Substituir o ctx.trn
-    def t(self, key, **fmt) -> str:
+    def t(self, key, *, _e=None, _f=None, _nc=False, **fmt) -> str:
         """Retorna uma tradução.
         
         Configurações:
@@ -47,9 +47,9 @@ class SoraContext(commands.Context):
         key = str(key)
 
         # Pega configurações
-        _error = fmt.pop('_e', None)
-        _file = fmt.pop('_f', None)
-        _nc = fmt.pop('_nc', False)
+        _error = _e
+        _file = _f
+        _nc = _nc
 
         if _error and not _file: _file='errors'
 
