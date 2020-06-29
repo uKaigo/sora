@@ -193,7 +193,7 @@ class SoraHelp(commands.HelpCommand):
             embed.add_field(name=ctx.t('cmd_parent'), value=f'{self.clean_prefix}`{command.parent.name}`', inline=False)
 
         if ctx.t(f'{cmd_name}.perms', _nc=1) != f'{cmd_name}.perms':
-            embed.add_field(name=ctx.t('cmd_perms'), value=', '.join([ctx.t(c, _f='perms').title() for c in ctx.t(f'{cmd_name}.perms', _nc=1)]))
+            embed.add_field(name=ctx.t('cmd_perms'), value=', '.join([ctx.t(c, _f='perms').title() for c in ctx.t(f'{cmd_name}.perms', _nc=1)]), inline=False)
         return await ctx.send(embed=embed)
     
     async def send_group_help(self, group):
@@ -208,13 +208,13 @@ class SoraHelp(commands.HelpCommand):
             embed.add_field(name=ctx.t('cmd_aliases'), value=', '.join(group.aliases), inline=False)
 
         if ctx.t(f'{cmd_name}.perms', _nc=1) != f'{cmd_name}.perms':
-            embed.add_field(name=ctx.t('cmd_perms'), value=', '.join([ctx.t(c, _f='perms').title() for c in ctx.t(f'{cmd_name}.perms', _nc=1) ]))
+            embed.add_field(name=ctx.t('cmd_perms'), value=', '.join([ctx.t(c, _f='perms').title() for c in ctx.t(f'{cmd_name}.perms', _nc=1) ]), inline=False)
         
         if group.commands:
             sub = ''
             for cmd in group.commands:
                 _sub_name = cmd.qualified_name
-                sub += f'{ctx.t(f"{_sub_name}.usage", _nc=1).format(self.clean_prefix)} — {ctx.t(f"{_sub_name}.description", _nc=1)}\n\n'
+                sub += f'**{ctx.t(f"{_sub_name}.usage", _nc=1).format(self.clean_prefix)}** — {ctx.t(f"{_sub_name}.description", _nc=1)}\n\n'
             embed.add_field(name=ctx.t('group_sub'), value=sub)
 
         return await ctx.send(embed=embed)

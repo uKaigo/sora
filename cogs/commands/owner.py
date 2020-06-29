@@ -23,6 +23,8 @@ class Owner(commands.Cog, command_attrs={"hidden": True}):
     @commands.command()
     async def reload(self, ctx):
         msg = await ctx.send('Recarregando todas as cogs, aguarde...')
+        # Recarregar o cache de traduções
+        self.bot._translation_cache = {} 
         error = []
         sccs = 0
 

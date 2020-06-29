@@ -133,7 +133,7 @@
         "description": "Limpa `x` mensagens do canal ou de um membro.",
         "perms": ["manage_messages"],
         "texts": {
-            "deleting": "Apagando...",
+            "deleting": "Deletando...",
             "high_low": ["alto", "baixo"],
             "err_or_title": "Quantidade inválida!",
             "err_or_desc": "Você digitou um número muito {high_low}, utilize números entre 2 e 500!",
@@ -141,6 +141,20 @@
             "emb_title": ":broom: | Purge",
             "emb_desc": "Foram deletadas {len_deleted} mensagens{of_member}."   
         } 
+    },
+
+    "clear match": {
+        "usage": "{}clear match [texto] (2-500)",
+        "description": "Limpa `x` mensagens que contenham o texto fornecido. Expressões regulares são suportadas.",
+        "perms": ["manage_messages"],
+        "texts": {
+            "deleting": "Deletando...", 
+            "high_low": ["alto", "baixo"],
+            "err_or_title": "Quantidade inválida!",
+            "err_or_desc": "Você digitou um número muito {high_low}, utilize números entre 2 e 500!",
+            "emb_title": ":broom: | Purge Match",
+            "emb_desc": "{len_deleted} mensagens foram deletadas procurando por `{pattern}`"
+        }
     },
 
     "ban": {

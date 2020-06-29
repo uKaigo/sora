@@ -32,10 +32,12 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             raise commands.NoPrivateMessage
         return True
 
-    @commands.command(aliases=['limpar'])
+    @commands.group(aliases=['limpar'])
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
     async def clear(self, ctx, membro:typing.Optional[discord.Member], quantidade:typing.Optional[int]=100):
+        if ctx.invoked_subcommand is not None:
+            return 
         if quantidade not in range(2, 501): # Out Range (or)
             high_low = ctx.t(f'high_low.{int(quantidade<2)}')
             embed = self.bot.erEmbed(ctx, ctx.t('err_or_title'))
@@ -46,6 +48,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         loading.title = ctx.t('deleting')
         msg = await ctx.send(embed=loading)
         msg_ids = [msg.id, ctx.message.id]
+        
         check = lambda m: m.id not in msg_ids
 
         if membro:
@@ -55,13 +58,44 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_title')
         embed.description = ctx.t('emb_desc', len_deleted=len(prg), of_member=f'{ctx.t("of") if membro else ""}{membro.mention if membro else ""}')
-        await msg.edit(embed=embed, delete_after=15)
+        await msg.edit(embed=embed)
         await sleep(10)
         try:
             await msg.delete()
+            await ctx.message.delete()
         except:
             pass
-        await ctx.message.delete()
+
+    @clear.command()
+    @commands.has_permissions(manage_messages=True)
+    @commands.bot_has_permissions(manage_messages=True)
+    async def match(self, ctx, pattern, limit:int=100):
+        if limit not in range(2, 501): # Out Range (or)
+            high_low = ctx.t(f'high_low.{int(limit<2)}')
+            embed = self.bot.erEmbed(ctx, ctx.t('err_or_title'))
+            embed.description = ctx.t('err_or_desc', high_low=high_low)
+            return await ctx.send(embed=embed)
+
+        loading = self.bot.embed(ctx, invisible=True)
+        loading.title = ctx.t('deleting')
+        msg = await ctx.send(embed=loading)
+        msg_ids = [msg.id, ctx.message.id]
+
+        check = lambda m: re.search(pattern, m.content) != None and m.id not in msg_ids 
+
+        prg = await ctx.channel.purge(limit=limit+2, check=check)
+
+        embed = self.bot.embed(ctx)
+        embed.title = ctx.t('emb_title')
+        embed.description = ctx.t('emb_desc', len_deleted=len(prg), pattern=pattern)
+        await msg.edit(embed=embed)
+        await sleep(10)
+        
+        try:
+            await msg.delete()
+            await ctx.message.delete()
+        except:
+            pass
 
     @commands.command(aliases=['banir'])
     @commands.has_permissions(ban_members=True)
