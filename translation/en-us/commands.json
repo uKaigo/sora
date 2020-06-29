@@ -63,6 +63,7 @@
             "emb_version": "I'm in the version:",
             "emb_uptime": "I'm online for:",
             "emb_created": "I was created:",
+            "emb_creator": "I was created by:", 
             "emb_techinfo": "Techincal information:",
             "techinfo_cpu": "CPU Percent:",
             "techinfo_ram": "Used ram:",
@@ -70,6 +71,8 @@
             "emb_host": "Host:",
             "links_inv": "Invite: [Click]",
             "links_server": "Server: [Join]",
+            "emb_total": "Actually I have:",
+            "total_value": "**{guilds}** guilds and **{users}** users",
             "emb_footer": "{author_name} • Type `{prefix}help`"
         }
     },

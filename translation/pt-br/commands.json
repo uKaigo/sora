@@ -64,6 +64,7 @@
             "emb_version": "Estou na versão",
             "emb_uptime": "Estou online por:",
             "emb_created": "Fui criado em:",
+            "emb_creator": "Fui criado por:",
             "emb_techinfo": "Informações técnicas:",
             "techinfo_cpu": "Porcentagem da CPU:",
             "techinfo_ram": "Ram usada:",
@@ -71,7 +72,8 @@
             "emb_host": "Hospedagem:",
             "links_inv": "Convite: [Clique]",
             "links_server": "Servidor: [Entre]",
-            "emb_footer": "{author_name} • Digite `{prefix}help`"
+            "emb_total": "Atualmente eu tenho:",
+            "total_value": "**{guilds}** servidores e **{users}** usuários",
         }
     },
 

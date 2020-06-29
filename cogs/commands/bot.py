@@ -35,7 +35,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
         embed.add_field(name=ctx.t('emb_version'), value=f'`{self.bot.__version__}`')
         embed.add_field(name=ctx.t('emb_uptime'), value=f'`{self.bot.formatTime(time_lang, self.bot.uptime)}`', inline=False)
         embed.add_field(name=ctx.t('emb_created'), value=f'`{ctx.me.created_at.strftime("%d/%m/%Y %H:%M")}`\n`({"".join(self.bot.getTime(time_lang, ctx.me.created_at))})`', inline=False)
-        embed.add_field(name=f'Fui criado por:', value=f'`Kaigo#0833`\n`discord.py {discord.__version__}`')
+        embed.add_field(name=ctx.t('emb_creator'), value=f'`Kaigo#0833`\n`discord.py {discord.__version__}`')
         mem = psutil.virtual_memory()
         embed.add_field(name=ctx.t('emb_techinfo'), 
         value=f'{ctx.t("techinfo_cpu")} `{process.cpu_percent()}%`\n{ctx.t("techinfo_ram")} `{process.memory_info().rss//1024//1024/1024*1000:.1f} MB/{mem.total//1024//1024/1024:.1f} GB`  ({process.memory_percent():.2f}%)\n{ctx.t("techinfo_hd")} `{psutil.disk_usage(".").percent}%`',
@@ -48,9 +48,10 @@ class BotCmds(commands.Cog, name='_bot_cog'):
             host = f'Local `({ping}ms)`'
         embed.add_field(name=ctx.t('emb_host'), value=host, inline=False)
 
+        embed.add_field(name=ctx.t('emb_total'), value=ctx.t('total_value', guilds=len(self.bot.guilds), users=len(set(self.bot.users))))
+        
         embed.add_field(name=f'Links:', value=f'{ctx.t("links_inv")}(https://is.gd/SoraBot)\n{ctx.t("links_server")}(https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
         
-        embed.set_footer(text=ctx.t('emb_footer', author_name=ctx.author.name, prefix=self.bot.formatPrefix(ctx)), icon_url=ctx.author.avatar_url)
         await ctx.send(embed=embed)
 
 def setup(bot): 
