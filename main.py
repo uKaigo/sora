@@ -29,7 +29,7 @@ with open('assets/json/config.json') as cnf:
 
 async def get_prefix(bot, message):
     if message.guild:
-        prefix = await bot.db.guild_get(message.guild.id, 'prefix') or config['prefix']
+        prefix = await bot.db.guilds.get(message.guild.id, 'prefix') or config['prefix']
         return commands.when_mentioned_or(prefix)(bot, message)
     return commands.when_mentioned_or(config['prefix'])(bot, message)
 
@@ -86,7 +86,7 @@ class Sora(commands.AutoShardedBot):
     # Tradução
 
     async def get_lang(self, guild_id) -> str:
-        return await self.db.guild_get(guild_id, 'lang')
+        return await self.db.guilds.get(guild_id, 'lang')
 
     async def get_translation(self, ctx) -> str:
         lang = ctx.lang
@@ -123,13 +123,6 @@ class Sora(commands.AutoShardedBot):
 
 
 bot = Sora()
-
-@bot.before_invoke
-async def set_lang(ctx):
-    if not ctx.guild:
-        ctx._lang = 'en-us'
-    else:
-        ctx._lang = await bot.db.guild_get(ctx.guild.id, 'lang')
 
 if __name__ == '__main__':
     try:

@@ -1,4 +1,4 @@
-from motor.motor_asyncio import AsyncIOMotorClient
+from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from typing import Any
 
 # Exceptions
@@ -11,70 +11,80 @@ class AlreadyExists(DatabaseException):
 class NotFound(DatabaseException):
     pass
 
-class Database:
-    def __init__(self, uri, database):
-        # Conectar na database
-        self.__client__ = AsyncIOMotorClient(uri)
+class Collection:
+    # pylint: disable=too-few-public-methods
+    def __init__(self, collection: AsyncIOMotorCollection, template: dict):
+        self.collection = collection
+        self.template = template
+        self.__cache__ = dict()
 
-        # Caches
-        self._guilds_cache = dict()
+    async def find(self, _id: str) -> dict:
+        """Encontra um documento na collection."""
+        _id = str(_id)
+        
+        doc = self.__cache__.get(
+            _id, 
+            await self.collection.find_one({'_id': _id})
+        )
+        
+        if not doc:
+            raise NotFound(f'Documento "{_id}" não encontrado.')
+        if not _id in self.__cache__:
+            self.__cache__[_id] = doc 
 
-        # Variaveis
-        self.db = self.__client__[database]
-        self.guilds = self.db['Guilds']
+        return doc
 
-    # -- Manipulação de guilds -- #
-    async def new_guild(self, _id) -> dict:
-        """Cria um novo servidor na database"""
+    async def get(self, _id: str, key: str) -> Any:
+        doc = await self.find(_id)
+        return doc.get(key)
 
-        # Checar se a guild existe:
+    async def new(self, _id: str) -> None:
+        """Cria um novo documento na collection."""
+
         try:
-            await self.get_guild(_id)
+            await self.find(_id)
         except NotFound:
             pass
         else:
-            raise AlreadyExists(f'Guild {_id} já existe.')
+            raise AlreadyExists(f'Documento "{_id}" já existe.')
 
-        template = {'_id': str(_id), 'prefix': None, 'lang': 'en-us', 'report': None}
-        
-        await self.guilds.insert_one(template) # Criar guild
-        self._guilds_cache[_id] = template # Salvar no cache
-        
-        return template
+        template = self.template
+        template['_id'] = str(_id)
+        await self.collection.insert_one(template)
+        self.__cache__[_id] = template 
 
-    async def get_guild(self, _id) -> dict:
-        """Retorna um servidor da database, raise NotFound se não existir."""
+    async def update(self, content: dict) -> None:
+        """Atualiza um documento."""
+        if not content.get('_id'): 
+            raise ValueError('_id não foi definido.')
 
-        # Procurar no cache e depois na database.
-        guild = self._guilds_cache.get(str(_id), await self.guilds.find_one({'_id': str(_id)}))
-        
-        if not _id in self._guilds_cache:
-            self._guilds_cache[_id] = guild
-        
-        if not guild:
-            raise NotFound(f'Guild {_id} não encontrado.')
-        return guild
+        _id = str(content.pop('_id'))
 
-    async def update_guild(self, content) -> None:
-        """Atualiza as informações de um servidor."""
-        old_content = content.copy()
+        await self.collection.update_one(
+            {'_id': _id}, 
+            {'$set': content}
+        )
 
-        await self.guilds.update_one({'_id': str(content.pop('_id'))}, {'$set': content})
+        if _id in self.__cache__:
+            self.__cache__[_id].update(content)
 
-        if str(old_content['_id']) in self._guilds_cache: # Se estiver no cache, atualizar
-            self._guilds_cache[str(old_content['_id'])].update(content)
+    async def delete(self, _id: str) -> None:
+        """Remove um documento da collection."""
+        _id = str(_id)
 
-    async def delete_guild(self, _id) -> None:
-        """Deleta um servidor da database"""
+        await self.collection.delete_one({'_id': _id})
 
-        await self.guilds.delete_one({'_id': str(_id)})
+        if _id in self.__cache__:
+            del(self.__cache__[_id])
 
-        if str(_id) in self._guilds_cache:
-            del(self._guilds_cache[str(_id)]) # Remover servidor do cache
-    # --------------------------- #
-    # -- Getters -- #
-    async def guild_get(self, _id, attribute) -> Any:
-        """Pega um atributo de um servidor da database."""
-        g = await self.get_guild(str(_id))
-        return g.get(attribute, None)
-    # ------------- #
+
+class Database:
+    # pylint: disable=too-few-public-methods
+    def __init__(self, uri, database):
+        self.__client__ = AsyncIOMotorClient(uri)
+
+        self.db = self.__client__[database]
+        self.guilds = Collection(
+            self.db['Guilds'], 
+            {'prefix': None, 'lang': 'en-us', 'report': None}
+        )

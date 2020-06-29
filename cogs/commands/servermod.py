@@ -414,7 +414,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.has_permissions(manage_guild=True)
     async def config(self, ctx):
         if ctx.invoked_subcommand is None:
-            _guild = await self.bot.db.get_guild(ctx.guild.id)
+            _guild = await self.bot.db.guilds.find(ctx.guild.id)
 
             embed = self.bot.embed(ctx)
             embed.set_author(name=ctx.t('emb_title', guild_name=ctx.guild.name), icon_url=ctx.guild.icon_url)
@@ -435,7 +435,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             else:
                 rep_channel = ctx.guild.get_channel(_guild.get('report'))
                 if not rep_channel:
-                    await self.bot.db.update_guild({"_id": ctx.guild.id, 'report': None})
+                    await self.bot.db.guilds.update({'_id': ctx.guild.id, 'report': None})
                 else:
                     rep_em = self.bot.emotes['sora_on']
                     rep_channel = f'#{rep_channel.name}'
@@ -469,7 +469,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.description = ctx.t('actual_desc')
             return await ctx.send(embed=embed)
 
-        g = await self.bot.db.update_guild({'_id': ctx.guild.id, 'lang': lang.strip()})
+        g = await self.bot.db.guilds.update({'_id': ctx.guild.id, 'lang': lang.strip()})
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_def_title')
         embed.description = ctx.t('emb_success', lang=lang)
@@ -490,7 +490,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         if prefix in ('reset', self.bot.config['prefix']):
             prefix = None
         
-        await self.bot.db.update_guild({'_id': ctx.guild.id, 'prefix': prefix}) 
+        await self.bot.db.guilds.update({'_id': ctx.guild.id, 'prefix': prefix}) 
 
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_success')
@@ -502,11 +502,11 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.has_permissions(manage_guild=True)
     @config.command()
     async def reports(self, ctx, channel):
-        _guild = await self.bot.db.get_guild(ctx.guild.id)
+        _guild = await self.bot.db.guilds.find(ctx.guild.id)
         
         if channel == 'reset':
             if _guild.get('report'):
-                await self.bot.db.update_guild({'_id': ctx.guild.id, 'report': None})
+                await self.bot.db.guilds.update({'_id': ctx.guild.id, 'report': None})
             embed = self.bot.embed(ctx)
             embed.title = ctx.t('emb_disabled')
             embed.description = ctx.t('disabled_desc')
@@ -537,7 +537,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.description = ctx.t('err_forbidden')
             return await ctx.send(embed=embed)
 
-        await self.bot.db.update_guild({'_id': ctx.guild.id, 'report': _channel.id})
+        await self.bot.db.guilds.update({'_id': ctx.guild.id, 'report': _channel.id})
 
         embed = self.bot.embed(ctx)
         embed.description = ctx.t('emb_title', channel=_channel.mention)

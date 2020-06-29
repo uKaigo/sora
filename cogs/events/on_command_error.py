@@ -11,10 +11,6 @@ class CommandError(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error): #pylint: disable=too-many-branches, too-many-statements
         aliases = {'UnexpectedQuoteError': 'ExpectedCLosingQuoteError'}
-        if ctx.guild:
-            ctx._lang = await self.bot.db.guild_get(ctx.guild.id, 'lang')
-        else: 
-            ctx._lang = 'en-us'
 
         name = aliases.get(error.__class__.__name__, error.__class__.__name__)
 
