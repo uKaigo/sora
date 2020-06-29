@@ -67,8 +67,8 @@ class CommandError(commands.Cog):
             return
 
         else:    
+            name = 'noError'
             if hasattr(error, 'original'):
-                name = 'noError'
                 er_name = type(error.original).__name__
 
                 if isinstance(error.original, discord.Forbidden):
