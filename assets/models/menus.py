@@ -1,5 +1,7 @@
 from assets.packages import discordMenus as menus
 
+__all__ = ('baseMenu',)
+
 class baseMenu(menus.Menu):
     def __init__(self, pages, title, msg):
         super().__init__(clear_reactions_after=True, timeout=30)

@@ -1,6 +1,9 @@
 from datetime import datetime
 from re import sub
 
+__all__ = ('sec2hours', 'formatTime', 'sec2time', 'getTime', '__getpings__',
+           '__cantset__', '__cantdel__', '__getuptime__', 'paginator')
+
 def sec2hours(secs: int) -> tuple:
     secs = int(secs)
     years, months = divmod(secs, 32140800)

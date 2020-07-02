@@ -5,8 +5,8 @@ validators
 motor
 dnspython
 pytz
-requests
 beautifulsoup4
 dblpy
+jishaku
 -e git://github.com/DiscoMusic/genius-wrapper.git#egg=genius
 -e git://github.com/uKaigo/frankerfacez.git#egg=frankerfacez

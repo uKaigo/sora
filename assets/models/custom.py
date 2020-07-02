@@ -4,7 +4,10 @@ import itertools
 from typing import Optional
 from assets.packages import discordMenus as dMenus 
 from assets.models import menus
+from enum import IntFlag
 import traceback
+
+__all__ = ('SoraHelp', 'SoraContext')
 
 class SoraContext(commands.Context):
     def __init__(self, *args, **kwargs):
@@ -17,15 +20,6 @@ class SoraContext(commands.Context):
         if not hasattr(self, '_lang') or not self._lang:
             raise RuntimeError('Linguagem não definida.')
         return self._lang
-
-    # A ser descontinuado
-    @property
-    async def trn(self) -> Optional[dict]:
-        _trn_jsn = await self.bot.get_translation(self)
-        try:
-            return _trn_jsn['texts']
-        except TypeError:
-            return None
 
     async def guild_prefix(self) -> Optional[str]:
         """Retorna a prefixo do servidor"""
@@ -182,6 +176,9 @@ class SoraHelp(commands.HelpCommand):
         ctx = self.context
         cmd_name = command.qualified_name
 
+        if command.hidden: 
+            return await ctx.send(await self.command_not_found(cmd_name))
+
         embed = ctx.bot.embed(ctx)
         embed.title = ctx.t('cmd_title', cmd=command.name.title())
         embed.add_field(name=ctx.t('cmd_usage'), value=ctx.t(f'{cmd_name}.usage', _nc=1).format(self.clean_prefix), inline=False)
@@ -199,6 +196,9 @@ class SoraHelp(commands.HelpCommand):
     async def send_group_help(self, group):
         ctx = self.context
         cmd_name = group.name 
+
+        if group.hidden:
+            return await ctx.send(await self.command_not_found(cmd_name))
 
         embed = ctx.bot.embed(ctx)
         embed.title = ctx.t('cmd_title', cmd=group.name.title())

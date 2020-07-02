@@ -3,6 +3,7 @@ import typing
 from json import loads
 import validators
 import re
+from assets.models.converters import EmojiConverter
 from asyncio import sleep
 from inspect import Parameter
 from datetime import datetime
@@ -156,7 +157,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
     @commands.command()
     @commands.has_permissions(ban_members=True)
-    @commands.has_permissions(ban_members=True)
+    @commands.bot_has_permissions(ban_members=True)
     async def softban(self, ctx, membro:discord.Member, *, reason='_no_reason'):
         ctx.command = self.bot.get_command('ban') # Perigoso, util para tradução
         reason = ctx.t(reason)
@@ -381,34 +382,47 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
     @commands.command(aliases=['votar'])
     @commands.has_permissions(manage_messages=True)
-    async def vote(self, ctx, canal:typing.Optional[discord.TextChannel], *, mensagem):
-        canal = canal if canal else ctx.channel
+    async def poll(self, ctx, emojis: commands.Greedy[EmojiConverter], channel:typing.Optional[discord.TextChannel], *, message):
+        channel = channel if channel else ctx.channel
+
+        # PartialEmojis não podem ser adicionados pelo bot, por isso essa verificaçao
+        emojis = list(filter(lambda e: type(e) != discord.PartialEmoji, emojis))
+        if not emojis:
+            emojis = ['✅', '❎']
+        
+        if len(emojis) == 1:
+            emojis.append('❎')
+
         try:
             await ctx.message.delete()
         except:
             pass
 
-        mentions = re.findall('<@(!|&)?([0-9]+)>', mensagem)
+        mentions = re.findall('<@(!|&)?([0-9]+)>', message)
         mentions = [c for c in mentions if c]
 
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('title')
-        embed.description = mensagem
+        embed.description = message
         if mentions:
             mentions = [f'<@{c[0]}{c[1]}>' for c in mentions]
 
-        if '@everyone' in mensagem:
+        if '@everyone' in message:
             mentions.append('@everyone')
-        elif '@here' in mensagem: # Everyone vale mais que o here, por isso o elif.
+        elif '@here' in message: # Everyone vale mais que o here, por isso o elif.
             mentions.append('@here')
 
-        msg = await canal.send(embed=embed, content=' '.join(mentions))
-        if canal != ctx.channel:
+        msg = await channel.send(embed=embed, content=' '.join(mentions))
+        for emoji in emojis:
+            try:
+                await msg.add_reaction(emoji)
+            except discord.HTTPException:
+                pass
+
+        if channel != ctx.channel:
             embed = self.bot.embed(ctx, invisible=True)
-            embed.description = ctx.t('sended', channel_mention=canal.mention, msg_link=msg.jump_url)
+            embed.description = ctx.t('sended', channel_mention=channel.mention, msg_link=msg.jump_url)
             await ctx.send(embed=embed)
-        await msg.add_reaction('✅')
-        await msg.add_reaction('❎')
 
     @commands.group(invoke_without_command=True, case_insensitive=True)
     @commands.has_permissions(manage_guild=True)

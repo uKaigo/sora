@@ -12,7 +12,7 @@ from discord.ext import commands
 # Configurando o logger
 logger = logging.getLogger('discord')
 logger.setLevel(logging.WARNING)
-handler = logging.FileHandler(filename='sorabot.log', encoding='utf-8', mode='w')
+handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
 handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
 logger.addHandler(handler)
 
@@ -64,6 +64,7 @@ class Sora(commands.AutoShardedBot):
         self.__version__ = self.config['version']
 
         # Carregamento de cogs
+        self.load_extension('jishaku')
         for fldr in listdir('cogs'):
             for _file in listdir(f'cogs/{fldr}'):
                 if _file .startswith('_') or not _file.endswith('.py'):
@@ -123,6 +124,15 @@ class Sora(commands.AutoShardedBot):
 
 
 bot = Sora()
+
+@bot.before_invoke 
+async def set_lang(ctx):
+    if not ctx._lang:
+        if ctx.guild:
+            ctx._lang = await bot.db.guilds.get(ctx.guild.id, 'lang')
+        else:
+            ctx._lang = 'en-us'
+
 
 if __name__ == '__main__':
     try:

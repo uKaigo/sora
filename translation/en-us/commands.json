@@ -253,8 +253,8 @@
         }
     },
 
-    "vote": {
-        "usage": "{}vote (channel) [message]",
+    "poll": {
+        "usage": "{}poll (channel) (emojis) [message]",
         "description": "Make a pool in the channel.",
         "perms": ["manage_messages"],
         "texts": {

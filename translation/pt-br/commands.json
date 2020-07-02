@@ -252,8 +252,8 @@
         }
     },
 
-    "vote": {
-        "usage": "{}vote (canal) [mensagem]",
+    "poll": {
+        "usage": "{}poll (canal) (emojis) [mensagem]",
         "description": "Faz uma enquete no canal.",
         "perms": ["manage_messages"],
         "texts": {
@@ -382,7 +382,7 @@
 
     "config lang": {
         "usage": "{}config lang (linguagem)",
-        "description": "Muda a linguagem do servidor.",
+        "description": "Muda o idioma do servidor.",
         "texts": {
             "emb_def_title": "Config | Lang",
             "emb_def_desc": "Esta são as linguagens disponíveis:\n\n{langs}",

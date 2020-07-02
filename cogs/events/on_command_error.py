@@ -2,6 +2,7 @@ import discord
 import traceback
 import json
 import re
+from time import time 
 from discord.ext import commands
 
 class CommandError(commands.Cog):
@@ -10,11 +11,24 @@ class CommandError(commands.Cog):
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error): #pylint: disable=too-many-branches, too-many-statements
+        if not ctx.me.permissions_in(ctx.channel).send_messages:
+            return
+
         aliases = {'UnexpectedQuoteError': 'ExpectedCLosingQuoteError'}
 
         name = aliases.get(error.__class__.__name__, error.__class__.__name__)
+        original = error.__cause__ 
+        original_name = original.__class__.__name__
 
-        if isinstance(error, (commands.CommandNotFound, commands.NotOwner)):
+        if isinstance(original, discord.Forbidden): # pylint: disable=no-else-return
+            perms = ctx.me.permissions_in(ctx.channel)
+            if perms.embed_links:
+                return await ctx.send(ctx.t('no_perm', _e=original_name))
+            if not perms.embed_links: 
+                return await ctx.send(ctx.t('no_embed', _e=original_name))
+            return
+
+        elif isinstance(error, (commands.CommandNotFound, commands.NotOwner)):
             pass
 
         elif isinstance(error, commands.MissingRequiredArgument):
@@ -41,7 +55,7 @@ class CommandError(commands.Cog):
             await ctx.send(embed=embed)
 
         elif isinstance(error, commands.BadArgument):
-            if 'Member' in error.args[0] and 'not found' in error.args[0]:
+            if 'Member' in error.args[0]:
                 trn = ctx.t('memberNotFound.emb_title', _e=name)
                 member = error.args[0].split('"')[1]
 
@@ -63,31 +77,23 @@ class CommandError(commands.Cog):
             return
 
         else:    
-            name = 'noError'
-            if hasattr(error, 'original'):
-                er_name = type(error.original).__name__
-
-                if isinstance(error.original, discord.Forbidden):
-                    embed = self.bot.erEmbed(ctx, ctx.t(f'{er_name}.emb_title', _e=name))
-                    embed.description = ctx.t(f'{er_name}.emb_desc', _e=name)
-                    if ctx.author.permissions_in(ctx.channel).manage_channels:
-                        embed.description += ctx.t(f'{er_name}.desc_perm', _e=name, channel_mention=ctx.channel.mention)
-                    else:
-                        embed.description += ctx.t(f'{er_name}.desc_noperm', _e=name, channel_mention=ctx.channel.mention)
-                    return await ctx.author.send(embed=embed)
-
-            lines = traceback.format_exception(type(error), error, error.__traceback__, 2)
+            lines = traceback.format_exception(type(error), error, error.__traceback__, 1)
             trace_txt = ''.join(lines)
-            
+
+            code = hex(int(str(time()).replace('.', ''))).replace('0x', '')
+
+            await ctx.send(ctx.t('emb_desc', code=code, _e='noError'))
+
             ch = self.bot.get_channel(678064736545406996)
             embed = self.bot.erEmbed(ctx)
-            embed.description=f'Ocorreu um erro.\n\nServidor: {str(ctx.guild)} ({ctx.guild.id if ctx.guild else str(ctx.author)})\nMensagem: `{ctx.message.content}`\nAutor: {ctx.author}'
-            embed.add_field(name='Erro:', value=trace_txt[:1024])
+
+            embed.description = f'Ocorreu um erro no comando `{ctx.command.qualified_name}` executado por `{ctx.author}`\n\n'
+            embed.description += f'Invocação do comando: `{ctx.message.content}`\n\nCódigo: `{code}`\n\n'
+
+            embed.description += f'```{"".join(lines)}```'
+
             await ch.send(embed=embed)
             
-            embed = self.bot.erEmbed(ctx)
-            embed.description = ctx.t('emb_desc', _e=name)
-            await ctx.send(embed=embed)
 
 def setup(bot):
     bot.add_cog(CommandError(bot))

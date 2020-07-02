@@ -1,6 +1,9 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from typing import Any
 
+__all__ = ('DatabaseException', 'AlreadyExists', 'NotFound', 'Collection',
+           'Database')
+
 # Exceptions
 class DatabaseException(Exception):
     pass
