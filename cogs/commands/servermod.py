@@ -380,7 +380,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         if invalid:
             await ctx.send(ctx.t('invalid', invalids="; ".join(invalid), delete_after=10))
 
-    @commands.command(aliases=['votar'])
+    @commands.command(aliases=['vote'])
     @commands.has_permissions(manage_messages=True)
     async def poll(self, ctx, emojis: commands.Greedy[EmojiConverter], channel:typing.Optional[discord.TextChannel], *, message):
         channel = channel if channel else ctx.channel

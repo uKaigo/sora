@@ -254,7 +254,7 @@
     },
 
     "poll": {
-        "usage": "{}poll (channel) (emojis) [message]",
+        "usage": "{}poll (emojis) (channel) [message]",
         "description": "Make a pool in the channel.",
         "perms": ["manage_messages"],
         "texts": {

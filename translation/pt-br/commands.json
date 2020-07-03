@@ -253,7 +253,7 @@
     },
 
     "poll": {
-        "usage": "{}poll (canal) (emojis) [mensagem]",
+        "usage": "{}poll (emojis) (canal) [mensagem]",
         "description": "Faz uma enquete no canal.",
         "perms": ["manage_messages"],
         "texts": {
