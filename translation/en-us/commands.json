@@ -255,7 +255,7 @@
 
     "poll": {
         "usage": "{}poll (emojis) (channel) [message]",
-        "description": "Make a pool in the channel.",
+        "description": "Make a pool in the channel. Use \\ to separate the arguments, if you need.",
         "perms": ["manage_messages"],
         "texts": {
             "title": "Vote for the question bellow.",

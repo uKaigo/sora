@@ -254,7 +254,7 @@
 
     "poll": {
         "usage": "{}poll (emojis) (canal) [mensagem]",
-        "description": "Faz uma enquete no canal.",
+        "description": "Faz uma enquete no canal. Use \\ para separar os arguments, se você precisar.",
         "perms": ["manage_messages"],
         "texts": {
             "title": "Vote para a pergunta abaixo.",

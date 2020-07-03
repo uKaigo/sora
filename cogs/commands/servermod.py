@@ -386,12 +386,12 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         channel = channel if channel else ctx.channel
 
         # PartialEmojis não podem ser adicionados pelo bot, por isso essa verificaçao
-        emojis = list(filter(lambda e: type(e) != discord.PartialEmoji, emojis))
+        emojis = set(filter(lambda e: type(e) != discord.PartialEmoji, emojis))
         if not emojis:
-            emojis = ['✅', '❎']
+            emojis = {'✅', '❎'}
         
         if len(emojis) == 1:
-            emojis.append('❎')
+            emojis.add('❎')
 
         try:
             await ctx.message.delete()
@@ -403,7 +403,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('title')
-        embed.description = message
+        embed.description = message.strip('\\ ')
         if mentions:
             mentions = [f'<@{c[0]}{c[1]}>' for c in mentions]
 
