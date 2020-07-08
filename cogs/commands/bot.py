@@ -13,7 +13,6 @@ class BotCmds(commands.Cog, name='_bot_cog'):
     @commands.command(aliases=['pong'])
     async def ping(self, ctx):
         embed = self.bot.embed(ctx)
-        raise Exception('Teste')
         embed.title = ctx.t('emb_title')
         embed.description = ctx.t('emb_desc', ping=self.bot.latency*1000)
         await ctx.send(embed=embed)
