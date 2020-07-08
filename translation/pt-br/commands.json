@@ -285,7 +285,6 @@
         "texts": {
             "err_nofile": "Nenhum arquivo.",
             "nofile_desc": "Você não informou nenhuma imagem.",
-            "loading": "Carregando...",
             "err_invalid": "Imagem inválida!",
             "invalid_desc": "Esta imagem não pode ser baixada ou lida.",
             "title": "QR Code | Read",
@@ -410,7 +409,6 @@
         "usage": "{}ffz (criador.)[nome]",
         "description": "Pesquisa um emote do FrankerFaceZ",
         "texts": {
-            "loading": "Carregando...\nEsse comando pode demorar para executar.",
             "err_notfound": "Não encontrado!",
             "notfound_desc": "O emote não foi encontrado.\n",
             "notfound_ath": "Talvez você tenha digitado o emote/autor errado.",
@@ -436,7 +434,6 @@
         "usage": "{}meme",
         "description": "Escolhe um meme aleatório dos destaques (ifunny).",
         "texts": {
-            "loading": "Carregando...",
             "err_notfound": "Nada encontrado!",
             "notfound_desc": "Nenhum video ou imagem encontrado, provavelmente é erro no servidor."
         }

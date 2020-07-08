@@ -56,34 +56,33 @@ class Utils(commands.Cog, name='_utils_cog'):
     async def read(self, ctx, *, url=None):
         nofile = self.bot.erEmbed(ctx, ctx.t('err_nofile'))
         nofile.description = ctx.t('nofile_desc')
+
         if not url:
             try:
                 url = ctx.message.attachments[0].url
             except:
                 return await ctx.send(embed=nofile)
 
-        response = await self.bot.session.get(f'http://api.qrserver.com/v1/read-qr-code/?fileurl={url}')
+        async with ctx.typing():
+            response = await self.bot.session.get(f'http://api.qrserver.com/v1/read-qr-code/?fileurl={url}')
 
-        embed = self.bot.embed(ctx, invisible=True)
-        embed.description = ctx.t('loading')
-        m = await ctx.send(embed=embed)
-        try:
-            async with response:
-                response = await response.json()
-                response = response[0]
+            try:
+                async with response:
+                    response = await response.json()
+                    response = response[0]
+            except:
+                return await ctx.send(embed=nofile)
 
-        except:
-            return await m.edit(embed=nofile)
-        if response['symbol'][0]['error']:
-            embed = self.bot.erEmbed(ctx, ctx.t('err_invalid'))
-            embed.description = ctx.t('invalid_desc')
-            return await m.edit(embed=embed)
+            if response['symbol'][0]['error']:
+                embed = self.bot.erEmbed(ctx, ctx.t('err_invalid'))
+                embed.description = ctx.t('invalid_desc')
+                return await ctx.send(embed=embed)
 
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('title')
         embed.add_field(name=ctx.t('exit'), value=response['symbol'][0]['data'], inline=False)
         embed.add_field(name=ctx.t('type'), value=response['type'])
-        await m.edit(embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def barcode(self, ctx, *, texto):
@@ -199,21 +198,20 @@ class Utils(commands.Cog, name='_utils_cog'):
     @commands.command(name='ffz')
     async def _ffz(self, ctx, emote):
 
-        loading = self.bot.embed(ctx, True)
-        loading.description = ctx.t('loading')
-        m = await ctx.send(embed=loading)
-
-        em = await ffz.search(emote)
+        async with ctx.typing():
+            em = await ffz.search(emote)
+        
         if not em:
             embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
             embed.description = ctx.t('notfound_desc')
             embed.description += ctx.t('notfound_ath') if '.' in emote else ''
-            return await m.edit(embed=embed)
+            return await ctx.send(embed=embed)
+        
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_title', name=em.name)
         embed.description = ctx.t('emb_desc', creator_name=em.creator.name, creator_twitch=em.creator.twitch, usage=em.usage, emote_link=em.url)
         embed.set_image(url=em.image)
-        await m.edit(embed=embed)
+        await ctx.send(embed=embed)
 
     @commands.command()
     async def report(self, ctx, member:discord.Member, *, msg):
