@@ -1,13 +1,11 @@
-import discord
-from assets.models import functions
-from os import getenv, listdir
 import json
 import logging
+from os import getenv, listdir
 from aiohttp import ClientSession
-from assets.models.database import Database
-from typing import Optional
-from pathlib import Path
+from discord import Embed
 from discord.ext import commands
+from utils import functions
+from utils import Database
 
 # Configurando o logger
 logger = logging.getLogger('discord')
@@ -20,10 +18,11 @@ is_heroku = bool(getenv('DYNO'))
 
 if not is_heroku: # Carregamento do canary
     from dotenv import load_dotenv
-    env = Path('./assets/') / '.env'
+    from pathlib import Path
+    env = Path('.') / '.env'
     load_dotenv(dotenv_path=env)
 
-with open('assets/json/config.json') as cnf:
+with open('utils/config.json') as cnf:
     config = json.load(cnf)
     config['prefix'] = config['prefix'] if is_heroku else 'sc.'
 
@@ -97,19 +96,19 @@ class Sora(commands.AutoShardedBot):
         return cmd
 
     # Embeds
-    def embed(self, ctx, invisible=False) -> discord.Embed:
+    def embed(self, ctx, invisible=False) -> Embed:
         # Cor do embed
         color = self.neutral if invisible else self.color
 
-        emb = discord.Embed(color=color)
+        emb = Embed(color=color)
 
         emb.set_footer(text=ctx.t('_executed_by', author_name=ctx.author.name, _nc=1),
                        icon_url=ctx.author.avatar_url)
         
         return emb
 
-    def erEmbed(self, ctx, error='_err_no_title') -> discord.Embed:
-        emb = discord.Embed(title=f':x: | {ctx.t(error, _nc=1)}', color=self.ecolor)
+    def erEmbed(self, ctx, error='_err_no_title') -> Embed:
+        emb = Embed(title=f':x: | {ctx.t(error, _nc=1)}', color=self.ecolor)
         emb.set_footer(text=ctx.t('_executed_by', author_name=ctx.author.name, _nc=1),
                        icon_url=ctx.author.avatar_url)
         return emb

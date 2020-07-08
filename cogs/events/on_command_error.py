@@ -1,8 +1,7 @@
-import discord
 import traceback
-import json
-import re
 from time import time 
+from hashlib import shake_256
+import discord
 from discord.ext import commands
 
 class CommandError(commands.Cog):
@@ -10,7 +9,8 @@ class CommandError(commands.Cog):
         self.bot = bot
 
     @commands.Cog.listener()
-    async def on_command_error(self, ctx, error): #pylint: disable=too-many-branches, too-many-statements
+    async def on_command_error(self, ctx, error):
+        #pylint: disable=too-many-branches, too-many-statements
         if not ctx.me.permissions_in(ctx.channel).send_messages:
             return
 
@@ -80,9 +80,11 @@ class CommandError(commands.Cog):
             lines = traceback.format_exception(type(error), error, error.__traceback__, 1)
             trace_txt = ''.join(lines)
 
-            code = hex(int(str(time()).replace('.', ''))).replace('0x', '')
+            code = shake_256(str(time()).replace('.', '').encode()).hexdigest(13) #pylint: disable=too-many-function-args
 
-            await ctx.send(ctx.t('emb_desc', code=code, _e='noError'))
+            embed = self.bot.erEmbed(ctx)
+            embed.description = ctx.t('emb_desc', code=code, _e='noError')
+            await ctx.send(embed=embed)
 
             ch = self.bot.get_channel(678064736545406996)
             embed = self.bot.erEmbed(ctx)

@@ -1,6 +1,6 @@
 from discord.ext.commands import Converter 
 from discord.ext.commands import PartialEmojiConverter, BadArgument
-from discord.ext.commands import EmojiConverter as dEmojiConverter
+from discord.ext.commands import EmojiConverter as EmConvert
 from emoji import UNICODE_EMOJI
 
 __all__ = ('EmojiConverter',)
@@ -16,7 +16,7 @@ class EmojiConverter(Converter):
 
     async def convert(self, ctx, argument):
         try:
-            emoji = await dEmojiConverter().convert(ctx, argument)
+            emoji = await EmConvert().convert(ctx, argument)
         except BadArgument:
             pass
         else:

@@ -1,6 +1,6 @@
-import discord
 from os import getenv
 from itertools import cycle
+import discord
 from discord.ext import tasks, commands
 from dbl import DBLClient
 

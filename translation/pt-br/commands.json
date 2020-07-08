@@ -266,11 +266,8 @@
         "usage": "{}ascii [fonte] [texto]",
         "description": "Envia um texto ascii. ([Fontes](http://www.figlet.org/examples.html))\n",
         "texts": {
-            "loading": "Carregando...",
             "err_invalid": "Fonte inválida!",
-            "invalid_desc": "A fonte que você inseriu não existe.\nFontes encontradas em: http://www.figlet.org/examples.html",
-            "err_big": "Texto inválido.",
-            "big_desc": "O texto que você inseriu é muito grande para ser convertido para ascii."
+            "invalid_desc": "A fonte que você inseriu não existe.\nFontes encontradas em: http://www.figlet.org/examples.html"
         }
     },
 

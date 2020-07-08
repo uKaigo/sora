@@ -1,4 +1,4 @@
-from assets.packages import discordMenus as menus
+from . import discordMenus as menus
 
 __all__ = ('baseMenu',)
 

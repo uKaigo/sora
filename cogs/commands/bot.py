@@ -1,14 +1,7 @@
-import discord
-from datetime import datetime
-import inspect
 import psutil
-from assets.models.custom import SoraHelp
-from re import sub, split
-from os import getenv 
-from json import load 
+import discord
 from discord.ext import commands
-from assets.models import menus
-import itertools
+from utils import SoraHelp
 
 class BotCmds(commands.Cog, name='_bot_cog'):
     def __init__(self, bot):
@@ -20,6 +13,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
     @commands.command(aliases=['pong'])
     async def ping(self, ctx):
         embed = self.bot.embed(ctx)
+        raise Exception('Teste')
         embed.title = ctx.t('emb_title')
         embed.description = ctx.t('emb_desc', ping=self.bot.latency*1000)
         await ctx.send(embed=embed)

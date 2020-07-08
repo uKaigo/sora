@@ -1,7 +1,5 @@
-import discord
-from io import BytesIO
-from random import choice
 from bs4 import BeautifulSoup
+from random import choice
 from discord.ext import commands
 
 

@@ -1,9 +1,5 @@
-import discord
-import asyncio
-import aiohttp
-from re import search
 from datetime import datetime 
-from os import getenv
+import discord
 from discord.ext import commands
 
 

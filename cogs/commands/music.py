@@ -1,8 +1,7 @@
-import discord
-from genius import Client
 from os import getenv
-from assets.models.menus import baseMenu
 from asyncio import TimeoutError
+from genius import Client
+from utils import baseMenu
 from discord.ext import commands
 
 class LyricsMenu(baseMenu):
@@ -13,7 +12,7 @@ class LyricsMenu(baseMenu):
         super().__init__(pages, self._title, '')
     
     async def send_initial_message(self, ctx, channel):
-        await self._obj.edit(content='', embed=await self.embed)
+        await self._obj.edit(content='', embed=self.embed)
         return self._obj
 
     @property 

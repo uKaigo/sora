@@ -1,5 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from typing import Any
+# pylint: disable=relative-beyond-top-level
+from .db_operators import set_op, inc_op, min_op, max_op, mul_op, rename_op, unset_op, push_op
 
 __all__ = ('DatabaseException', 'AlreadyExists', 'NotFound', 'Collection',
            'Database')
@@ -56,8 +58,9 @@ class Collection:
         await self.collection.insert_one(template)
         self.__cache__[_id] = template 
 
-    async def update(self, content: dict) -> None:
+    async def update(self, content: dict, operator: str = 'set') -> None:
         """Atualiza um documento."""
+        operator = f'${operator}'
         if not content.get('_id'): 
             raise ValueError('_id não foi definido.')
 
@@ -65,11 +68,22 @@ class Collection:
 
         await self.collection.update_one(
             {'_id': _id}, 
-            {'$set': content}
+            {operator: content}
         )
 
         if _id in self.__cache__:
-            self.__cache__[_id].update(content)
+            operators = {
+                '$set': set_op,
+                '$inc': inc_op,
+                '$min': min_op,
+                '$max': max_op,
+                '$mul': mul_op,
+                '$rename': rename_op,
+                '$unset': unset_op,
+                '$push': push_op
+            }
+            
+            operators[operator](self.__cache__[_id], content)
 
     async def delete(self, _id: str) -> None:
         """Remove um documento da collection."""

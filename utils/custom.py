@@ -1,11 +1,11 @@
-from discord.ext import commands
-from json import load
 import itertools
-from typing import Optional
-from assets.packages import discordMenus as dMenus 
-from assets.models import menus
-from enum import IntFlag
 import traceback
+from json import load
+from typing import Optional
+from enum import IntFlag
+from . import discordMenus as dMenus
+from discord.ext import commands
+from .menu import baseMenu
 
 __all__ = ('SoraHelp', 'SoraContext')
 
@@ -25,7 +25,6 @@ class SoraContext(commands.Context):
         """Retorna a prefixo do servidor"""
         return await self.bot.db.guild_get(self.guild.id, 'prefix')
 
-    # Substituir o ctx.trn
     def t(self, key, *, _e=None, _f=None, _nc=False, **fmt) -> str:
         """Retorna uma tradução.
         
@@ -81,7 +80,7 @@ class SoraContext(commands.Context):
         except KeyError:
             return key
 
-class HelpPaginator(menus.baseMenu):
+class HelpPaginator(baseMenu):
     def __init__(self, page_trn, title, prefix, pages):
         super().__init__(pages, title, '')
         self._prefix = prefix
@@ -121,7 +120,6 @@ class HelpPaginator(menus.baseMenu):
 class SoraHelp(commands.HelpCommand):
     def __init__(self):
         super().__init__(command_attrs={'aliases': ['ajuda']})
-        self._help_index = -1
 
     async def on_help_command_error(self, ctx, error):
         lines = traceback.format_exception(type(error), error, error.__traceback__, 2)

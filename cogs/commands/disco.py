@@ -1,10 +1,7 @@
-import discord
-from typing import Optional
-from json import load
 from re import search
-from assets.models.menus import baseMenu
-from assets.packages import discordMenus as menus
+import discord
 from discord.ext import commands 
+from utils import menus, baseMenu
 
 class OldMembersMenu(baseMenu):
     def __init__(self, pages, title, msg, author_page):

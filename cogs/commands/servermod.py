@@ -1,12 +1,12 @@
-import discord
-import typing
-from json import loads
-import validators
-import re
-from assets.models.converters import EmojiConverter
 from asyncio import sleep
 from inspect import Parameter
+from utils import EmojiConverter
 from datetime import datetime
+from json import loads
+import typing
+import re
+import validators
+import discord
 from discord.ext import commands
 
 def can_modify(ctx, member):
@@ -151,7 +151,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             await m.edit(embed=loading)
 
             member = await self.bot.fetch_user(member.id)
-            embed = await ban_embed(member)
+            embed = ban_embed(member)
 
             await m.edit(embed=embed)
 

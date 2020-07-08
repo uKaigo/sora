@@ -267,11 +267,8 @@
         "usage": "{}ascii [font] [text]",
         "description": "Sends an ascii text. ([Fonts](http://www.figlet.org/examples.html))\n",
         "texts": {
-            "loading": "Loading...",
             "err_invalid": "Invalid font!",
-            "invalid_desc": "The font you typed didn't exist.\nFonts founded in: http://www.figlet.org/examples.html",
-            "err_big": "Invalid text.",
-            "big_desc": "The text you typed is too long to be converted to ascii."
+            "invalid_desc": "The font you typed didn't exist.\nFonts founded in: http://www.figlet.org/examples.html"
         }
     },
 

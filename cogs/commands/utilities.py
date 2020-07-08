@@ -1,15 +1,16 @@
-import discord
-import pyfiglet
-import ffz
 import re
 from typing import Union
-from bs4 import BeautifulSoup
 from json import load
-from discord.ext import commands
 from aiohttp import BasicAuth 
 from os import getenv
 from datetime import datetime
-from assets.models.menus import baseMenu  
+from io import BytesIO
+import pyfiglet
+import ffz
+import discord
+from bs4 import BeautifulSoup
+from discord.ext import commands
+from utils import baseMenu  
 
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
@@ -17,23 +18,25 @@ class Utils(commands.Cog, name='_utils_cog'):
 
     @commands.command(name='ascii')
     async def _ascii(self, ctx, fonte, *, texto):
-        embed = self.bot.embed(ctx, invisible=True)
-        embed.description = ctx.t('loading')
-        msg = await ctx.send(embed=embed)
+        await ctx.trigger_typing()
+
         try:
             fnt = pyfiglet.Figlet(font=fonte)
         except pyfiglet.FontNotFound:
             embed = self.bot.erEmbed(ctx, ctx.t('err_invalid'))
             embed.description = ctx.t('invalid_desc')
-            return await msg.edit(embed=embed)
+            return await ctx.send(embed=embed)
 
         txt = fnt.renderText(texto)
-        if len(txt) > 2000-10:
-            embed = self.bot.erEmbed(ctx, ctx.t('err_big'))
-            embed.description = ctx.t('big_desc')
-            return await msg.edit(embed=embed)
+        
+        if len(txt) > 2000-6:
+            io = BytesIO(txt.encode())
+            args = dict(file=discord.File(io, 'ascii.txt'))
 
-        await msg.edit(embed=None, content=f'```{txt}```')       
+        else:
+            args = dict(content=f'```{txt}```')
+
+        await ctx.send(**args)       
 
     @commands.group(aliases=['qr'], invoke_without_command=True, case_insensitive=True)
     async def qrcode(self, ctx, *, texto):
