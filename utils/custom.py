@@ -264,7 +264,7 @@ class SoraHelp(commands.HelpCommand):
         return await ctx.send(embed=embed)
 
 class Embed(emb):
-    def __init__(self, ctx, *args, **kwargs):
+    def __init__(self, ctx, **kwargs):
         self.ctx = ctx
         bot = ctx.bot 
         color = bot.color
@@ -273,16 +273,17 @@ class Embed(emb):
             color = bot.ecolor
             kwargs['title'] = f':x: | {kwargs.get("title", "Error")}'
 
-        kwargs.update({'color': kwargs.get('color') or color, 'timestamp': ctx.message.created_at})
+        timestamp = kwargs.get('timestamp', ctx.message.created_at)
+        kwargs.update({'color': kwargs.get('color') or color, 'timestamp': timestamp})
 
-        super().__init__(*args, **kwargs)
-        super().set_footer(text=str(ctx.author), icon_url=ctx.author.avatar_url)
+        super().__init__(**kwargs)
+        super().set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
 
     def set_footer(self, *, text=emb.Empty, icon_url=emb.Empty):
         if not isinstance(text, type(emb.Empty)):
-            text = f'{self.ctx.author} • {text}'
+            text = f'{self.ctx.author.name} • {text}'
         else:
-            text = str(self.ctx.author)
+            text = self.ctx.author.name
 
         if isinstance(icon_url, type(emb.Empty)):
             icon_url = self.ctx.author.avatar_url
