@@ -33,7 +33,11 @@
         "emb_desc": "Esse comando não pode ser usado em grupos privados"
     },
 
+    "CannotReadMessageHistory": {
+        "emb_desc": "Preciso da permissão `Ler Historico de Mensagens` para executar esse comando."
+    },
+
     "noError": {
-        "emb_desc": "Ocorreu um erro durante a execução deste comando. Contate a equipe de [suporte](https://discord.gg/s7AsCvd) com o código `{code}`."
+        "emb_desc": "Ocorreu um erro durante a execução deste comando. Contate a equipe de [suporte](https://discord.gg/s7AsCvd) com o código `{code}`.\n\nErro:\n{error}"
     }
 }

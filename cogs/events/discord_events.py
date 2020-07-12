@@ -9,10 +9,11 @@ class DiscordEvents(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
         # Bloquear bots
-        if message.author.bot:
-            return
         
         await self.bot.wait_until_ready()
+        
+        if message.author.bot:
+            return        
 
         # Interpretar comandos
         ctx = await self.bot.get_context(message, cls=SoraContext)

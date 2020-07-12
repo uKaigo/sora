@@ -3,6 +3,7 @@ from time import time
 from hashlib import shake_256
 import discord
 from discord.ext import commands
+from utils import menus
 
 class CommandError(commands.Cog):
     def __init__(self, bot):
@@ -27,6 +28,11 @@ class CommandError(commands.Cog):
             if not perms.embed_links: 
                 return await ctx.send(ctx.t('no_embed', _e=original_name))
             return
+
+        elif isinstance(original, menus.CannotReadMessageHistory):
+            embed = self.bot.erEmbed(ctx)
+            embed.description = ctx.t('emb_desc', _e=original_name)
+            return await ctx.send(embed=embed)
 
         elif isinstance(error, (commands.CommandNotFound, commands.NotOwner)):
             pass
@@ -83,7 +89,7 @@ class CommandError(commands.Cog):
             code = shake_256(str(time()).replace('.', '').encode()).hexdigest(13) #pylint: disable=too-many-function-args
 
             embed = self.bot.erEmbed(ctx)
-            embed.description = ctx.t('emb_desc', code=code, _e='noError')
+            embed.description = ctx.t('emb_desc', code=code, error=error, _e='noError')
             await ctx.send(embed=embed)
 
             ch = self.bot.get_channel(678064736545406996)

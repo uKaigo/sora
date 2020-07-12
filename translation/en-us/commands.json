@@ -27,7 +27,7 @@
         "usage": "{}ping",
         "description": "Sends the bot latency.",
         "texts": {
-            "text": "I'm with `{ping:.1f}ms` of latency."
+            "text": "I'm with `{ping:.1f}ms` of latency.`"
         }
     },
 

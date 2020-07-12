@@ -7,7 +7,7 @@ from dbl import DBLClient
 class Tasks(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
-        if getenv('DYNO'):
+        if bot.is_heroku:
             self.dblpy = DBLClient(self.bot, getenv('dbl_token'), autopost=True)
 
         # Todas as presenças e o número delas.

@@ -33,7 +33,11 @@
         "emb_desc": "This command can't be used in DM's"
     },
 
+    "CannotReadMessageHistory": {
+        "emb_desc": "I need the `Read Message History` permission to run this command."
+    },
+
     "noError": {
-        "emb_desc": "An error ocurred running this command. Contact the [support](https://discord.gg/s7AsCvd) team with the code `{code}`."
+        "emb_desc": "An error ocurred running this command. Contact the [support](https://discord.gg/s7AsCvd) team with the code `{code}`.\n\nErro:\n{error}"
     }
 }

@@ -2,7 +2,8 @@ import json
 import logging
 from os import getenv, listdir
 from aiohttp import ClientSession
-from discord import Embed
+from datetime import datetime
+from discord import Embed, Activity, utils
 from discord.ext import commands
 from utils import functions
 from utils.database import Database
@@ -62,9 +63,7 @@ class Sora(commands.AutoShardedBot):
 
         # Versão do bot
         self.__version__ = self.config['version']
-
-        # Carregamento de cogs
-        self.load_extension('jishaku')
+        
         for fldr in listdir('cogs'):
             for _file in listdir(f'cogs/{fldr}'):
                 if _file.startswith('_') or not _file.endswith('.py'):
@@ -73,7 +72,7 @@ class Sora(commands.AutoShardedBot):
                 try:
                     self.load_extension(f'cogs.{fldr}.{_file}')
                 except Exception as e:
-                    print(f'[{fldr}/{_file}] -> {type(e).__name__}: {e}')
+                    print(f'[{fldr}.{_file}] -> {type(e).__name__}: {e}')
                 else:
                     print(f'[{fldr}.{_file}] -> Carregado.')
 
@@ -108,6 +107,27 @@ class Sora(commands.AutoShardedBot):
 
     async def on_message(self, message):
         return
+
+    async def on_ready(self):
+        if self.__started_in__:
+            print('Bot retomado!')
+            return
+        print(f'{f" {self.user.name} ":-^33}')
+        print(f'{f"Id: {self.user.id}":^33}')
+        bots = list(filter(lambda m: m.bot, self.users))
+        print(f'{f"Usuários: {len(self.users) - len(bots)}":^33}')
+        print(f'{f"Bots: {len(bots)}":^33}')
+        print(f'{f"Guilds: {len(self.guilds)}":^33}')
+        print('---------------------------------')
+        ############
+
+        # Servidor de emojis, verifique os emojis usados pelo bot para não dar erro. (Caso for usar)
+        for emoji in self.get_guild(675889958262931488).emojis:
+            self.emotes[emoji.name] = emoji
+        
+        await self.change_presence(activity=Activity(name='minha ajuda', type=1, url='https://twitch.tv/ukaigo'))
+
+        self.__started_in__ = datetime.utcnow()
 
     pings = property(functions.__getpings__,
                      functions.__cantset__, functions.__cantdel__)
