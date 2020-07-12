@@ -1,7 +1,7 @@
 import psutil
 import discord
 from discord.ext import commands
-from utils.custom import SoraHelp
+from utils.custom import SoraHelp, Embed
 
 class BotCmds(commands.Cog, name='_bot_cog'):
     def __init__(self, bot):
@@ -12,10 +12,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
 
     @commands.command(aliases=['pong'])
     async def ping(self, ctx):
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('emb_title')
-        embed.description = ctx.t('emb_desc', ping=self.bot.latency*1000)
-        await ctx.send(embed=embed)
+        await ctx.send(ctx.t('text', ping=round(self.bot.latency*1000, 2)))
 
     @commands.command(aliases=['stats'])
     async def botstats(self, ctx):

@@ -28,8 +28,7 @@
         "usage": "{}ping",
         "description": "Envia a latência do bot.",
         "texts": {
-            "emb_title": ":ping_pong: | Ping!",
-            "emb_desc": "Estou com `{ping:.1f}ms` de ping."
+            "text": "Estou com `{ping}ms` de ping."
         }
     },
 
