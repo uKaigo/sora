@@ -21,7 +21,7 @@ class BotCmds(commands.Cog, name='_bot_cog'):
 
         process = psutil.Process()
         embed = self.bot.embed(ctx)
-        embed.set_autor(name=ctx.t('emb_title', bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
+        embed.set_author(name=ctx.t('emb_title', bot_name=self.bot.user.name), icon_url=ctx.me.avatar_url)
         embed.description = ctx.t('emb_desc', author_name=ctx.author.name)
         embed.add_field(name=ctx.t('emb_version'), value=f'`{self.bot.__version__}`')
         embed.add_field(name=ctx.t('emb_uptime'), value=f'`{self.bot.formatTime(time_lang, self.bot.uptime)}`', inline=False)
