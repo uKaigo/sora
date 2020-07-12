@@ -1,3 +1,5 @@
+"""Modelos customizados"""
+
 import itertools
 import traceback
 from json import load

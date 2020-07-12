@@ -1,3 +1,5 @@
+"""Manipular o mongodb"""
+
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from typing import Any
 # pylint: disable=relative-beyond-top-level

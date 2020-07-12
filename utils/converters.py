@@ -1,3 +1,5 @@
+"""Conversores de comandos"""
+
 from discord.ext.commands import Converter 
 from discord.ext.commands import PartialEmojiConverter, BadArgument
 from discord.ext.commands import EmojiConverter as EmConvert

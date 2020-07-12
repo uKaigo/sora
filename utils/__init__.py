@@ -1,3 +1,5 @@
+"""Utilitários do bot."""
+
 from . import converters 
 from . import menus
 from . import custom 
