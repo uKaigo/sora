@@ -1,7 +1,7 @@
 from motor.motor_asyncio import AsyncIOMotorClient, AsyncIOMotorCollection
 from typing import Any
 # pylint: disable=relative-beyond-top-level
-from .db_operators import set_op, inc_op, min_op, max_op, mul_op, rename_op, unset_op, push_op
+from ._db_operators import set_op, inc_op, min_op, max_op, mul_op, rename_op, unset_op, push_op
 
 __all__ = ('DatabaseException', 'AlreadyExists', 'NotFound', 'Collection',
            'Database')

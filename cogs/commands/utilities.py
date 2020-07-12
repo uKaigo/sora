@@ -28,7 +28,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             return await ctx.send(embed=embed)
 
         txt = fnt.renderText(texto)
-        
+
         if len(txt) > 2000-6:
             io = BytesIO(txt.encode())
             args = dict(content=f'Online:\n...\nDownload:', file=discord.File(io, 'ascii.txt'))
@@ -36,7 +36,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         else:
             args = dict(content=f'```{txt}```')
 
-        m = await ctx.send(**args)       
+        m = await ctx.send(**args)
         if 'file' in args:
             url = f'https://txt.discord.website/?txt={m.attachments[0].url[38:-4].strip("/")}'
             await m.edit(content=f'Online:\n<{url}>\nDownload:')

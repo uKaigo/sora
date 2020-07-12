@@ -5,7 +5,7 @@ from aiohttp import ClientSession
 from discord import Embed
 from discord.ext import commands
 from utils import functions
-from utils import Database
+from utils.database import Database
 
 # Configurando o logger
 logger = logging.getLogger('discord')
@@ -34,6 +34,7 @@ async def get_prefix(bot, message):
 
 
 class Sora(commands.AutoShardedBot):
+    # pylint: disable=too-many-instance-attributes
     def __init__(self):
         super().__init__(command_prefix=get_prefix, case_insensitive=True)
         self.db = Database(getenv('mongo_uri'), 'Sora')
@@ -66,15 +67,15 @@ class Sora(commands.AutoShardedBot):
         self.load_extension('jishaku')
         for fldr in listdir('cogs'):
             for _file in listdir(f'cogs/{fldr}'):
-                if _file .startswith('_') or not _file.endswith('.py'):
+                if _file.startswith('_') or not _file.endswith('.py'):
                     continue
                 _file = _file.replace('.py', '')
                 try:
                     self.load_extension(f'cogs.{fldr}.{_file}')
                 except Exception as e:
-                    print(f'Falha ao carregar [{fldr}/{_file}]: ({type(e).__name__}) {e}')
+                    print(f'[{fldr}/{_file}] -> {type(e).__name__}: {e}')
                 else:
-                    print(f'{fldr.capitalize()}.{_file} carregado com sucesso.')
+                    print(f'[{fldr}.{_file}] -> Carregado.')
 
     def __repr__(self) -> str:
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
@@ -82,18 +83,6 @@ class Sora(commands.AutoShardedBot):
     def formatPrefix(self, ctx) -> str:
         prefix = ctx.prefix if not str(self.user.id) in ctx.prefix else f'@{ctx.me} '
         return ctx.prefix.replace(ctx.prefix, prefix)
-
-    # Tradução
-
-    async def get_lang(self, guild_id) -> str:
-        return await self.db.guilds.get(guild_id, 'lang')
-
-    async def get_translation(self, ctx) -> str:
-        lang = ctx.lang
-        command_name = ctx.command.qualified_name
-        with open(f'translation/{lang}/commands.json', encoding='utf-8') as trns:
-            cmd = json.load(trns).get(command_name)
-        return cmd
 
     # Embeds
     def embed(self, ctx, invisible=False) -> Embed:
@@ -123,15 +112,6 @@ class Sora(commands.AutoShardedBot):
 
 
 bot = Sora()
-
-@bot.before_invoke 
-async def set_lang(ctx):
-    if not ctx._lang:
-        if ctx.guild:
-            ctx._lang = await bot.db.guilds.get(ctx.guild.id, 'lang')
-        else:
-            ctx._lang = 'en-us'
-
 
 if __name__ == '__main__':
     try:

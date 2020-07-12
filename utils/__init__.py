@@ -1,8 +1,7 @@
-from .converters import *
-from .custom import *
-from .database import *
-from .functions import *
-from .menu import *
-from . import discordMenus 
+from . import converters 
+from . import menus
+from . import custom 
+from . import database 
+from . import functions 
 
-menus = discordMenus
+__all__ = ('converters', 'menus', 'custom', 'database', 'functions')

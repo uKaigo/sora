@@ -2,12 +2,56 @@ import itertools
 import traceback
 from json import load
 from typing import Optional
-from enum import IntFlag
-from . import discordMenus as dMenus
+from discord import Embed as emb
 from discord.ext import commands
-from .menu import baseMenu
+from . import menus 
 
-__all__ = ('SoraHelp', 'SoraContext')
+__all__ = ('SoraHelp', 'SoraContext', 'Embed', 'baseMenu')
+
+class baseMenu(menus.Menu):
+    def __init__(self, pages, title, msg):
+        super().__init__(clear_reactions_after=True, timeout=30)
+        self.pages = [c for c in pages if c]
+        if not pages:
+            raise ValueError('Nenhuma página.')
+        self._title = title
+        self._msg = msg
+        self._index = 0
+
+    def should_add_reactions(self):
+        if len(self.pages) == 1:
+            return 0
+        return len(self.buttons)
+    
+    async def send_initial_message(self, ctx, channel):
+        return await ctx.send(embed=self.embed)
+
+    @property 
+    def embed(self):
+        msg = self._msg
+        msg += self.pages[self._index]
+        embed = self.bot.embed(self.ctx)
+        embed.title = self._title
+        embed.description = msg 
+        return embed
+
+    @menus.button('◀️')
+    async def back(self, _):
+        self._index -= 1
+        if self._index < 0:
+            self._index = len(self.pages)-1
+        return await self.message.edit(embed=self.embed)
+
+    @menus.button('⏹')
+    async def _stop(self, _):
+        self.stop()
+
+    @menus.button('▶️')
+    async def foward(self, _):
+        self._index += 1
+        if self._index == len(self.pages):
+            self._index = 0
+        return await self.message.edit(embed=self.embed)
 
 class SoraContext(commands.Context):
     def __init__(self, *args, **kwargs):
@@ -18,7 +62,7 @@ class SoraContext(commands.Context):
     def lang(self) -> str:
         """Retorna a linguagem do servidor"""
         if not hasattr(self, '_lang') or not self._lang:
-            raise RuntimeError('Linguagem não definida.')
+            self._lang = 'pt-br' if self.guild.region.value == 'brazil' else 'en-us'
         return self._lang
 
     async def guild_prefix(self) -> Optional[str]:
@@ -105,13 +149,13 @@ class HelpPaginator(baseMenu):
         
         return embed
 
-    @dMenus.button('⏪', position=dMenus.First())
+    @menus.button('⏪', position=menus.First())
     async def fast_back(self, _):
         if self._index != 0:
             self._index = 0
             await self.message.edit(embed=self.embed)
 
-    @dMenus.button('⏩')
+    @menus.button('⏩')
     async def fast_foward(self, _):
         if self._index != len(self.pages)-1: # pylint: disable=access-member-before-definition
             self._index = len(self.pages)-1
@@ -216,3 +260,29 @@ class SoraHelp(commands.HelpCommand):
             embed.add_field(name=ctx.t('group_sub'), value=sub)
 
         return await ctx.send(embed=embed)
+
+class Embed(emb):
+    def __init__(self, ctx, *args, **kwargs):
+        self.ctx = ctx
+        bot = ctx.bot 
+        color = bot.color
+
+        if kwargs.pop('error', None):
+            color = bot.ecolor
+            kwargs['title'] = f':x: | {kwargs.get("title", "Error")}'
+
+        kwargs.update({'color': kwargs.get('color') or color, 'timestamp': ctx.message.created_at})
+
+        super().__init__(*args, **kwargs)
+        super().set_footer(text=str(ctx.author), icon_url=ctx.author.avatar_url)
+
+    def set_footer(self, *, text=emb.Empty, icon_url=emb.Empty):
+        if not isinstance(text, type(emb.Empty)):
+            text = f'{self.ctx.author} • {text}'
+        else:
+            text = str(self.ctx.author)
+
+        if isinstance(icon_url, type(emb.Empty)):
+            icon_url = self.ctx.author.avatar_url
+
+        return super().set_footer(text=text, icon_url=icon_url)
