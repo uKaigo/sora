@@ -1,6 +1,6 @@
 import discord
 from discord.ext import commands
-from utils import SoraContext
+from utils.custom import SoraContext
 
 class DiscordEvents(commands.Cog):
     def __init__(self, bot):

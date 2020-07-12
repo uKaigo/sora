@@ -1,7 +1,8 @@
 from re import search
 import discord
 from discord.ext import commands 
-from utils import menus, baseMenu
+from utils import menus
+from utils.custom import baseMenu
 
 class OldMembersMenu(baseMenu):
     def __init__(self, pages, title, msg, author_page):

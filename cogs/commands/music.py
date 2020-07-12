@@ -1,7 +1,7 @@
 from os import getenv
 from asyncio import TimeoutError
 from genius import Client
-from utils import baseMenu
+from utils.custom import baseMenu
 from discord.ext import commands
 
 class LyricsMenu(baseMenu):

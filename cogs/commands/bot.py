@@ -1,7 +1,7 @@
 import psutil
 import discord
 from discord.ext import commands
-from utils import SoraHelp
+from utils.custom import SoraHelp
 
 class BotCmds(commands.Cog, name='_bot_cog'):
     def __init__(self, bot):
