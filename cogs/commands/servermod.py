@@ -1,6 +1,5 @@
 from asyncio import sleep
 from inspect import Parameter
-from utils import EmojiConverter
 from datetime import datetime
 from json import loads
 import typing
@@ -8,6 +7,7 @@ import re
 import validators
 import discord
 from discord.ext import commands
+from utils.converters import EmojiConverter
 
 def can_modify(ctx, member):
     if ctx.author == ctx.guild.owner:
