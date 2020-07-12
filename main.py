@@ -80,6 +80,10 @@ class Sora(commands.AutoShardedBot):
     def __repr__(self) -> str:
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
 
+    async def close(self):
+        await self.session.close()
+        await super().close()
+
     def formatPrefix(self, ctx) -> str:
         prefix = ctx.prefix if not str(self.user.id) in ctx.prefix else f'@{ctx.me} '
         return ctx.prefix.replace(ctx.prefix, prefix)
