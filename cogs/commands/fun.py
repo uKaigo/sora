@@ -10,11 +10,12 @@ class Fun(commands.Cog, name='_fun_cog'):
         self.bot = bot
 
     @commands.command()
+    @commands.bot_has_permissions(attach_files=True)
     async def meme(self, ctx):
-        server = 'br.' if ctx.lang == 'pt-br' else ''
+        sv = 'br.' if ctx.lang == 'pt-br' else ''
 
         async with ctx.typing():
-            res = await self.bot.session.get(f'https://{server}ifunny.co/')
+            res = await self.bot.session.get(f'https://{sv}ifunny.co/')
 
             soup = BeautifulSoup(await res.text(), 'html.parser')
             
@@ -32,14 +33,14 @@ class Fun(commands.Cog, name='_fun_cog'):
                     (ext := choosen.attrs['data-type']) in ['image', 'video']:
                 ext = {'image': 'gif', 'video': 'mp4'}.get(ext) 
                 
-                url = 'https://ifunny.co'+list(list(choosen.children)[1].children)[0].attrs['href']
+                url = f'https://{sv}ifunny.co'+list(list(choosen.children)[1].children)[0].attrs['href']
                 url = sub('\?gallery\=[\w\d]+', '', url)
 
                 to_send = await self.bot.session.get(choosen.attrs['data-source'])
                 io = BytesIO(await to_send.read())
                 await ctx.send(f'Link: <{url}>', file=File(io, filename=f'meme.{ext}'))
             else: # É uma imagem
-                url = 'https://ifunny.co'+list(list(choosen.children)[1].children)[1].attrs['href']
+                url = f'https://{sv}ifunny.co'+list(list(choosen.children)[1].children)[1].attrs['href']
                 url = sub('\?gallery\=[\w\d]+', '', url)
 
                 _surl = list(list(list(choosen.children)[1].children)[1].children)[0].attrs['data-src']
