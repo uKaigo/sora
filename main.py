@@ -49,7 +49,7 @@ class Sora(commands.AutoShardedBot):
         self.__started_in__ = None
         self.is_heroku = is_heroku
         self._translation_cache = dict()
-        self.session = ClientSession(loop=self.loop)
+        self.session = None
         self.emotes = dict()
         self.config = config
         self.nfimg = 'https://i.imgur.com/byuoWoJ.png' # Not Found Image
@@ -60,6 +60,8 @@ class Sora(commands.AutoShardedBot):
         self.sec2time = functions.sec2time
         self.paginator = functions.paginator
         self.getTime = functions.getTime
+
+        self.loop.run_until_complete(self.define_session())
 
         # Versão do bot
         self.__version__ = self.config['version']
@@ -78,6 +80,10 @@ class Sora(commands.AutoShardedBot):
 
     def __repr__(self) -> str:
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
+
+    async def define_session(self):
+        if not hasattr(self, 'session') or not self.session:
+            self.session = ClientSession(loop=self.loop)
 
     async def close(self):
         await self.session.close()
