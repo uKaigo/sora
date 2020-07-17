@@ -6,15 +6,16 @@ from os import getenv
 from datetime import datetime
 from io import BytesIO
 import pyfiglet
-import ffz
 import discord
 from bs4 import BeautifulSoup
 from discord.ext import commands
 from utils.custom import baseMenu  
+from ffz import Client, NotFound
 
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
         self.bot = bot
+        self.ffz = Client(session=bot.session, loop=bot.loop)
 
     @commands.command(name='ascii')
     async def _ascii(self, ctx, fonte, *, texto):
@@ -202,18 +203,23 @@ class Utils(commands.Cog, name='_utils_cog'):
     async def _ffz(self, ctx, emote):
 
         async with ctx.typing():
-            em = await ffz.search(emote)
-        
-        if not em:
-            embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
-            embed.description = ctx.t('notfound_desc')
-            embed.description += ctx.t('notfound_ath') if '.' in emote else ''
-            return await ctx.send(embed=embed)
-        
+            try:
+                em = await self.ffz.search_emote(emote, 1)
+            except NotFound:
+                embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
+                embed.description = ctx.t('notfound_desc')
+                embed.description += ctx.t('notfound_ath') if '.' in emote else ''
+                return await ctx.send(embed=embed)
+        em = em[0]
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_title', name=em.name)
-        embed.description = ctx.t('emb_desc', creator_name=em.creator.name, creator_twitch=em.creator.twitch, usage=em.usage, emote_link=em.url)
-        embed.set_image(url=em.image)
+        embed.description = ctx.t(
+            'emb_desc', 
+            creator_name=em.owner.display_name, 
+            creator_twitch=em.owner.twitch_url, 
+            usage=em.usage, 
+            emote_link=em.url)
+        embed.set_image(url=f'https:{em.image}')
         await ctx.send(embed=embed)
 
     @commands.command()
