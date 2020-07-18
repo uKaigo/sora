@@ -15,7 +15,7 @@ from ffz import Client, NotFound
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
         self.bot = bot
-        self.ffz = Client(session=bot.session, loop=bot.loop)
+        self.ffz = Client()
 
     @commands.command(name='ascii')
     async def _ascii(self, ctx, fonte, *, texto):
