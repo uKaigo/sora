@@ -87,7 +87,7 @@ class Sora(commands.AutoShardedBot):
 
     async def close(self):
         await self.session.close()
-        self.loop.close()   
+        self.loop.close()
         await super().close()
 
     def formatPrefix(self, ctx) -> str:
