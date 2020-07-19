@@ -1,7 +1,7 @@
 from os import getenv
 from asyncio import TimeoutError
 from genius import Client
-from utils.custom import baseMenu
+from utils.custom import baseMenu, Embed
 from discord.ext import commands
 
 class LyricsMenu(baseMenu):
@@ -19,8 +19,7 @@ class LyricsMenu(baseMenu):
     def embed(self):
         msg = self.pages[self._index].strip()
         msg += '...' if not self._index == len(self.pages)-1 and self.should_add_reactions() else ''
-        embed = self.bot.embed(self.ctx)
-        embed.description = msg 
+        embed = Embed(self.ctx, description=msg)
         embed.set_author(name=self._title, icon_url=self._song.image_url, url=self._song.url)
         return embed
 
@@ -33,22 +32,27 @@ class Music(commands.Cog, name='_music_cog'):
     async def lyrics(self, ctx, *, query):
         _results = await self.genius.search(query)
         if not _results:
-            embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
+            embed = Embed(ctx, title=ctx.t('err_notfound'), error=True)
             embed.description = ctx.t('notfound_desc')
             return await ctx.send(embed=embed)
 
         op = [f'- **{i}**: [{s.artist} - {s}]({s.url})' for i, s in enumerate(_results, 1)]
 
-        embed = self.bot.embed(ctx)
-        embed.title = 'Sora | Lyrics'
-        embed.description = ctx.t('opts_desc') + '\n\n' + '\n'.join(op)
-        embed.set_footer(text=ctx.t('opts_footer', author_name=ctx.author.name), icon_url=ctx.author.avatar_url)
+        print(op)
+        embed = Embed(
+            ctx, 
+            title='Sora | Lyrics', 
+            description=ctx.t('opts_desc') + '\n\n' + '\n'.join(op)
+        )
+
+        embed.set_footer(text=ctx.t('opts_footer'))
 
         msg = await ctx.send(embed=embed)
 
         def check(m):
-            return m.channel == ctx.channel and m.author == ctx.author and m.content \
-                and m.content.isdecimal() and 0 < int(m.content) <= len(_results) or m.content.lower() == 'exit'
+            return (m.channel, ctx.author) == (ctx.channel, ctx.author) \
+                and (bool(m.content), m.content.isdecimal()) == (True, True) \
+                and 0 < int(m.content) <= len(_results) or m.content.lower() == 'exit'
         
         try:
             res = await self.bot.wait_for('message', check=check, timeout=60)

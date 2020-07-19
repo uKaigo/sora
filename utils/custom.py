@@ -264,12 +264,12 @@ class SoraHelp(commands.HelpCommand):
         return await ctx.send(embed=embed)
 
 class Embed(emb):
-    def __init__(self, ctx, **kwargs):
+    def __init__(self, ctx, *, error=False, **kwargs):
         self.ctx = ctx
         bot = ctx.bot 
         color = bot.color
 
-        if kwargs.pop('error', None):
+        if error == True:
             color = bot.ecolor
             kwargs['title'] = f':x: | {kwargs.get("title", "Error")}'
 

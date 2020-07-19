@@ -1,5 +1,5 @@
 from datetime import datetime
-from re import sub
+from re import sub, findall, DOTALL
 
 __all__ = ('sec2hours', 'formatTime', 'sec2time', 'getTime', '__getpings__',
            '__cantset__', '__cantdel__', '__getuptime__', 'paginator')
@@ -50,6 +50,5 @@ def __getuptime__(bot):
     return sec2hours((datetime.utcnow() - bot.__started_in__).total_seconds())
 
 def paginator(text: str, amount: int) -> list:
-    text = str(text)
-    return [text[i:i+amount] for i in range(0, len(text), amount)]
-
+    return findall('.' + '.?'*(amount-1), str(text), flags=DOTALL) # Uma maneira mais limpa de fazer
+ 

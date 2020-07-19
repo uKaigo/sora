@@ -7,7 +7,8 @@ import re
 import validators
 import discord
 from discord.ext import commands
-from utils.converters import EmojiConverter
+from utils.custom import Embed
+from utils.converters import EmojiConverter, UserConverter
 
 def can_modify(ctx, member):
     if ctx.author == ctx.guild.owner:
@@ -45,8 +46,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             embed.description = ctx.t('err_or_desc', high_low=high_low)
             return await ctx.send(embed=embed)
 
-        loading = self.bot.embed(ctx, invisible=True)
-        loading.title = ctx.t('deleting')
+        loading = Embed(ctx, title=ctx.t('deleting'), color=self.bot.neutral)
         msg = await ctx.send(embed=loading)
         msg_ids = [msg.id, ctx.message.id]
         
@@ -56,9 +56,13 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             check = lambda m: m.author == membro and not m.id in msg_ids
 
         prg = await ctx.channel.purge(limit=quantidade+2, check=check)
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('emb_title')
-        embed.description = ctx.t('emb_desc', len_deleted=len(prg), of_member=f'{ctx.t("of") if membro else ""}{membro.mention if membro else ""}')
+       
+        embed = Embed(ctx, title=ctx.t('emb_title'))
+        embed.description = ctx.t(
+            'emb_desc', 
+            len_deleted=len(prg), 
+            of_member=f'{ctx.t("of") if membro else ""}{membro.mention if membro else ""}')
+        
         await msg.edit(embed=embed)
         await sleep(10)
         try:
@@ -73,12 +77,16 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     async def match(self, ctx, pattern, limit:int=100):
         if limit not in range(2, 501): # Out Range (or)
             high_low = ctx.t(f'high_low.{int(limit<2)}')
-            embed = self.bot.erEmbed(ctx, ctx.t('err_or_title'))
-            embed.description = ctx.t('err_or_desc', high_low=high_low)
+            embed = Embed(
+                ctx, 
+                title=ctx.t('err_or_title'), 
+                description=ctx.t('err_or_desc', high_low=high_low),
+                error=True
+            )
             return await ctx.send(embed=embed)
+    
+        loading = Embed(ctx, title=ctx.t('deleting'), color=self.bot.neutral)
 
-        loading = self.bot.embed(ctx, invisible=True)
-        loading.title = ctx.t('deleting')
         msg = await ctx.send(embed=loading)
         msg_ids = [msg.id, ctx.message.id]
 
@@ -86,8 +94,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         prg = await ctx.channel.purge(limit=limit+2, check=check)
 
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('emb_title')
+        embed = Embed(ctx, title=ctx.t('emb_title'))
         embed.description = ctx.t('emb_desc', len_deleted=len(prg), pattern=pattern)
         await msg.edit(embed=embed)
         await sleep(10)
@@ -101,32 +108,33 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.command(aliases=['banir'])
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def ban(self, ctx, membro:typing.Union[discord.Member, str], *, reason='_no_reason'):
+    async def ban(self, ctx, membro:UserConverter, *, reason='_no_reason'):
         reason = ctx.t(reason)
         def ban_embed(member):
-            embed = self.bot.embed(ctx)
-            embed.title = ctx.t('emb_title', emote=self.bot.emotes['sora_ban'])
+            embed = Embed(ctx, ctx.t('emb_title', emote=self.bot.emotes['sora_ban']))
             embed.add_field(name=ctx.t('emb_user'), value=ctx.t('user_value', member=str(member), member_id=member.id), inline=False)
             embed.add_field(name=ctx.t('emb_staff'), value=ctx.t('staff_value', staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
             embed.add_field(name=ctx.t('emb_reason'), value=reason, inline=False)
             embed.set_footer(text=ctx.t('emb_footer', member_name=member.name), icon_url=member.avatar_url)
             return embed
 
-        if isinstance(membro, discord.Member):
-            error = self.bot.erEmbed(ctx, ctx.t('err_np_title'))
+        error = self.bot.erEmbed(ctx, ctx.t('err_np_title'))
 
-            mdf_state = can_modify(ctx, membro)
-            if mdf_state != 0:
-                error.description = ctx.t(f'cant_ban.{mdf_state-1}')
+        mdf_state = can_modify(ctx, membro)
+        if mdf_state != 0:
+            error.description = ctx.t(f'cant_ban.{mdf_state-1}')
 
-            if not isinstance(error.description, type(discord.Embed.Empty)):
-                return await ctx.send(embed=error)
+        if not isinstance(error.description, type(discord.Embed.Empty)):
+            return await ctx.send(embed=error)
 
-            await membro.ban(reason=ctx.t('ban_reason', author=str(ctx.author), reason=reason))
+        await ctx.guild.ban(membro, reason=ctx.t('ban_reason', author=str(ctx.author), reason=reason))
 
-            embed = ban_embed(membro)
+        embed = ban_embed(membro)
 
-            return await ctx.send(embed=embed)
+        return await ctx.send(embed=embed)
+
+        if True:
+            pass
 
         else:
             if not membro.isdigit():

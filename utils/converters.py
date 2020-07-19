@@ -1,11 +1,12 @@
 """Conversores de comandos"""
 
+from discord import NotFound
 from discord.ext.commands import Converter 
-from discord.ext.commands import PartialEmojiConverter, BadArgument
+from discord.ext.commands import PartialEmojiConverter, MemberConverter, BadArgument
 from discord.ext.commands import EmojiConverter as EmConvert
 from emoji import UNICODE_EMOJI
 
-__all__ = ('EmojiConverter',)
+__all__ = ('EmojiConverter', 'UserConverter')
 
 class EmojiConverter(Converter):
     # pylint: disable=too-few-public-methods
@@ -34,3 +35,29 @@ class EmojiConverter(Converter):
         if argument in UNICODE_EMOJI:
             return argument
         raise BadArgument(f'{argument} não é um emoji.')
+
+class UserConverter(Converter):
+    #pylint: disable=too-few-public-methods
+    """Converte para discord.Member ou discord.User
+
+    1. Tenta converter para membro.
+    2. Tenta dar fetch_user (se for um número)
+    """
+
+    async def convert(self, ctx, argument):
+        try:
+            member = await MemberConverter().convert(ctx, argument)
+        except BadArgument:
+            pass
+        else:
+            return member
+        
+        if argument.isnumeric():
+            try:
+                user = await ctx.bot.fetch_user(int(argument))
+            except:
+                pass
+            else:
+                return user 
+        
+        raise BadArgument('Usuário não encontrado.')

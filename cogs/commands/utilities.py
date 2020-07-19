@@ -201,7 +201,6 @@ class Utils(commands.Cog, name='_utils_cog'):
 
     @commands.command(name='ffz')
     async def _ffz(self, ctx, emote):
-
         async with ctx.typing():
             try:
                 em = await self.ffz.search_emote(emote, 1)
@@ -210,7 +209,6 @@ class Utils(commands.Cog, name='_utils_cog'):
                 embed.description = ctx.t('notfound_desc')
                 embed.description += ctx.t('notfound_ath') if '.' in emote else ''
                 return await ctx.send(embed=embed)
-        em = em[0]
         embed = self.bot.embed(ctx)
         embed.title = ctx.t('emb_title', name=em.name)
         embed.description = ctx.t(

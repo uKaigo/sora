@@ -423,7 +423,7 @@
             "err_notfound": "Não encontrado!",
             "notfound_desc": "Nenhuma música encontrada.",
             "opts_desc": "Selecione uma música:", 
-            "opts_footer": "{author_name} • Digite \"exit\" para sair.",
+            "opts_footer": "Digite \"exit\" para sair.",
             "err_nolyric": "Letra não encontrada!",
             "nolyric_desc": "Não foi encontrada uma letra para essa música."
         }

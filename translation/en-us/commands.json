@@ -429,7 +429,7 @@
             "err_notfound": "Not found!",
             "notfound_desc": "No song found.",
             "opts_desc": "Select a song:", 
-            "opts_footer": "{author_name} • Type \"exit\" to exit.",
+            "opts_footer": "Type \"exit\" to exit.",
             "err_nolyric": "Lyrics not found!",
             "nolyric_desc": "No lyrics were found for this song."
         }

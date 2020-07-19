@@ -2,7 +2,7 @@ from re import search
 import discord
 from discord.ext import commands 
 from utils import menus
-from utils.custom import baseMenu
+from utils.custom import baseMenu, Embed
 
 class OldMembersMenu(baseMenu):
     def __init__(self, pages, title, msg, author_page):
@@ -13,9 +13,8 @@ class OldMembersMenu(baseMenu):
     def embed(self):
         msg = self._msg
         msg += self.pages[self._index]
-        embed = self.bot.embed(self.ctx)
+        embed = Embed(self.ctx, description=msg)
         embed.title = self._title.format(page=str(self._index+1), pages=str(len(self.pages)))
-        embed.description = msg
         return embed
 
     @menus.button('👨')
@@ -31,8 +30,7 @@ class Disco(commands.Cog, name='_disco_cog'):
     @commands.command()
     async def avatar(self, ctx, membro:discord.Member=None):
         member = membro or ctx.author 
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('emb_title', member_name=member.name)
+        embed = Embed(ctx, title=ctx.t('emb_title', member_name=member.name))
         if not membro:
             embed.description = ctx.t('emb_author', author_mention=member.mention)
         embed.set_image(url=member.avatar_url)
@@ -45,9 +43,7 @@ class Disco(commands.Cog, name='_disco_cog'):
         membro = membro or ctx.author
         cor = membro.color if str(membro.color) != '#000000' else self.bot.color
 
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('emb_title', member_name=membro.name)
-        embed.color = cor
+        embed = Embed(ctx, title=ctx.t('emb_title', member_name=membro.name), color=cor)
 
         embed.set_author(name=f'Userinfo | {membro.name}', icon_url=membro.avatar_url)
 
