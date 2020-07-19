@@ -53,11 +53,11 @@ class UserConverter(Converter):
             return member
         
         if argument.isnumeric():
-            try:
-                user = await ctx.bot.fetch_user(int(argument))
-            except:
-                pass
-            else:
-                return user 
+            user = ctx.bot.get_user(int(argument))
+            if not user:
+                try:
+                    user = await ctx.bot.fetch_user(int(argument))
+                except:
+                    raise BadArgument('Usuário não encontrado.')
+            return user 
         
-        raise BadArgument('Usuário não encontrado.')
