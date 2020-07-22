@@ -19,7 +19,7 @@ class LyricsMenu(baseMenu):
         msg = self.pages[self._index].strip()
         msg += '...' if not self._index == len(self.pages)-1 and self.should_add_reactions() else ''
         embed = Embed(self.ctx, description=msg)
-        embed.set_footer('Ksoft.Si')
+        embed.set_footer(text='Ksoft.Si')
         embed.set_author(name=self._title, icon_url=self._song.album_art)
         return embed
 

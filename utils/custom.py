@@ -268,7 +268,7 @@ class Embed(emb):
             kwargs['title'] = f':x: | {kwargs.get("title", "Error")}'
 
         timestamp = kwargs.get('timestamp', ctx.message.created_at)
-        kwargs.update({'color': kwargs.get('color') or color, 'timestamp': timestamp})
+        kwargs.setdefault('color', color)
 
         super().__init__(**kwargs)
         super().set_footer(text=ctx.author.name, icon_url=ctx.author.avatar_url)
