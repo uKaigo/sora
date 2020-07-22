@@ -34,7 +34,7 @@ class EmojiConverter(Converter):
 
         if argument in UNICODE_EMOJI:
             return argument
-        raise BadArgument(f'{argument} não é um emoji.')
+        raise BadArgument(f'Emoji "{argument}" not found.')
 
 class UserConverter(Converter):
     #pylint: disable=too-few-public-methods
@@ -58,6 +58,8 @@ class UserConverter(Converter):
                 try:
                     user = await ctx.bot.fetch_user(int(argument))
                 except:
-                    raise BadArgument('Usuário não encontrado.')
-            return user 
+                    pass
+                else:
+                    return user 
         
+        raise BadArgument(f'User "{argument}" not found.')

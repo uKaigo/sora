@@ -31,7 +31,7 @@ async def get_prefix(bot, message):
     if message.guild:
         prefix = await bot.db.guilds.get(message.guild.id, 'prefix') or config['prefix']
         return commands.when_mentioned_or(prefix)(bot, message)
-    return commands.when_mentioned_or(config['prefix'])(bot, message)
+    return commands.when_mentioned_or('')(bot, message)
 
 
 class Sora(commands.AutoShardedBot):
@@ -93,24 +93,6 @@ class Sora(commands.AutoShardedBot):
     def formatPrefix(self, ctx) -> str:
         prefix = ctx.prefix if not str(self.user.id) in ctx.prefix else f'@{ctx.me} '
         return ctx.prefix.replace(ctx.prefix, prefix)
-
-    # Embeds
-    def embed(self, ctx, invisible=False) -> Embed:
-        # Cor do embed
-        color = self.neutral if invisible else self.color
-
-        emb = Embed(color=color)
-
-        emb.set_footer(text=ctx.t('_executed_by', author_name=ctx.author.name, _nc=1),
-                       icon_url=ctx.author.avatar_url)
-        
-        return emb
-
-    def erEmbed(self, ctx, error='_err_no_title') -> Embed:
-        emb = Embed(title=f':x: | {ctx.t(error, _nc=1)}', color=self.ecolor)
-        emb.set_footer(text=ctx.t('_executed_by', author_name=ctx.author.name, _nc=1),
-                       icon_url=ctx.author.avatar_url)
-        return emb
 
     async def on_message(self, message):
         return

@@ -405,14 +405,14 @@
     },
 
     "ffz": {
-        "usage": "{}ffz (criador.)[nome]",
+        "usage": "{}ffz [nome]",
         "description": "Pesquisa um emote do FrankerFaceZ",
         "texts": {
             "err_notfound": "Não encontrado!",
             "notfound_desc": "O emote não foi encontrado.\n",
             "notfound_ath": "Talvez você tenha digitado o emote/autor errado.",
             "emb_title": "FrankerFaceZ | {name}",
-            "emb_desc": "Criado por: [{creator_name}]({creator_twitch})\nUsado em {usage} canais.\n[Adicione no seu canal]({emote_link})"
+            "emb_desc": "Criado por: [{creator_name}](https:{creator_twitch})\nUsado em {usage} canais.\n[Adicione no seu canal]({emote_link})"
         }
     },
 

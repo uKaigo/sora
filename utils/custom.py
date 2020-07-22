@@ -32,9 +32,7 @@ class baseMenu(menus.Menu):
     def embed(self):
         msg = self._msg
         msg += self.pages[self._index]
-        embed = self.bot.embed(self.ctx)
-        embed.title = self._title
-        embed.description = msg 
+        embed = Embed(self.ctx, title=self._title, description=msg)
         return embed
 
     @menus.button('◀️')
@@ -139,12 +137,10 @@ class HelpPaginator(baseMenu):
         cog = current[0]
         commands = current[1]
 
-        embed = self.bot.embed(self.ctx)
+        embed = Embed(self.ctx, title = self._title.format(cog=cog))
         
         if self.should_add_reactions():
             embed.set_author(name=self._pagec.format(page=self._index+1, max=len(self.pages)))
-        
-        embed.title = self._title.format(cog=cog)
         
         for cmd, description in commands:
             embed.add_field(name=cmd.format(self._prefix), value=description, inline=False)
@@ -223,8 +219,7 @@ class SoraHelp(commands.HelpCommand):
         if command.hidden: 
             return await ctx.send(await self.command_not_found(cmd_name))
 
-        embed = ctx.bot.embed(ctx)
-        embed.title = ctx.t('cmd_title', cmd=command.name.title())
+        embed = Embed(ctx, title=ctx.t('cmd_title', cmd=command.name.title()))
         embed.add_field(name=ctx.t('cmd_usage'), value=ctx.t(f'{cmd_name}.usage', _nc=1).format(self.clean_prefix), inline=False)
         embed.add_field(name=ctx.t('cmd_desc'), value=ctx.t(f'{cmd_name}.description', _nc=1), inline=False)
         if command.aliases:
@@ -244,8 +239,7 @@ class SoraHelp(commands.HelpCommand):
         if group.hidden:
             return await ctx.send(await self.command_not_found(cmd_name))
 
-        embed = ctx.bot.embed(ctx)
-        embed.title = ctx.t('cmd_title', cmd=group.name.title())
+        embed = Embed(ctx, title=ctx.t('cmd_title', cmd=group.name.title()))
         embed.add_field(name=ctx.t('cmd_usage'), value=ctx.t(f'{cmd_name}.usage', _nc=1).format(self.clean_prefix), inline=False)
         embed.add_field(name=ctx.t('cmd_desc'), value=ctx.t(f'{cmd_name}.description', _nc=1), inline=False)
         if group.aliases:

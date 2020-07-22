@@ -9,7 +9,7 @@ import pyfiglet
 import discord
 from bs4 import BeautifulSoup
 from discord.ext import commands
-from utils.custom import baseMenu  
+from utils.custom import baseMenu, Embed
 from ffz import Client, NotFound
 
 class Utils(commands.Cog, name='_utils_cog'):
@@ -24,8 +24,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         try:
             fnt = pyfiglet.Figlet(font=fonte)
         except pyfiglet.FontNotFound:
-            embed = self.bot.erEmbed(ctx, ctx.t('err_invalid'))
-            embed.description = ctx.t('invalid_desc')
+            embed = Embed(ctx, title=ctx.t('err_invalid'), description=ctx.t('invalid_desc'), error=True)
             return await ctx.send(embed=embed)
 
         txt = fnt.renderText(texto)
@@ -50,16 +49,14 @@ class Utils(commands.Cog, name='_utils_cog'):
             except:
                 cor = 'cccccc'
             
-            embed = self.bot.embed(ctx)
-            embed.title = ctx.t('title')
+            embed = Embed(ctx, title=ctx.t('title'))
             embed.set_image(url=f'http://api.qrserver.com/v1/create-qr-code/?data={texto}&size=500x500&color={cor}&bgcolor=2F3136')
 
             await ctx.send(embed=embed)
 
     @qrcode.command()
     async def read(self, ctx, *, url=None):
-        nofile = self.bot.erEmbed(ctx, ctx.t('err_nofile'))
-        nofile.description = ctx.t('nofile_desc')
+        nofile = Embed(ctx, title=ctx.t('err_nofile'), description=ctx.t('nofile_desc'), error=True)
 
         if not url:
             try:
@@ -78,12 +75,11 @@ class Utils(commands.Cog, name='_utils_cog'):
                 return await ctx.send(embed=nofile)
 
             if response['symbol'][0]['error']:
-                embed = self.bot.erEmbed(ctx, ctx.t('err_invalid'))
+                embed = Embed(ctx, title=ctx.t('err_invalid'), error=True)
                 embed.description = ctx.t('invalid_desc')
                 return await ctx.send(embed=embed)
 
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('title')
+        embed = Embed(ctx, title=ctx.t('title'))
         embed.add_field(name=ctx.t('exit'), value=response['symbol'][0]['data'], inline=False)
         embed.add_field(name=ctx.t('type'), value=response['type'])
         await ctx.send(embed=embed)
@@ -99,19 +95,17 @@ class Utils(commands.Cog, name='_utils_cog'):
             pass
     
         if text.startswith('Error:'):
-            embed = self.bot.erEmbed(ctx)
-            embed.description = ctx.t('error')
+            embed = Embed(ctx, description=ctx.t('error'), error=True)
             return await ctx.send(embed=embed)
         
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('title')
+        embed = Embed(ctx, title=ctx.t('title'))
         embed.set_image(url=barcode.url)
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['mcbody'])
     async def skin(self, ctx, nick):
         nick = nick[:200]
-        embed = self.bot.embed(ctx)
+        embed = Embed(ctx)
         embed.description = f'[{ctx.t("download")}](https://minecraft.tools/download-skin/{nick}) | [{ctx.t("model")}](https://mc-heads.net/body/{nick})'
         embed.set_author(name=ctx.t('emb_title', nick=nick), icon_url=f'https://minotar.net/helm/{nick}/300.png')
         embed.set_image(url=f'https://mc-heads.net/body/{nick}')
@@ -126,7 +120,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         user = await self.bot.session.get(base_url, auth=auth)
 
         if user.status != 200:
-            erro = self.bot.erEmbed(ctx)
+            erro = Embed(ctx, error=True)
             erro.description = ctx.t(f'err_{user.status}')
            
             if user.status == 404:
@@ -137,7 +131,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         
         user = await user.json()
 
-        embed = self.bot.embed(ctx)
+        embed = Embed(ctx)
         embed.description = user.get('bio', discord.Embed.Empty)
 
         nome = user['name'] if user['name'] else user['login']
@@ -175,8 +169,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         _id = member.id
 
         if not str(_id).isdigit():
-            embed = self.bot.erEmbed(ctx, ctx.t('err_invalid'))
-            embed.description = ctx.t('not_member')
+            embed = Embed(ctx, title=ctx.t('err_invalid'), description=ctx.t('not_member'), error=True)
             return await ctx.send(embed=embed)
 
         invalid = False
@@ -190,12 +183,10 @@ class Utils(commands.Cog, name='_utils_cog'):
         if not isinstance(member, discord.Member):
             member = await self.bot.fetch_user(_id) 
         if not member.bot:
-            embed = self.bot.erEmbed(ctx, ctx.t('err_invalid'))
-            embed.description = ctx.t('invalid_desc')
-            return await ctx.send(embed=embed)  
+            embed = Embed(ctx, title=ctx.t('err_invalid'), description=ctx.t('invalid_desc'), error=True)
+            return await ctx.send(embed=embed)
 
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('emb_title', name=member.name)
+        embed = Embed(ctx, title=ctx.t('emb_title', name=member.name))
         embed.description = f'{base_url.format(member.id, permissions)}\n\n{ctx.t("perm_inv") if invalid else ""}'
         await ctx.send(embed=embed)
 
@@ -205,17 +196,15 @@ class Utils(commands.Cog, name='_utils_cog'):
             try:
                 em = await self.ffz.search_emote(emote, 1)
             except NotFound:
-                embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
+                embed = Embed(ctx, title=ctx.t('err_notfound'), error=True)
                 embed.description = ctx.t('notfound_desc')
-                embed.description += ctx.t('notfound_ath') if '.' in emote else ''
                 return await ctx.send(embed=embed)
-        embed = self.bot.embed(ctx)
-        embed.title = ctx.t('emb_title', name=em.name)
+        embed = Embed(ctx, title=ctx.t('emb_title', name=em.name))
         embed.description = ctx.t(
             'emb_desc', 
-            creator_name=em.owner.display_name, 
-            creator_twitch=em.owner.twitch_url, 
-            usage=em.usage, 
+            creator_name=em.owner.display_name,
+            creator_twitch=em.owner.twitch_url,
+            usage=em.usage,
             emote_link=em.url)
         embed.set_image(url=f'https:{em.image}')
         await ctx.send(embed=embed)
@@ -236,8 +225,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         if not channel:
             await invalid_report()
 
-        _rep = self.bot.embed(ctx)
-        _rep.title = ctx.t('rep_title')
+        _rep = Embed(ctx, title=ctx.t('rep_title'))
         _rep.description = ctx.t('rep_desc', author_mention=ctx.author.mention, member_mention=member.mention, reason=msg)
         
         try:
