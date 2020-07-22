@@ -47,7 +47,7 @@ def __cantdel__(_):
 def __getuptime__(bot):
     if not hasattr(bot, '__started_in__'):
         raise RuntimeError('A data do uptime não foi definida.')
-    return sec2hours((datetime.utcnow() - bot.__started_in__).total_seconds())
+    return sec2hours((datetime.utcnow() - bot._started_date).total_seconds())
 
 def paginator(text: str, amount: int) -> list:
     return findall('.' + '.?'*(amount-1), str(text), flags=DOTALL) # Uma maneira mais limpa de fazer

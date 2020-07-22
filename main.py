@@ -1,19 +1,13 @@
-import json
-import logging
+from json import load
 from os import getenv, listdir
-from aiohttp import ClientSession
+from aiohttp import ClientSession, __version__ as aiohttp_version
+from sys import version as py_version
 from datetime import datetime
-from discord import Embed, Activity, utils
+from discord import Embed, Activity
 from discord.ext import commands
 from utils import functions
+from utils.classes import json
 from utils.database import Database
-
-# Configurando o logger
-logger = logging.getLogger('discord')
-logger.setLevel(logging.WARNING)
-handler = logging.FileHandler(filename='discord.log', encoding='utf-8', mode='w')
-handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-logger.addHandler(handler)
 
 is_heroku = bool(getenv('DYNO'))
 
@@ -24,7 +18,7 @@ if not is_heroku: # Carregamento do canary
     load_dotenv(dotenv_path=env)
 
 with open('utils/config.json') as cnf:
-    config = json.load(cnf)
+    config = load(cnf)
     config['prefix'] = config['prefix'] if is_heroku else 'sc.'
 
 async def get_prefix(bot, message):
@@ -43,13 +37,13 @@ class Sora(commands.AutoShardedBot):
         # Cores
         self.color = 0xBA3C51
         self.ecolor = 0xDD2E44
-        self.neutral = 0x36393F
+        self.neutral = 0x2F3136 
 
         # Variáveis internas
-        self.__started_in__ = None
-        self.is_heroku = is_heroku
+        self._started_date = self.session = None
+        self.apis = json()
         self._translation_cache = dict()
-        self.session = None
+        self.is_heroku = is_heroku
         self.emotes = dict()
         self.config = config
         self.nfimg = 'https://i.imgur.com/byuoWoJ.png' # Not Found Image
@@ -64,30 +58,21 @@ class Sora(commands.AutoShardedBot):
         self.loop.run_until_complete(self.define_session())
 
         # Versão do bot
-        self.__version__ = self.config['version']
+        self.version = self.config['version']
         
-        for fldr in listdir('cogs'):
-            for _file in listdir(f'cogs/{fldr}'):
-                if _file.startswith('_') or not _file.endswith('.py'):
-                    continue
-                _file = _file.replace('.py', '')
-                try:
-                    self.load_extension(f'cogs.{fldr}.{_file}')
-                except Exception as e:
-                    print(f'[{fldr}.{_file}] -> {type(e).__name__}: {e}')
-                else:
-                    print(f'[{fldr}.{_file}] -> Carregado.')
-
     def __repr__(self) -> str:
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
 
     async def define_session(self):
         if not hasattr(self, 'session') or not self.session:
-            self.session = ClientSession(loop=self.loop)
+            headers = {
+                'User-Agent': 'SoraBot/{} (https://github.com/uKaigo)'.format(self.version),
+                'X-Powered-By': 'aiohttp {}/Python {}'.format(aiohttp_version, py_version)
+                }
+            self.session = ClientSession(headers=headers, connector=self.http.connector, loop=self.loop)
 
     async def close(self):
         await self.session.close()
-        self.loop.close()
         await super().close()
 
     def formatPrefix(self, ctx) -> str:
@@ -98,12 +83,12 @@ class Sora(commands.AutoShardedBot):
         return
 
     async def on_ready(self):
-        if self.__started_in__:
+        if self._started_date:
             print('Bot retomado!')
             return
         print(f'{f" {self.user.name} ":-^33}')
         print(f'{f"Id: {self.user.id}":^33}')
-        bots = list(filter(lambda m: m.bot, self.users))
+        bots = [member for member in self.users if member.bot]
         print(f'{f"Usuários: {len(self.users) - len(bots)}":^33}')
         print(f'{f"Bots: {len(bots)}":^33}')
         print(f'{f"Guilds: {len(self.guilds)}":^33}')
@@ -112,11 +97,27 @@ class Sora(commands.AutoShardedBot):
 
         # Servidor de emojis, verifique os emojis usados pelo bot para não dar erro. (Caso for usar)
         for emoji in self.get_guild(675889958262931488).emojis:
-            self.emotes[emoji.name] = emoji
-        
+            if emoji.name.startswith('sora_'):
+                self.emotes[emoji.name] = emoji
+
         await self.change_presence(activity=Activity(name='minha ajuda', type=1, url='https://twitch.tv/ukaigo'))
 
-        self.__started_in__ = datetime.utcnow()
+        self._started_date = datetime.utcnow()
+
+    def run(self, token, **kwargs):
+        for folder in listdir('cogs'):
+            for _file in listdir(f'cogs/{folder}'):
+                if _file.startswith('_') or not _file.endswith('.py'):
+                    continue
+                _file = _file.replace('.py', '')
+                try:
+                    self.load_extension(f'cogs.{folder}.{_file}')
+                except Exception as e:
+                    print(f'[{folder}.{_file}] -> {type(e).__name__}: {e}')
+                else:
+                    print(f'[{folder}.{_file}] -> Carregado.')
+
+        super().run(token, **kwargs)
 
     pings = property(functions.__getpings__,
                      functions.__cantset__, functions.__cantdel__)
