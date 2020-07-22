@@ -1,4 +1,4 @@
-discord.py
+-e git+https://github.com/Rapptz/discord.py@master#egg=discord.py
 pyfiglet
 psutil
 validators
