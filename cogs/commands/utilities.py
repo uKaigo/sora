@@ -10,12 +10,12 @@ import discord
 from bs4 import BeautifulSoup
 from discord.ext import commands
 from utils.custom import baseMenu, Embed
-from ffz import Client, NotFound
+# from ffz import Client, NotFound
 
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
         self.bot = bot
-        self.ffz = bot.apis.ffz = Client()
+        # self.ffz = bot.apis.ffz = Client()
 
     @commands.command(name='ascii')
     async def _ascii(self, ctx, fonte, *, texto):
