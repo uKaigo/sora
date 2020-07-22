@@ -5,6 +5,7 @@ from sys import version as py_version
 from datetime import datetime
 from discord import Embed, Activity
 from discord.ext import commands
+from ksoftapi import Client
 from utils import functions
 from utils.classes import json
 from utils.database import Database
@@ -41,8 +42,8 @@ class Sora(commands.AutoShardedBot):
 
         # Variáveis internas
         self._started_date = self.session = None
-        self.apis = json()
         self._translation_cache = dict()
+        self.apis = json()
         self.is_heroku = is_heroku
         self.emotes = dict()
         self.config = config
@@ -55,11 +56,13 @@ class Sora(commands.AutoShardedBot):
         self.paginator = functions.paginator
         self.getTime = functions.getTime
 
-        self.loop.run_until_complete(self.define_session())
-
         # Versão do bot
         self.version = self.config['version']
-        
+
+        self.apis.ksoft = Client(getenv('ksoft_token'), loop=self.loop)
+
+        self.loop.run_until_complete(self.define_session())
+
     def __repr__(self) -> str:
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
 
@@ -72,6 +75,7 @@ class Sora(commands.AutoShardedBot):
             self.session = ClientSession(headers=headers, connector=self.http.connector, loop=self.loop)
 
     async def close(self):
+        await self.apis.ksoft.close()
         await self.session.close()
         await super().close()
 
@@ -132,3 +136,4 @@ if __name__ == '__main__':
         bot.run(getenv('token'))
     except KeyboardInterrupt:
         pass
+    pass
