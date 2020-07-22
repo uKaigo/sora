@@ -10,4 +10,4 @@ beautifulsoup4
 dblpy
 jishaku
 emoji
--e git://github.com/uKaigo/frankerfacez.git@28e44ffc25ae157018f57bc687b395a45597b7f8
+-e git://github.com/uKaigo/frankerfacez.git@28e44ffc25ae157018f57bc687b395a45597b7f8#egg=frankerfacez
