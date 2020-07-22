@@ -47,7 +47,6 @@ class Sora(commands.AutoShardedBot):
         self.is_heroku = is_heroku
         self.emotes = dict()
         self.config = config
-        self.nfimg = 'https://i.imgur.com/byuoWoJ.png' # Not Found Image
 
         # Funções
         self.sec2hours = functions.sec2hours
