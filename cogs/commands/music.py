@@ -17,7 +17,6 @@ class LyricsMenu(baseMenu):
     @property 
     def embed(self):
         msg = self.pages[self._index].strip()
-        msg += '...' if not self._index == len(self.pages)-1 and self.should_add_reactions() else ''
         embed = Embed(self.ctx, description=msg)
         embed.set_footer(text='Ksoft.Si')
         embed.set_author(name=self._title, icon_url=self._song.album_art)
@@ -29,7 +28,8 @@ class Music(commands.Cog, name='_music_cog'):
 
     @commands.command(aliases=['letra', 'l'])
     async def lyrics(self, ctx, *, query):
-        _results = await self.bot.apis.ksoft.music.lyrics(query)
+        async with ctx.typing():
+            _results = await self.bot.apis.ksoft.music.lyrics(query)
         if not _results:
             embed = Embed(ctx, title=ctx.t('err_notfound'), error=True)
             embed.description = ctx.t('notfound_desc')
@@ -63,8 +63,7 @@ class Music(commands.Cog, name='_music_cog'):
         song = _results[int(res.content) - 1] 
         lyrics = song.lyrics
 
-        pages = self.bot.paginator(lyrics, 2045)
-
+        pages = self.bot.paginator(lyrics, 2048)
         menu = LyricsMenu(pages, song, msg)
         await menu.start(ctx)
 

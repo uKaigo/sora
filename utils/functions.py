@@ -49,6 +49,22 @@ def __getuptime__(bot):
         raise RuntimeError('A data do uptime não foi definida.')
     return sec2hours((datetime.utcnow() - bot._started_date).total_seconds())
 
+def paginator(txt, amount):
+    final = []
+    helper = []
+    count = 0
+    for line in txt.splitlines():
+        if count+len(line)+1 >= amount and not count == 0: 
+            final.append('\n'.join(helper))
+            helper = [line]
+            count = len(line)
+        else:
+            count += len(line)+1
+            helper.append(line)
+    if helper:
+        final.append('\n'.join(helper))
+    return final
+"""
 def paginator(text: str, amount: int) -> list:
     return findall('.' + '.?'*(amount-1), str(text), flags=DOTALL) # Uma maneira mais limpa de fazer
- 
+""" 
