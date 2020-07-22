@@ -1,5 +1,4 @@
 discord.py==1.3.4
-aiohttp
 pyfiglet
 psutil
 validators
@@ -10,5 +9,5 @@ beautifulsoup4
 dblpy
 jishaku
 emoji
--e git://github.com/DiscoMusic/genius-wrapper.git#egg=genius
+-e git://github.com/DiscoMusic/genius-wrapper.git#egg=genius-wrapper
 -e git://github.com/uKaigo/frankerfacez.git#egg=frankerfacez
