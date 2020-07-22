@@ -45,7 +45,7 @@ def __cantdel__(_):
     raise AttributeError("não é possivel deletar o atributo")
 
 def __getuptime__(bot):
-    if not hasattr(bot, '__started_in__'):
+    if not hasattr(bot, '_started_date'):
         raise RuntimeError('A data do uptime não foi definida.')
     return sec2hours((datetime.utcnow() - bot._started_date).total_seconds())
 
