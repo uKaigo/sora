@@ -1,13 +1,13 @@
 discord.py==1.3.4
-ksoftapi
-pyfiglet
-psutil
-validators
-motor
-dnspython
-pytz
-beautifulsoup4
-dblpy
-jishaku
-emoji
--e git://github.com/uKaigo/frankerfacez.git@1275fd6937c8c009ee5c8b7f35739459ebe795b7#egg=frankerfacez
+ksoftapi==0.2.4a
+pyfiglet==0.8.post1
+psutil==5.7.2
+validators==0.16.0
+motor==2.1.0
+dnspython==2.0.0
+pytz==2020.1
+beautifulsoup4==4.9.1
+dblpy==0.3.4
+jishaku==1.18.2.188
+emoji==0.5.4
+frankerfacez==1.0.6
