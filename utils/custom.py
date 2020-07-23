@@ -2,6 +2,7 @@
 
 import itertools
 import traceback
+from functools import cached_property
 from json import load
 from typing import Optional
 from discord import Embed as emb
@@ -58,7 +59,7 @@ class SoraContext(commands.Context):
         super().__init__(*args, **kwargs)
         self._lang = ''
 
-    @property
+    @cached_property
     def lang(self) -> str:
         """Retorna a linguagem do servidor"""
         if not hasattr(self, '_lang') or not self._lang:

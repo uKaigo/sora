@@ -207,7 +207,37 @@ class Utils(commands.Cog, name='_utils_cog'):
             usage=em.usage,
             emote_link=em.url)
         embed.set_image(url=f'https:{em.image}')
-        await ctx.send(embed=embed)
+        m = await ctx.send(embed=embed)
+
+        if not ctx.me.permissions_in(ctx.channel).manage_emojis \
+                or not ctx.author.permissions_in(ctx.channel).manage_emojis:
+            return
+
+        await m.add_reaction('➕')
+        
+        def check(r, user):
+            return user == ctx.author and r.message.id == m.id and r.emoji == '➕'
+        try:
+            # Não preciso acessar oq retorna, já que eu ja sei (pelo check)       
+            await self.bot.wait_for('reaction_add', check=check, timeout=60)
+        except TimeoutError:
+            return await m.remove_reaction('➕', ctx.me)
+
+        async with ctx.typing():
+            img = await self.bot.session.get(f'https:{em.image}')
+            img_bytes = await img.read()
+            io = BytesIO(img_bytes)
+            try:
+                emoji = await ctx.guild.create_custom_emoji(
+                    name=em.name, 
+                    image=io.read(), 
+                    reason=str({ctx.author})
+                )
+            except discord.HTTPException as error:
+                if error.status == 400:
+                    return await ctx.send(ctx.t('emote_limit'))
+                raise error
+        await ctx.send(ctx.t('emote_add', emote=emoji, emote_name=em.name))
 
     @commands.command()
     async def report(self, ctx, member:discord.Member, *, msg):
