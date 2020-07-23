@@ -15,7 +15,7 @@ class Fun(commands.Cog, name='_fun_cog'):
         sv = 'br.' if ctx.lang == 'pt-br' else ''
 
         async with ctx.typing():
-            res = await self.bot.session.get(f'https://{sv}ifunny.co/')
+            res = await self.bot.session.get(f'https://{sv}ifunny.co/feeds/shuffle')
 
             soup = BeautifulSoup(await res.text(), 'html.parser')
             
