@@ -10,4 +10,4 @@ beautifulsoup4==4.9.1
 dblpy==0.3.4
 jishaku==1.18.2.188
 emoji==0.5.4
-frankerfacez==1.0.6
+frankerfacez==1.1.1
