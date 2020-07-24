@@ -1,16 +1,17 @@
 import re
+from asyncio import TimeoutError
 from typing import Union
 from json import load
-from aiohttp import BasicAuth 
 from os import getenv
 from datetime import datetime
 from io import BytesIO
 import pyfiglet
-import discord
+from aiohttp import BasicAuth 
 from bs4 import BeautifulSoup
+import discord
 from discord.ext import commands
-from utils.custom import baseMenu, Embed
 from ffz import Client, NotFound
+from utils.custom import baseMenu, Embed
 
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
