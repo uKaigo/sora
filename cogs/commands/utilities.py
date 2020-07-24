@@ -194,6 +194,7 @@ class Utils(commands.Cog, name='_utils_cog'):
     @commands.command(name='ffz')
     async def _ffz(self, ctx, emote):
         async with ctx.typing():
+            await self.ffz.wait_until_ready()
             try:
                 em = await self.ffz.search_emote(emote, 1)
             except NotFound:
