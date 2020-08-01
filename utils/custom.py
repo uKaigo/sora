@@ -268,7 +268,6 @@ class Embed(emb):
             color = bot.ecolor
             kwargs['title'] = f':x: | {kwargs.get("title", "Error")}'
 
-        timestamp = kwargs.get('timestamp', ctx.message.created_at)
         kwargs.setdefault('color', color)
 
         super().__init__(**kwargs)

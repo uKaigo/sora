@@ -45,13 +45,9 @@ class Utils(commands.Cog, name='_utils_cog'):
     @commands.group(aliases=['qr'], invoke_without_command=True, case_insensitive=True)
     async def qrcode(self, ctx, *, texto):
         if ctx.invoked_subcommand is None:
-            try:
-                texto, cor = texto.split('#')
-            except:
-                cor = 'cccccc'
-            
-            embed = Embed(ctx, title=ctx.t('title'))
-            embed.set_image(url=f'http://api.qrserver.com/v1/create-qr-code/?data={texto}&size=500x500&color={cor}&bgcolor=2F3136')
+            texto = texto.replace(' ', '%20')
+            embed = Embed(ctx, title=ctx.t('title'), color=self.bot.neutral)
+            embed.set_image(url=f'http://api.qrserver.com/v1/create-qr-code/?data={texto}&size=500x500')
 
             await ctx.send(embed=embed)
 
@@ -72,7 +68,7 @@ class Utils(commands.Cog, name='_utils_cog'):
                 async with response:
                     response = await response.json()
                     response = response[0]
-            except:
+            except Exception as e:
                 return await ctx.send(embed=nofile)
 
             if response['symbol'][0]['error']:
@@ -80,7 +76,7 @@ class Utils(commands.Cog, name='_utils_cog'):
                 embed.description = ctx.t('invalid_desc')
                 return await ctx.send(embed=embed)
 
-        embed = Embed(ctx, title=ctx.t('title'))
+        embed = Embed(ctx, title=ctx.t('title'), color=self.bot.neutral)
         embed.add_field(name=ctx.t('exit'), value=response['symbol'][0]['data'], inline=False)
         embed.add_field(name=ctx.t('type'), value=response['type'])
         await ctx.send(embed=embed)

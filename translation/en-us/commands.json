@@ -272,8 +272,8 @@
     },
 
     "qrcode": {
-        "usage": "{}qrcode [text] (#color:hex)",
-        "description": "Generates a QR Code\n||If the text starts with `read`, put it in quotes.||",
+        "usage": "{}qrcode [text]",
+        "description": "Generates a QR Code.\n",
         "texts": {
             "title": "QR Code"
         }

@@ -271,8 +271,8 @@
     },
 
     "qrcode": {
-        "usage": "{}qrcode [texto] (#cor:hex)",
-        "description": "Gera um código QR\n||Se o texto começar com `read`, coloque tudo entre aspas.||",
+        "usage": "{}qrcode [texto]",
+        "description": "Gera um código QR.\n",
         "texts": {
             "title": "QR Code"
         }
