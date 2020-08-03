@@ -6,7 +6,6 @@ from os import getenv
 from datetime import datetime
 from io import BytesIO
 import pyfiglet
-from aiohttp import BasicAuth 
 from bs4 import BeautifulSoup
 import discord
 from discord.ext import commands
@@ -111,10 +110,8 @@ class Utils(commands.Cog, name='_utils_cog'):
 
     @commands.command(aliases=['git'])
     async def github(self, ctx, usuario):
-        base_url = f'https://api.github.com/users/{usuario}'
-        git_name, git_token = getenv('git_token').split(":")
-        auth = BasicAuth(git_name, git_token, 'utf-8')
-        user = await self.bot.session.get(base_url, auth=auth)
+        base_url=f'https://api.github.com/users/{usuario}'
+        user = await self.bot.session.get(base_url)
 
         if user.status != 200:
             erro = Embed(ctx, error=True)
@@ -149,7 +146,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         m = await ctx.send(embed=embed)
 
         embed.remove_field(1)
-        repos = await self.bot.session.get(base_url + '/repos', auth=auth)
+        repos = await self.bot.session.get(base_url + '/repos')
         repos = await repos.json()
 
         user_repos = [f'[{c["name"]}]({c["html_url"]}) ==={c["fork"]}'.replace('===True', '_forked_').replace('===False', '') for c in repos]
