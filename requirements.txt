@@ -9,5 +9,5 @@ pytz==2020.1
 beautifulsoup4==4.9.1
 dblpy==0.3.4
 jishaku==1.19.0.194
-emoji==0.5.4
+emoji==0.6.0
 frankerfacez==1.2.0
