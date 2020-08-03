@@ -210,7 +210,7 @@
                 "Eu não tenho permissão para expulsar **{member_name}**! (Meu cargo é menor ou igual ao dele)"
             ],
             "emb_title": "{emote} | Kick",
-            "emb_desc": "{member} foi banido por:\n`{reason}`"
+            "emb_desc": "{member} foi expulso por:\n`{reason}`"
         }
     },
 

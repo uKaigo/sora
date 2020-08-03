@@ -211,7 +211,7 @@
                 "I don't have permission to kick **{member_name}**! (My role is lower or equal to him)"
             ],
             "emb_title": "{emote} | Kick",
-            "emb_desc": "{member} was banned by:\n`{reason}`"
+            "emb_desc": "{member} was kicked by:\n`{reason}`"
         }
     },
 

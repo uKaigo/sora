@@ -129,7 +129,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         mdf_state = can_modify(ctx, membro)
         if mdf_state != 0:
-            error.description = ctx.t(f'cant_ban.{mdf_state-1}')
+            error.description = ctx.t(f'cant_ban.{mdf_state-1}', member_name=membro.display_name)
 
         if not isinstance(error.description, type(discord.Embed.Empty)):
             return await ctx.send(embed=error)
@@ -151,7 +151,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         mdf_state = can_modify(ctx, membro)
         if mdf_state != 0:
-            error.description = ctx.t(f'cant_ban.{mdf_state-1}')
+            error.description = ctx.t(f'cant_ban.{mdf_state-1}', member_name=membro.display_name)
 
         if not isinstance(error.description, type(discord.Embed.Empty)):
             return await ctx.send(embed=error)
