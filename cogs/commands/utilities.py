@@ -192,7 +192,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         async with ctx.typing():
             await self.ffz.wait_until_ready()
             try:
-                em = await self.ffz.search_emote(emote, 1)
+                em = await self.ffz.search_emote(emote, limit=1)
             except NotFound:
                 embed = Embed(ctx, title=ctx.t('err_notfound'), error=True)
                 embed.description = ctx.t('notfound_desc')

@@ -4,6 +4,8 @@ from random import choice
 from re import sub
 from discord import File
 from discord.ext import commands
+from ksoftapi import NoResults
+from utils.custom import Embed
 
 class Fun(commands.Cog, name='_fun_cog'):
     def __init__(self, bot):
@@ -47,6 +49,28 @@ class Fun(commands.Cog, name='_fun_cog'):
                 to_send = await self.bot.session.get(_surl)
                 io = BytesIO(await to_send.read())
                 await ctx.send(f'Link: <{url}>', file=File(io, filename=f'meme.jpg'))
+
+    @commands.command()
+    async def reddit(self, ctx, subreddit):
+        await ctx.trigger_typing()
+        nsfw = ctx.channel.is_nsfw()
+
+        try:
+            image = await self.bot.apis.ksoft.images.random_reddit(
+                subreddit,
+                remove_nsfw=not nsfw # Para inverter o valor
+            )
+        except NoResults:
+            nsfw_message = '.'
+            if not nsfw:
+                nsfw_message = '. Talvez por que você está usando o comando fora de um canal nsfw.'
+            return await ctx.send('Nenhuma imagem encontrada' + nsfw_message)
+
+        embed = Embed(ctx, description=image.title)
+        embed.set_author(name=f'{image.author.strip("/")} em {image.subreddit}', url=image.source)
+        embed.set_image(url=image.image_url)
+        await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(Fun(bot))
