@@ -61,5 +61,6 @@ class UserConverter(Converter):
                     pass
                 else:
                     return user 
-        
+            else:
+                return user
         raise BadArgument(f'User "{argument}" not found.')

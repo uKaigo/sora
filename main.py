@@ -3,6 +3,7 @@ from os import getenv, listdir
 from aiohttp import ClientSession, __version__ as aiohttp_version
 from sys import version as py_version
 from datetime import datetime
+from asyncio import create_task, get_running_loop
 from discord import Embed, Activity
 from discord.ext import commands
 from ksoftapi import Client
@@ -47,6 +48,7 @@ class Sora(commands.AutoShardedBot):
         self.is_heroku = is_heroku
         self.emotes = dict()
         self.config = config
+        self.support_bans = {}
 
         # Funções
         self.sec2hours = functions.sec2hours
@@ -60,18 +62,28 @@ class Sora(commands.AutoShardedBot):
 
         self.apis.ksoft = Client(getenv('ksoft_token'), loop=self.loop)
 
-        self.loop.run_until_complete(self.define_session())
+        self.loop.create_task(self.async_init())
 
     def __repr__(self) -> str:
         return f'<{__name__}.Sora guilds={len(self.guilds)} users={len(self.users)}> '
 
-    async def define_session(self):
+    async def async_init(self):
         if not hasattr(self, 'session') or not self.session:
             headers = {
                 'User-Agent': 'SoraBot/{} (https://github.com/uKaigo)'.format(self.version),
                 'X-Powered-By': 'aiohttp {}/Python {}'.format(aiohttp_version, py_version)
                 }
             self.session = ClientSession(headers=headers, connector=self.http.connector, loop=self.loop)
+
+        await self.wait_until_ready()
+
+        for emoji in self.get_guild(675889958262931488).emojis:
+            if emoji.name.startswith('sora_'):
+                self.emotes[emoji.name] = emoji
+
+        bans = await self.get_guild(675889958262931488).bans()
+        for entry in bans:
+            self.support_bans[entry.user.id] = entry
 
     async def close(self):
         await self.apis.ksoft.close()
@@ -98,13 +110,6 @@ class Sora(commands.AutoShardedBot):
         print('---------------------------------')
         ############
 
-        # Servidor de emojis, verifique os emojis usados pelo bot para não dar erro. (Caso for usar)
-        for emoji in self.get_guild(675889958262931488).emojis:
-            if emoji.name.startswith('sora_'):
-                self.emotes[emoji.name] = emoji
-
-        await self.change_presence(activity=Activity(name='minha ajuda', type=1, url='https://twitch.tv/ukaigo'))
-
         self._started_date = datetime.utcnow()
 
     def run(self, token, **kwargs):
@@ -130,9 +135,16 @@ class Sora(commands.AutoShardedBot):
 
 bot = Sora()
 
+@bot.check
+async def check_ban(ctx):
+    if ctx.author.id in bot.support_bans:
+        reason = bot.support_bans[ctx.author.id].reason
+        await ctx.send(f"Você está banido./You're banned.\n```{reason}```")
+        return False
+    return True
+
 if __name__ == '__main__':
     try:
         bot.run(getenv('token'))
     except KeyboardInterrupt:
         pass
-    pass

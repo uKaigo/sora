@@ -39,6 +39,19 @@ class SupportEvents(commands.Cog):
             await message.add_reaction('👍')
             return await message.add_reaction('👎') 
 
+    @commands.Cog.listener()
+    async def on_member_ban(self, guild, member):
+        if not guild.id == 675889958262931488: return
+        entry = await self.bot.get_guild(675889958262931488).fetch_ban(member)
+        self.bot.support_bans[member.id] = entry
+
+    @commands.Cog.listener()
+    async def on_member_unban(self, guild, user):
+        if not guild.id == 675889958262931488: return
+        try:
+            del(self.bot.support_bans[user.id])
+        except KeyError:
+            pass
 
 def setup(bot):
     bot.add_cog(SupportEvents(bot))
