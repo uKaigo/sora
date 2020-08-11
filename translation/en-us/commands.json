@@ -258,7 +258,7 @@
         "perms": ["manage_messages"],
         "texts": {
             "title": "Vote for the question bellow.",
-            "sended": "Message send in the channel {channel_mention}\n\n[Link]({msg_link})"
+            "sended": "Message sent in the channel {channel_mention}\n\n[Link]({msg_link})"
         }
     },
 
@@ -266,6 +266,7 @@
         "usage": "{}ascii [font] [text]",
         "description": "Sends an ascii text. ([Fonts](http://www.figlet.org/examples.html))\n",
         "texts": {
+            "err_big": "The result is too big, and I don't have the `Attach Files` permission.",
             "err_invalid": "Invalid font!",
             "invalid_desc": "The font you typed didn't exist.\nFonts founded in: http://www.figlet.org/examples.html"
         }
@@ -453,6 +454,15 @@
             "rep_title": "New report!",
             "rep_desc": "Author: {author_mention}\nUser: {member_mention}\n\nReason: {reason}",
             "success": "Report sended!"
+        }
+    },
+
+    "secret": {
+        "usage": "{}secret [number] [texto]",
+        "description": "Hides a message between numbers. Press CTRL+F and search for the number.",
+        "texts": {
+            "err_invalid_n": "The first argument needs to be a number between 0 and 9.",
+            "err_too_big": "The result is too big and I don't have permission to attach files."
         }
     }
 

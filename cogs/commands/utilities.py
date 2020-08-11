@@ -30,6 +30,8 @@ class Utils(commands.Cog, name='_utils_cog'):
         txt = fnt.renderText(texto)
 
         if len(txt) > 2000-6:
+            if not ctx.me.permissions_in(ctx.channel).attach_files:
+                return await ctx.send(ctx.t('err_big'))
             io = BytesIO(txt.encode())
             args = dict(content=f'Online:\n...\nDownload:', file=discord.File(io, 'ascii.txt'))
 

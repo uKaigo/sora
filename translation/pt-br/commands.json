@@ -265,6 +265,7 @@
         "usage": "{}ascii [fonte] [texto]",
         "description": "Envia um texto ascii. ([Fontes](http://www.figlet.org/examples.html))\n",
         "texts": {
+            "err_big": "O resultado é muito grande e eu não tenho permissão de `Anexar Arquivos`.",
             "err_invalid": "Fonte inválida!",
             "invalid_desc": "A fonte que você inseriu não existe.\nFontes encontradas em: http://www.figlet.org/examples.html"
         }
@@ -447,6 +448,15 @@
             "rep_title": "Novo reporte!",
             "rep_desc": "Autor: {author_mention}\nUsuário: {member_mention}\n\nMotivo: {reason}",
             "success": "Reporte enviado!"
+        }
+    },
+
+    "secret": {
+        "usage": "{}secret [numero] [texto]",
+        "description": "Esconde uma mensagem no meio de números. Pressione CTRL+F e pesquise pelo numero.",
+        "texts": {
+            "err_invalid_n": "O primeiro argumento precisa ser um número entre 0 e 9.",
+            "err_too_big": "O resultado é muito grande e eu não tenho permissão de enviar arquivos."
         }
     }
 
