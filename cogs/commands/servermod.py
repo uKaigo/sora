@@ -366,9 +366,14 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
                 continue
 
         try:
+            await ctx.message.delete()
+        except:
+            pass
+        
+        try:
             await ctx.send(embed=discord.Embed.from_dict(jsn_emb), content=msg)
         except Exception as e:
-            error = True # Isso pq alguns valores do field, não sei arrumar.
+            error = True # Isso pq alguns valores do field não sei arrumar.
             await ctx.send(ctx.t('err_fail', error=e))
         
         if invalid:
