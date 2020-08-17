@@ -2,7 +2,7 @@ discord.py==1.4.1
 ksoftapi==0.2.4a
 pyfiglet==0.8.post1
 psutil==5.7.2
-validators==0.17.0
+validators==0.17.1
 motor==2.2.0
 dnspython==2.0.0
 pytz==2020.1
