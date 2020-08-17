@@ -268,8 +268,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         try:
             jsn = loads(json)
         except Exception as e:
-            embed = self.bot.erEmbed(ctx)
-            embed.description = ctx.t('err_invalid')
+            embed = Embed(ctx, description=ctx.t('err_invalid'), error=True)
             return await ctx.send(embed=embed)
         msg = jsn.get('content', None)
 
@@ -280,8 +279,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         try:
             jsn_emb = jsn['embed']
         except:
-            error = self.bot.erEmbed(ctx)
-            error.description = ctx.t('err_noemb')
+            error = Embed(ctx, description=ctx.t('err_noemb'), error=True)
             return await ctx.send(embed=error)
     
         # Daqui pra baixo, ele vai verificar tudo que é possivel no embed, e retirar do dicionario caso esteja errado

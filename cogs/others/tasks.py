@@ -24,5 +24,9 @@ class Tasks(commands.Cog):
         tp, name = next(self.presences)
         await self.bot.change_presence(activity=discord.Activity(name=name, type=tp, url='https://twitch.tv/ukaigo'))
 
+    @ch_presence.before_loop # pylint: disable=no-member
+    async def init_presence(self):
+        await self.bot.wait_until_ready()
+
 def setup(bot):
     bot.add_cog(Tasks(bot))

@@ -43,9 +43,14 @@ class Disco(commands.Cog, name='_disco_cog'):
         membro = membro or ctx.author
         cor = membro.color if str(membro.color) != '#000000' else self.bot.color
 
-        embed = Embed(ctx, title=ctx.t('emb_title', member_name=membro.name), color=cor)
+        flags_emote = set()
+        for flag in membro.public_flags.all():
+            flags_emote.add(str(self.bot.emotes.get(flag.name, '')))
+        flags_emote = " ".join(flags_emote)
 
-        embed.set_author(name=f'Userinfo | {membro.name}', icon_url=membro.avatar_url)
+        embed = Embed(ctx, title=f'{flags_emote} {membro}', color=cor)
+
+        embed.set_thumbnail(url=membro.avatar_url)
 
         bot = '**Bot**' if membro.bot else ''
         nick = f'\n{ctx.t("nick")} {membro.nick}' if membro.nick else ''
@@ -78,10 +83,6 @@ class Disco(commands.Cog, name='_disco_cog'):
 
         if roles:
             embed.add_field(name=ctx.t('emb_roles', roles=len(roles)), value=', '.join(roles), inline=False)
-        
-        perms = [ctx.t(c[0], _f='perms').capitalize() for c in membro.permissions_in(ctx.channel) if c[1]]
-        embed.add_field(name=ctx.t('emb_perms'), value=', '.join(perms), inline=False)
-
         await ctx.send(embed=embed)
 
     @commands.guild_only()
