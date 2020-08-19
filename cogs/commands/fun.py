@@ -1,7 +1,8 @@
 from io import BytesIO
 from bs4 import BeautifulSoup
 from random import choice, randint
-from re import sub
+from re import compile as re_compile
+from collections import namedtuple
 
 from discord import File
 from discord.ext import commands
@@ -10,48 +11,71 @@ from pyfiglet import Figlet
 
 from utils.custom import Embed
 
+class NotFound(Exception): pass
+
 class Fun(commands.Cog, name='_fun_cog'):
     def __init__(self, bot):
         self.bot = bot
 
+    async def get_meme(self, soup: BeautifulSoup) -> namedtuple:
+        """Retorna uma namedtuple contendo o post e a imagem do meme."""
+        MemeTuple = namedtuple('Meme', 'post url')
+        gallery_pattern = re_compile('\?gallery\=[\w\d]+')
+        
+        def get_href(element, is_image):
+            num = 1 if is_image else 0
+            return list(list(element.children)[1].children)[num].attrs['href']
+
+        memes = soup.find_all(class_='post__media')
+        if not memes:
+            raise NotFound('Nenhum meme encontrado.')
+
+        meme = list(choice(memes).children)[1]
+
+        # image = gif, video = mp4
+        if meme.attrs.get('data-type') in {'image', 'video'}:
+            post = get_href(meme, False)
+            url = meme.attrs['data-source']
+        else:
+            post = get_href(meme, True)
+            # \/ Por algum motivo o jeito de pegar imagem no ifunny é HORRIVEL
+            # então eu tenho que fazer isso.
+            url = list(list(list(meme.children)[1].children)[1].children)[0].attrs['data-src']            
+
+        post = gallery_pattern.sub('', post)
+
+        return MemeTuple(post, url)
+
     @commands.command()
     @commands.bot_has_permissions(attach_files=True)
     async def meme(self, ctx):
-        sv = 'br.' if ctx.lang == 'pt-br' else ''
+        url = f'https://{"br." if ctx.lang == "pt-br" else ""}ifunny.co'
+        url = url.strip('/')
 
         async with ctx.typing():
-            res = await self.bot.session.get(f'https://{sv}ifunny.co/feeds/shuffle')
+            request = await self.bot.session.get(f'{url}/feeds/shuffle')
+            text = await request.text()
 
-            soup = BeautifulSoup(await res.text(), 'html.parser')
-            
-            to_choice = soup.find_all(class_='post__media')
-            
-            if not to_choice:
-                embed = self.bot.erEmbed(ctx, ctx.t('err_notfound'))
-                embed.description = ctx.t('notfound_desc')
+            try:
+                meme = await self.get_meme(BeautifulSoup(text, 'html.parser'))
+            except NotFound:
+                embed = Embed(
+                    ctx, 
+                    title=ctx.t('err_notfound'), 
+                    description=ctx.t('notfound_desc'), 
+                    error=True
+                )
                 return await ctx.send(embed=embed)
-            
-            choosen = list(choice(to_choice).children)[1]
 
-            # É um video/gif
-            if choosen.attrs.get('data-type') and \
-                    (ext := choosen.attrs['data-type']) in ['image', 'video']:
-                ext = {'image': 'gif', 'video': 'mp4'}.get(ext) 
-                
-                url = f'https://{sv}ifunny.co'+list(list(choosen.children)[1].children)[0].attrs['href']
-                url = sub('\?gallery\=[\w\d]+', '', url)
+            post_url = url + meme.post
 
-                to_send = await self.bot.session.get(choosen.attrs['data-source'])
-                io = BytesIO(await to_send.read())
-                await ctx.send(f'Link: <{url}>', file=File(io, filename=f'meme.{ext}'))
-            else: # É uma imagem
-                url = f'https://{sv}ifunny.co'+list(list(choosen.children)[1].children)[1].attrs['href']
-                url = sub('\?gallery\=[\w\d]+', '', url)
+            meme_ext = meme.url.split('.')[-1]
+            meme_response = await self.bot.session.get(meme.url)
+            meme_io = BytesIO(await meme_response.read())
 
-                _surl = list(list(list(choosen.children)[1].children)[1].children)[0].attrs['data-src']
-                to_send = await self.bot.session.get(_surl)
-                io = BytesIO(await to_send.read())
-                await ctx.send(f'Link: <{url}>', file=File(io, filename=f'meme.jpg'))
+            attachment = File(meme_io, filename=f'meme.{meme_ext}')
+
+            await ctx.send(f'Link: <{post_url}>', file=attachment)
 
     @commands.command()
     async def secret(self, ctx, number, *, text):
@@ -86,7 +110,6 @@ class Fun(commands.Cog, name='_fun_cog'):
             url = f'https://txt.discord.website/?txt={m.attachments[0].url[38:-4].strip("/")}'
             await m.edit(content=f'Online:\n<{url}>\nDownload:')
 
-
 """
     @commands.command()
     async def reddit(self, ctx, subreddit):
@@ -118,6 +141,5 @@ class Fun(commands.Cog, name='_fun_cog'):
         #embed.set_image(url=image.image_url)
         await ctx.send(embed=embed)
 """
-
 def setup(bot):
     bot.add_cog(Fun(bot))
