@@ -110,36 +110,42 @@ class Fun(commands.Cog, name='_fun_cog'):
             url = f'https://txt.discord.website/?txt={m.attachments[0].url[38:-4].strip("/")}'
             await m.edit(content=f'Online:\n<{url}>\nDownload:')
 
-"""
+
     @commands.command()
     async def reddit(self, ctx, subreddit):
-        await ctx.trigger_typing()
         nsfw = ctx.channel.is_nsfw()
-        try:
-            image = await self.bot.apis.ksoft.images.random_reddit(
-                subreddit,
-                remove_nsfw=not nsfw # Para inverter o valor.
-            )
-        except (APIError) as e:
-            no_img = ("reddit returned no results, try extending your span to "
-                      "week or month (set 'span' GET parameter)")
-            no_sub = 'subreddit not found'
 
-            if not e.message in [no_img, no_sub]:
-                raise
+        async with ctx.typing():
+            try:
+                image = await self.bot.apis.ksoft.images.random_reddit(
+                    subreddit,
+                    remove_nsfw=not nsfw # Para inverter o valor.
+                )
+            except APIError as e:
+                no_img = 'reddit returned no'
+                no_sub = 'subreddit not found'
 
-            if e.message == no_sub:
-                return await ctx.send('Subreddit não encontrado.')
+                message = ' '.join(e.message.split(' ')[:3])
 
-            nsfw_message = '.'
-            if not nsfw:
-                nsfw_message = ' Talvez por que você está usando o comando fora de um canal nsfw.'
-            return await ctx.send('Nenhuma imagem encontrada.' + nsfw_message)
+                if not message in [no_img, no_sub]:
+                    raise
 
-        embed = Embed(ctx, description=image.title)
-        embed.set_author(name=f'{image.author.strip("/")} em {image.subreddit}', url=image.source)
-        #embed.set_image(url=image.image_url)
-        await ctx.send(embed=embed)
-"""
+                if message == no_sub:
+                    return await ctx.send(ctx.t('err_notfound'))
+
+                nsfw_message = ''
+                if not nsfw:
+                    nsfw_message = ' ' + ctx.t('maybe_nsfw')
+                return await ctx.send(ctx.t('err_noimage') + nsfw_message)
+
+            author = image.author.strip('/')
+            sub = image.subreddit
+
+            embed = Embed(ctx, description=image.title)
+
+            embed.set_author(name=ctx.t('title', author=author, sub=sub), url=image.source)
+            embed.set_image(url=image.image_url)
+            await ctx.send(embed=embed)
+
 def setup(bot):
     bot.add_cog(Fun(bot))

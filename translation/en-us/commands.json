@@ -464,6 +464,17 @@
             "err_invalid_n": "The first argument needs to be a number between 0 and 9.",
             "err_too_big": "The result is too big and I don't have permission to attach files."
         }
+    },
+
+    "reddit": {
+        "usage": "{}reddit [subreddit]",
+        "description": "Sends a random image of the subreddit.",
+        "texts": {
+            "err_notfound": "Subreddit not found.",
+            "err_noimage": "No image found.",
+            "maybe_nsfw": "Maybe because you're running the command outside nsfw channel.",
+            "title": "{author} in {sub}"    
+        }
     }
 
 

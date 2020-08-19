@@ -458,6 +458,17 @@
             "err_invalid_n": "O primeiro argumento precisa ser um número entre 0 e 9.",
             "err_too_big": "O resultado é muito grande e eu não tenho permissão de enviar arquivos."
         }
+    },
+
+    "reddit": {
+        "usage": "{}reddit [subreddit]",
+        "description": "Envia uma imagem aleatória do subreddit.",
+        "texts": {
+            "err_notfound": "Subreddit não encontrado.",
+            "err_noimage": "Nenhuma imagem encontrada.",
+            "maybe_nsfw": "Talvez seja porque você está usando o comando fora de um canal nsfw.",
+            "title": "{author} em {sub}"    
+        }
     }
 
 }
