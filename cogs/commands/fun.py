@@ -143,6 +143,7 @@ class Fun(commands.Cog, name='_fun_cog'):
 
             embed = Embed(ctx, description=image.title)
 
+            embed.set_footer(text='Ksoft.Si')
             embed.set_author(name=ctx.t('title', author=author, sub=sub), url=image.source)
             embed.set_image(url=image.image_url)
             await ctx.send(embed=embed)
