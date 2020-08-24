@@ -86,6 +86,7 @@ class Sora(commands.AutoShardedBot):
 
     async def close(self):
         await self.apis.ksoft.close()
+        await self.apis['ffz'].close()
         await self.session.close()
         await super().close()
 

@@ -122,7 +122,12 @@ class Utils(commands.Cog, name='_utils_cog'):
             if user.status == 404:
                 erro.title = ctx.t('err_404')
                 erro.description = ctx.t('notfound_desc')
-    
+
+            if erro.description == f'err_{user.status}':
+                msg = await user.json()
+                msg = msg['message']
+                return await ctx.send(msg)
+
             return await ctx.send(embed=erro)
         
         user = await user.json()
