@@ -8,7 +8,7 @@ class Tasks(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         if bot.is_heroku:
-            self.dblpy = DBLClient(self.bot, getenv('dbl_token'), autopost=True)
+            self.dblpy = DBLClient(self.bot, getenv('DBL_TOKEN'), autopost=True)
 
         # Todas as presenças e o número delas.
         self.presences = cycle([

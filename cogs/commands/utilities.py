@@ -110,6 +110,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         embed.set_thumbnail(url=f'https://minecraftskinstealer.com/api/v1/skin/render/fullbody/{nick}/700')
         await ctx.send(embed=embed)
 
+    """
     @commands.command(aliases=['git'])
     async def github(self, ctx, usuario):
         base_url=f'https://api.github.com/users/{usuario}'
@@ -164,6 +165,7 @@ class Utils(commands.Cog, name='_utils_cog'):
         user_repos = [ctx.t('none')] if not user_repos else user_repos
         embed.insert_field_at(1, name=ctx.t('emb_repo', repos=user['public_repos']), value='\n'.join(user_repos), inline=False)
         await m.edit(embed=embed)
+    """
 
     @commands.command()
     async def addbot(self, ctx, member: Union[discord.Member, discord.Object], permissions='8'):

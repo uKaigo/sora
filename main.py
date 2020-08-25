@@ -1,7 +1,7 @@
 from json import load
 from os import getenv, listdir
 from aiohttp import ClientSession, __version__ as aiohttp_version
-from sys import version as py_version
+from sys import version_info as py_version
 from datetime import datetime
 from asyncio import create_task, get_running_loop
 from discord import Embed, Activity
@@ -34,7 +34,7 @@ class Sora(commands.AutoShardedBot):
     # pylint: disable=too-many-instance-attributes
     def __init__(self):
         super().__init__(command_prefix=get_prefix, case_insensitive=True)
-        self.db = Database(getenv('mongo_uri'), 'Sora')
+        self.db = Database(getenv('MONGO_URI'), 'Sora')
 
         # Cores
         self.color = 0xBA3C51
@@ -60,7 +60,7 @@ class Sora(commands.AutoShardedBot):
         # Versão do bot
         self.version = self.config['version']
 
-        self.apis.ksoft = Client(getenv('ksoft_token'), loop=self.loop)
+        self.apis.ksoft = Client(getenv('KSOFT_TOKEN'), loop=self.loop)
 
         self.loop.create_task(self.async_init())
 
@@ -71,8 +71,8 @@ class Sora(commands.AutoShardedBot):
         if not hasattr(self, 'session') or not self.session:
             headers = {
                 'User-Agent': 'SoraBot/{} (https://github.com/uKaigo)'.format(self.version),
-                'X-Powered-By': 'aiohttp {}/Python {}'.format(aiohttp_version, py_version)
-                }
+                'X-Powered-By': 'aiohttp {0}/Python {1.major}.{1.minor}.{1.micro}'.format(aiohttp_version, py_version)
+            }
             self.session = ClientSession(headers=headers, connector=self.http.connector, loop=self.loop)
 
         await self.wait_until_ready()
@@ -145,6 +145,6 @@ async def check_ban(ctx):
 
 if __name__ == '__main__':
     try:
-        bot.run(getenv('token'))
+        bot.run(getenv('TOKEN'))
     except KeyboardInterrupt:
         pass
