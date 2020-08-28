@@ -71,7 +71,12 @@ class Fun(commands.Cog, name='_fun_cog'):
 
             meme_ext = meme.url.split('.')[-1]
             meme_response = await self.bot.session.get(meme.url)
-            meme_io = BytesIO(await meme_response.read())
+            meme_content = await meme_response.read()
+
+            if len(meme_content) > int(7.99*1024*1024):
+                return await ctx.reinvoke()
+
+            meme_io = BytesIO(meme_content)
 
             attachment = File(meme_io, filename=f'meme.{meme_ext}')
 
