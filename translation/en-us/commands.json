@@ -107,13 +107,13 @@
             "emb_title": "Here's some info about {member_name}.",
             "nick": "**Nickname:**",
             "emb_member": "Member:",
+            "member_value": "**{member}**\n**ID:** {member.id}{nick}\n**{join_pos}º** to join.",
             "status_l": {"online": "Online", "dnd": "Do Not Disturb", "idle": "Idle", "offline": "Offline"},
             "activities_l": ["Playing:", "Streaming:", "Listening:", "Watching:", "Custom:"],
             "emb_date": "Date:",
             "date_value": "**That created the account:** {created_at} ({rel_created})\n**That joined the server:** {joined_at} ({rel_joined})",
             "topr_value": "{member.top_role.mention} ({member.top_role.id})\n**Color:** {member.top_role.color}",
-            "emb_roles": "Roles: [{roles}]",
-            "emb_perms": "This member has the followings permissions:"
+            "emb_roles": "Roles: [{roles}]"
         }
     },
 

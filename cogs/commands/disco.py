@@ -44,6 +44,8 @@ class Disco(commands.Cog, name='_disco_cog'):
         cor = membro.color if str(membro.color) != '#000000' else self.bot.color
 
         flags_emote = set()
+        if membro.bot:
+            flags_emote.add(str(self.bot.emotes.get('bot')))
         for flag in membro.public_flags.all():
             flags_emote.add(str(self.bot.emotes.get(flag.name, '')))
         flags_emote = " ".join(flags_emote)
@@ -52,9 +54,23 @@ class Disco(commands.Cog, name='_disco_cog'):
 
         embed.set_thumbnail(url=membro.avatar_url)
 
-        bot = '**Bot**' if membro.bot else ''
+        join_pos = sorted(
+            ctx.guild.members, 
+            key=lambda m: m.joined_at.timestamp()
+        )
+        join_pos = join_pos.index(membro) + 1
+
         nick = f'\n{ctx.t("nick")} {membro.nick}' if membro.nick else ''
-        embed.add_field(name=ctx.t('emb_member'), value=f'**Tag:** {membro}{nick}\n**ID:** {membro.id}\n{bot}', inline=False)
+        embed.add_field(
+            name=ctx.t('emb_member'), 
+            value=ctx.t(
+                'member_value', 
+                member=membro, 
+                nick=nick, 
+                join_pos=join_pos
+            ), 
+            inline=False
+        )
 
         status = str(self.bot.emotes[f'sora_{str(membro.status)}']) + f" {':iphone:' if membro.is_on_mobile() else ''} **{ctx.t('status_l.' + str(membro.status))}**"
         
@@ -88,9 +104,7 @@ class Disco(commands.Cog, name='_disco_cog'):
     @commands.guild_only()
     @commands.command()
     async def oldmembers(self, ctx):
-        members = [(member, member.joined_at.timestamp()) for member in ctx.guild.members]
-        members.sort(key=lambda t: t[1])
-        members = [c[0] for c in members]
+        members = sorted(ctx.guild.members, key=lambda m: m.joined_at.timestamp())
         
         pages = []
         

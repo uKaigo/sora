@@ -104,16 +104,15 @@
         "usage": "{}userinfo (membro)",
         "description": "Exibe as informações de um membro.",
         "texts": {
-            "emb_title": "Aqui estão algumas informações sobre {member_name}.",
             "nick": "**Apelido:**",
             "emb_member": "Membro:",
+            "member_value": "**{member}**\n**ID:** {member.id}{nick}\n**{join_pos}º** a entrar.",
             "status_l": {"online": "Online", "dnd": "Não perturbar", "idle": "Ausente", "offline": "Offline"},
             "activities_l": ["Jogando:", "Transmitindo:", "Ouvindo:", "Assistindo:", "Custom:"],
             "emb_date": "Data:",
             "date_value": "**Que criou a conta:** {created_at} ({rel_created})\n**Que entrou no server:** {joined_at} ({rel_joined})",
             "topr_value": "{member.top_role.mention} ({member.top_role.id})\n**Cor:** {member.top_role.color}",
-            "emb_roles": "Cargos: [{roles}]",
-            "emb_perms": "Este membro tem as seguintes permissões:"
+            "emb_roles": "Cargos: [{roles}]"
         }
     },
 
