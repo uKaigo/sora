@@ -38,7 +38,15 @@ class BotCmds(commands.Cog, name='_bot_cog'):
             host = f'Local `({ping}ms)`'
         embed.add_field(name=ctx.t('emb_host'), value=host, inline=False)
 
-        embed.add_field(name=ctx.t('emb_total'), value=ctx.t('total_value', guilds=len(self.bot.guilds), users=len(set(self.bot.users))))
+        embed.add_field(
+            name=ctx.t('emb_total'), 
+            value=ctx.t(
+                'total_value', 
+                guilds=len(self.bot.guilds), 
+                users=len(set(self.bot.users)), 
+                commands=len(set(self.bot.commands))
+            )
+        )
         
         embed.add_field(name=f'Links:', value=f'{ctx.t("links_inv")}(https://is.gd/SoraBot)\n{ctx.t("links_server")}(https://discord.gg/4YVfJMV)\nSource: [uKaigo/Sora-Bot](https://github.com/uKaigo/Sora-Bot) ', inline=False)
         

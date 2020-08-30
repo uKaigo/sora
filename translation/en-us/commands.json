@@ -71,8 +71,7 @@
             "links_inv": "Invite: [Click]",
             "links_server": "Server: [Join]",
             "emb_total": "Actually I have:",
-            "total_value": "**{guilds}** guilds and **{users}** users",
-            "emb_footer": "{author_name} • Type `{prefix}help`"
+            "total_value": "**{guilds}** guilds, **{users}** users and **{commands}** commands."
         }
     },
 
