@@ -35,9 +35,11 @@ class SupportEvents(commands.Cog):
         if message.author.bot:
             return
 
-        if message.channel.id == 676523018943594572 and not message.content.startswith('>'):
+        channels = [676523018943594572, 729831163518255124]
+
+        if message.channel.id in channels and not message.content.startswith('>'):
             await message.add_reaction('👍')
-            return await message.add_reaction('👎') 
+            return await message.add_reaction('👎')
 
     @commands.Cog.listener()
     async def on_member_ban(self, guild, member):
