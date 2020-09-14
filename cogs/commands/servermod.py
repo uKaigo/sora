@@ -112,7 +112,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.command(aliases=['banir'])
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def ban(self, ctx, membro:UserConverter, *, reason='_no_reason'):
+    async def ban(self, ctx, membro: UserConverter, *, reason='_no_reason'):
         reason = ctx.t(reason)
         def ban_embed(member):
             embed = Embed(
@@ -127,9 +127,10 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         error = Embed(ctx, title=ctx.t('err_np_title'), error=True)
 
-        mdf_state = can_modify(ctx, membro)
-        if mdf_state != 0:
-            error.description = ctx.t(f'cant_ban.{mdf_state-1}', member_name=membro.display_name)
+        if isinstance(membro, discord.Member):
+            mdf_state = can_modify(ctx, membro)
+            if mdf_state != 0:
+                error.description = ctx.t(f'cant_ban.{mdf_state-1}', member_name=membro.display_name)
 
         if not isinstance(error.description, type(discord.Embed.Empty)):
             return await ctx.send(embed=error)

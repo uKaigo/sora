@@ -8,6 +8,7 @@ from discord import File
 from discord.ext import commands
 from ksoftapi import APIError, NoResults
 from pyfiglet import Figlet
+from aiohttp import ClientConnectorError
 
 from utils.custom import Embed
 
@@ -72,7 +73,6 @@ class Fun(commands.Cog, name='_fun_cog'):
             meme_ext = meme.url.split('.')[-1]
             meme_response = await self.bot.session.get(meme.url)
             meme_content = await meme_response.read()
-
             if len(meme_content) > int(7.99*1024*1024):
                 return await ctx.reinvoke()
 
