@@ -1,6 +1,7 @@
 from os import getenv
 from asyncio import TimeoutError
 from utils.custom import baseMenu, Embed
+from ksoftapi import NoResults
 from discord.ext import commands
 
 class LyricsMenu(baseMenu):
@@ -29,11 +30,12 @@ class Music(commands.Cog, name='_music_cog'):
     @commands.command(aliases=['letra', 'l'])
     async def lyrics(self, ctx, *, query):
         async with ctx.typing():
-            _results = await self.bot.apis.ksoft.music.lyrics(query)
-        if not _results:
-            embed = Embed(ctx, title=ctx.t('err_notfound'), error=True)
-            embed.description = ctx.t('notfound_desc')
-            return await ctx.send(embed=embed)
+            try:
+                _results = await self.bot.apis.ksoft.music.lyrics(query)
+            except NoResults:
+                embed = Embed(ctx, title=ctx.t('err_notfound'), error=True)
+                embed.description = ctx.t('notfound_desc')
+                return await ctx.send(embed=embed)
 
         op = [f'- **{i}**: {s.artist} - {s.name}' for i, s in enumerate(_results, 1)]
 
@@ -48,10 +50,18 @@ class Music(commands.Cog, name='_music_cog'):
         msg = await ctx.send(embed=embed)
 
         def check(m):
-            return (m.channel, ctx.author) == (ctx.channel, ctx.author) \
-                and (bool(m.content), m.content.isdecimal()) == (True, True) \
-                and 0 < int(m.content) <= len(_results) or m.content.lower() == 'exit'
-        
+            mandatory_conditions = (
+                m.channel == ctx.channel,
+                m.author == ctx.author,
+                len(m.content),
+            )
+            optional_conditions = (
+                m.content == 'exit',
+                m.content.isnumeric() and 0 < int(m.content) <= len(_results),
+            )
+
+            return all(mandatory_conditions) and any(optional_conditions)
+
         try:
             res = await self.bot.wait_for('message', check=check, timeout=60)
         except TimeoutError:

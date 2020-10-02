@@ -124,6 +124,12 @@ class Sora(commands.AutoShardedBot):
                     print(f'[{folder}.{_file}] -> {type(e).__name__}: {e}')
                 else:
                     print(f'[{folder}.{_file}] -> Carregado.')
+        try:
+            self.load_extension('zuraaaVoteChecker')
+        except Exception as e:
+            print(f'[zuraaaVoteChecker] -> {type(e).__name__}: {e}')
+        else:
+            print(f'[zuraaaVoteChecker] -> Carregado.')
 
         super().run(token, **kwargs)
 

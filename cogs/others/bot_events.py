@@ -32,5 +32,10 @@ class BotEvents(commands.Cog):
         time = datetime.now().strftime('%H:%M:%S')
         print(f'[TOP.GG] {time} - Guilds atualizados: {len(self.bot.guilds)}')
 
+    @commands.Cog.listener()
+    async def on_zuraaa_vote(self, user):
+        print(f'{user} votou no Sora!')
+        print(f'Atualmente com {self.bot.zuraaa_vote_streak}')
+
 def setup(bot):
     bot.add_cog(BotEvents(bot))
