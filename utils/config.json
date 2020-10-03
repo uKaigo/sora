@@ -1,5 +1,6 @@
 {
     "prefix": "so.",
     "version": "204001",
+    "intents": ["guilds", "members", "bans", "emojis", "presences", "messages"],
     "invite": "https://discord.com/oauth2/authorize?client_id=666825074850136076&scope=bot&permissions=1544023126"
 }

@@ -1,3 +1,4 @@
+import discord
 from json import load
 from os import getenv, listdir
 from aiohttp import ClientSession, __version__ as aiohttp_version
@@ -29,11 +30,14 @@ async def get_prefix(bot, message):
         return commands.when_mentioned_or(prefix)(bot, message)
     return commands.when_mentioned_or('')(bot, message)
 
+intents = discord.Intents()
+for intent_to_enable in config['intents']:
+    setattr(intents, intent_to_enable, True)
 
 class Sora(commands.AutoShardedBot):
     # pylint: disable=too-many-instance-attributes
     def __init__(self):
-        super().__init__(command_prefix=get_prefix, case_insensitive=True)
+        super().__init__(command_prefix=get_prefix, case_insensitive=True, intents=intents)
         self.db = Database(getenv('MONGO_URI'), 'Sora')
 
         # Cores
