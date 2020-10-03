@@ -53,7 +53,7 @@ class Music(commands.Cog, name='_music_cog'):
             mandatory_conditions = (
                 m.channel == ctx.channel,
                 m.author == ctx.author,
-                len(m.content),
+                len(m.content) != 0,
             )
             optional_conditions = (
                 m.content == 'exit',
