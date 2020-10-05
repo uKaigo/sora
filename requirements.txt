@@ -6,7 +6,7 @@ validators==0.18.1
 motor==2.3.0
 dnspython==2.0.0
 pytz==2020.1
-beautifulsoup4==4.9.2
+beautifulsoup4==4.9.3
 dblpy==0.4.0
 jishaku==1.19.1.200
 emoji==0.6.0
