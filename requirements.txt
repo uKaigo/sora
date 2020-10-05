@@ -10,4 +10,4 @@ beautifulsoup4==4.9.2
 dblpy==0.4.0
 jishaku==1.19.1.200
 emoji==0.6.0
-zuraaa-vote-checker==0.1.0
+zuraaa-vote-checker==0.1.2
