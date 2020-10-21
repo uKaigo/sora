@@ -1,4 +1,4 @@
-discord.py==1.5.0
+discord.py==1.5.1
 ksoftapi==0.2.5a0
 pyfiglet==0.8.post1
 psutil==5.7.2
