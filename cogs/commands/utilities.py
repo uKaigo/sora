@@ -15,7 +15,7 @@ from utils.custom import baseMenu, Embed
 class Utils(commands.Cog, name='_utils_cog'):
     def __init__(self, bot):
         self.bot = bot
-        self.ffz = bot.apis.ffz = Client(loop=bot.loop, session=bot.session)
+        self.ffz = bot.apis.ffz = Client()
 
     @commands.command(name='ascii')
     async def _ascii(self, ctx, fonte, *, texto):
@@ -198,19 +198,20 @@ class Utils(commands.Cog, name='_utils_cog'):
         async with ctx.typing():
             await self.ffz.wait_until_ready()
             try:
-                em = await self.ffz.search_emote(emote, limit=1)
+                em = await self.ffz.search_emote(emote, per_page=1)
             except NotFound:
                 embed = Embed(ctx, title=ctx.t('err_notfound'), error=True)
                 embed.description = ctx.t('notfound_desc')
                 return await ctx.send(embed=embed)
+        em = em[0]
         embed = Embed(ctx, title=ctx.t('emb_title', name=em.name))
         embed.description = ctx.t(
             'emb_desc', 
             creator_name=em.owner.display_name,
-            creator_twitch=em.owner.twitch_url,
-            usage=em.usage,
-            emote_link=em.url)
-        embed.set_image(url=f'https:{em.image}')
+            creator_twitch=f'https://twitch.tv/{em.owner}',
+            usage=em.usage_count,
+            emote_link=f'https://www.frankerfacez.com/emoticon/{em.id}')
+        embed.set_image(url=list(em.urls.items())[-1][1])
         m = await ctx.send(embed=embed)
 
         if not ctx.me.permissions_in(ctx.channel).manage_emojis \
@@ -228,7 +229,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             return await m.remove_reaction('➕', ctx.me)
 
         async with ctx.typing():
-            img = await self.bot.session.get(f'https:{em.image}')
+            img = await self.bot.session.get(list(em.urls.items())[-1][1])
             img_bytes = await img.read()
             io = BytesIO(img_bytes)
             try:
@@ -240,7 +241,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             except discord.HTTPException as error:
                 if error.status == 400:
                     return await ctx.send(ctx.t('emote_limit'))
-                raise error
+                raise
         await ctx.send(ctx.t('emote_add', emote=emoji, emote_name=em.name))
 
     @commands.command()
