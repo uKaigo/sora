@@ -10,4 +10,4 @@ beautifulsoup4==4.9.3
 dblpy==0.4.0
 jishaku==1.19.2.202
 emoji==0.6.0
-ffz.py==0.1.1
+ffz.py==0.1.3
