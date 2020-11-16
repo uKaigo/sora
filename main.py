@@ -81,7 +81,7 @@ class Sora(commands.AutoShardedBot):
 
         await self.wait_until_ready()
 
-        for emoji in self.get_guild(673654457824837654).emojis:
+        for emoji in self.get_guild(777716631253024768).emojis:
             self.emotes[emoji.name] = emoji
 
         bans = await self.get_guild(675889958262931488).bans()
