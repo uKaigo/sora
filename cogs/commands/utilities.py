@@ -168,7 +168,7 @@ class Utils(commands.Cog, name='_utils_cog'):
     """
 
     @commands.command()
-    async def addbot(self, ctx, member: Union[discord.Member, discord.Object], permissions='8'):
+    async def addbot(self, ctx, member: Union[discord.Member, discord.Object], permissions='2147483647'):
         _id = member.id
 
         if not str(_id).isdigit():
@@ -181,7 +181,7 @@ class Utils(commands.Cog, name='_utils_cog'):
             invalid = True
             permissions = '8'
 
-        base_url = 'https://discordapp.com/oauth2/authorize?scope=bot&client_id={}&permissions={}'     
+        base_url = 'https://discord.com/oauth2/authorize?scope=bot&client_id={}&permissions={}'     
 
         if not isinstance(member, discord.Member):
             member = await self.bot.fetch_user(_id) 

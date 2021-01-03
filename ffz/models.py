@@ -26,8 +26,7 @@ from .abc import BaseModel
 __all__ = ('Color', 'Badge', 'EmoteOwner', 'Emote', 'Room', 'Set', 'User')
 
 _strptime = datetime.strptime
-_date_fmt = '%a, %d %b %Y %H:%M:%S GMT'
-
+_date_fmt = '%Y-%m-%dT%H:%M:%S.%fZ'
 
 class Color:
     """Represents an color.
