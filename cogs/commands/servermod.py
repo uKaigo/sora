@@ -10,6 +10,7 @@ from discord.ext import commands
 from utils.custom import Embed
 from utils.converters import EmojiConverter, UserConverter
 
+
 def can_modify(ctx, member):
     if ctx.author == ctx.guild.owner:
         return 0
@@ -22,8 +23,9 @@ def can_modify(ctx, member):
         return 3
     if member.top_role.position >= ctx.me.top_role.position \
             or member == ctx.guild.owner:
-        return 4 
+        return 4
     return 0
+
 
 class ServerAdmin(commands.Cog, name='_mod_cog'):
     def __init__(self, bot):
@@ -37,36 +39,36 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.group(aliases=['limpar'])
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def clear(self, ctx, membro:typing.Optional[discord.Member], quantidade:typing.Optional[int]=100):
+    async def clear(self, ctx, membro: typing.Optional[discord.Member], quantidade: typing.Optional[int] = 100):
         if ctx.invoked_subcommand is not None:
-            return 
-        if quantidade not in range(2, 501): # Out Range (or)
+            return
+        if quantidade not in range(2, 501):  # Out Range (or)
             high_low = ctx.t(f'high_low.{int(quantidade<2)}')
             embed = Embed(
-                ctx, 
-                title=ctx.t('err_or_title'), 
-                description=ctx.t('err_or_desc', high_low=high_low), 
+                ctx,
+                title=ctx.t('err_or_title'),
+                description=ctx.t('err_or_desc', high_low=high_low),
                 error=True)
             return await ctx.send(embed=embed)
 
         loading = Embed(ctx, title=ctx.t('deleting'), color=self.bot.neutral)
         msg = await ctx.send(embed=loading)
         msg_ids = [msg.id, ctx.message.id]
-        
-        check = lambda m: m.id not in msg_ids
+
+        def check(m): return m.id not in msg_ids
 
         if membro:
-            check = lambda m: m.author == membro and not m.id in msg_ids
+            def check(m): return m.author == membro and not m.id in msg_ids
 
         prg = await ctx.channel.purge(limit=quantidade+2, check=check)
-       
+
         embed = Embed(ctx, title=ctx.t('emb_title'))
         embed.description = ctx.t(
-            'emb_desc', 
-            len_deleted=len(prg), 
+            'emb_desc',
+            len_deleted=len(prg),
             of_member=f'{ctx.t("of") if membro else ""}{membro.mention if membro else ""}'
         )
-        
+
         await msg.edit(embed=embed)
         await sleep(10)
         try:
@@ -78,31 +80,33 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @clear.command()
     @commands.has_permissions(manage_messages=True)
     @commands.bot_has_permissions(manage_messages=True)
-    async def match(self, ctx, pattern, limit:int=100):
-        if limit not in range(2, 501): # Out Range (or)
+    async def match(self, ctx, pattern, limit: int = 100):
+        if limit not in range(2, 501):  # Out Range (or)
             high_low = ctx.t(f'high_low.{int(limit<2)}')
             embed = Embed(
-                ctx, 
-                title=ctx.t('err_or_title'), 
+                ctx,
+                title=ctx.t('err_or_title'),
                 description=ctx.t('err_or_desc', high_low=high_low),
                 error=True
             )
             return await ctx.send(embed=embed)
-    
+
         loading = Embed(ctx, title=ctx.t('deleting'), color=self.bot.neutral)
 
         msg = await ctx.send(embed=loading)
         msg_ids = [msg.id, ctx.message.id]
 
-        check = lambda m: re.search(pattern, m.content) != None and m.id not in msg_ids 
+        def check(m): return re.search(
+            pattern, m.content) != None and m.id not in msg_ids
 
         prg = await ctx.channel.purge(limit=limit+2, check=check)
 
         embed = Embed(ctx, title=ctx.t('emb_title'))
-        embed.description = ctx.t('emb_desc', len_deleted=len(prg), pattern=pattern)
+        embed.description = ctx.t(
+            'emb_desc', len_deleted=len(prg), pattern=pattern)
         await msg.edit(embed=embed)
         await sleep(10)
-        
+
         try:
             await msg.delete()
             await ctx.message.delete()
@@ -114,15 +118,20 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.bot_has_permissions(ban_members=True)
     async def ban(self, ctx, membro: UserConverter, *, reason='_no_reason'):
         reason = ctx.t(reason)
+
         def ban_embed(member):
             embed = Embed(
-                ctx, 
+                ctx,
                 title=ctx.t('emb_title', emote=self.bot.emotes['sora_ban'])
             )
-            embed.add_field(name=ctx.t('emb_user'), value=ctx.t('user_value', member=str(member), member_id=member.id), inline=False)
-            embed.add_field(name=ctx.t('emb_staff'), value=ctx.t('staff_value', staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
-            embed.add_field(name=ctx.t('emb_reason'), value=reason, inline=False)
-            embed.set_footer(text=ctx.t('emb_footer', member_name=member.name), icon_url=member.avatar_url)
+            embed.add_field(name=ctx.t('emb_user'), value=ctx.t(
+                'user_value', member=str(member), member_id=member.id), inline=False)
+            embed.add_field(name=ctx.t('emb_staff'), value=ctx.t(
+                'staff_value', staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
+            embed.add_field(name=ctx.t('emb_reason'),
+                            value=reason, inline=False)
+            embed.set_footer(text=ctx.t(
+                'emb_footer', member_name=member.name), icon_url=member.avatar_url)
             return embed
 
         error = Embed(ctx, title=ctx.t('err_np_title'), error=True)
@@ -130,7 +139,8 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         if isinstance(membro, discord.Member):
             mdf_state = can_modify(ctx, membro)
             if mdf_state != 0:
-                error.description = ctx.t(f'cant_ban.{mdf_state-1}', member_name=membro.display_name)
+                error.description = ctx.t(
+                    f'cant_ban.{mdf_state-1}', member_name=membro.display_name)
 
         if not isinstance(error.description, type(discord.Embed.Empty)):
             return await ctx.send(embed=error)
@@ -144,34 +154,39 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.command()
     @commands.has_permissions(ban_members=True)
     @commands.bot_has_permissions(ban_members=True)
-    async def softban(self, ctx, membro:discord.Member, *, reason='_no_reason'):
-        ctx.command = self.bot.get_command('ban') # Perigoso, util para tradução
+    async def softban(self, ctx, membro: discord.Member, *, reason='_no_reason'):
+        ctx.command = self.bot.get_command(
+            'ban')  # Perigoso, util para tradução
         reason = ctx.t(reason)
 
         error = Embed(ctx, title=ctx.t('err_np_title'), error=True)
 
         mdf_state = can_modify(ctx, membro)
         if mdf_state != 0:
-            error.description = ctx.t(f'cant_ban.{mdf_state-1}', member_name=membro.display_name)
+            error.description = ctx.t(
+                f'cant_ban.{mdf_state-1}', member_name=membro.display_name)
 
         if not isinstance(error.description, type(discord.Embed.Empty)):
             return await ctx.send(embed=error)
 
         await membro.ban(reason=ctx.t('ban_reason', author=ctx.author, reason=reason))
         await membro.unban(reason=ctx.t('ban_reason', author=ctx.author, reason=reason))
-        
-        embed = Embed(ctx, title = ctx.t('emb_title', emote=self.bot.emotes['sora_ban']).replace('ban', 'soft-ban')
-)
-        embed.add_field(name=ctx.t('emb_user'), value=ctx.t('user_value', member=str(membro), member_id=membro.id), inline=False)
-        embed.add_field(name=ctx.t('emb_staff'), value=ctx.t('staff_value', staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
+
+        embed = Embed(ctx, title=ctx.t('emb_title', emote=self.bot.emotes['sora_ban']).replace('ban', 'soft-ban')
+                      )
+        embed.add_field(name=ctx.t('emb_user'), value=ctx.t(
+            'user_value', member=str(membro), member_id=membro.id), inline=False)
+        embed.add_field(name=ctx.t('emb_staff'), value=ctx.t(
+            'staff_value', staff_mention=ctx.author.mention, role=ctx.author.top_role.name), inline=False)
         embed.add_field(name=ctx.t('emb_reason'), value=reason, inline=False)
-        embed.set_footer(text=ctx.t('emb_footer', member_name=membro.name), icon_url=membro.avatar_url)
+        embed.set_footer(text=ctx.t(
+            'emb_footer', member_name=membro.name), icon_url=membro.avatar_url)
         await ctx.send(embed=embed)
 
     @commands.command(aliases=['kickar'])
     @commands.has_permissions(kick_members=True)
     @commands.bot_has_permissions(kick_members=True)
-    async def kick(self, ctx, membro:discord.Member, *, reason='_no_reason'):
+    async def kick(self, ctx, membro: discord.Member, *, reason='_no_reason'):
         erro = Embed(ctx, title=ctx.t('err_np_title'), error=True)
         reason = ctx.t(reason)
 
@@ -185,9 +200,9 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         await membro.kick(reason=ctx.t('kick_reason', author=str(ctx.author), reason=reason))
 
         embed = Embed(
-            ctx, 
+            ctx,
             title=ctx.t('emb_title', emote=self.bot.emotes['sora_ban']),
-            description = ctx.t('emb_desc', member=membro, reason=reason)
+            description=ctx.t('emb_desc', member=membro, reason=reason)
         )
         return await ctx.send(embed=embed)
 
@@ -198,23 +213,24 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         rms = None
         unlock = False
         try:
-            rms = ctx.channel.overwrites[ctx.guild.default_role].read_messages # Manter permissão de ler mensagens
+            # Manter permissão de ler mensagens
+            rms = ctx.channel.overwrites[ctx.guild.default_role].read_messages
             if ctx.channel.overwrites[ctx.guild.default_role].send_messages == False:
                 unlock = None
         except KeyError:
             rms = None
 
         await ctx.channel.set_permissions(
-            ctx.guild.default_role, 
-            reason=ctx.t('reason', author=ctx.author), 
-            send_messages=unlock, 
+            ctx.guild.default_role,
+            reason=ctx.t('reason', author=ctx.author),
+            send_messages=unlock,
             read_messages=rms
         )
 
         embed = Embed(ctx, title=ctx.t('emb_title'))
         embed.description = ctx.t(
-            'emb_desc', 
-            un=ctx.t('_un') if unlock is None else '', 
+            'emb_desc',
+            un=ctx.t('_un') if unlock is None else '',
             role=ctx.guild.default_role.name
         )
         await ctx.send(embed=embed)
@@ -222,7 +238,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @commands.command()
     @commands.has_permissions(manage_channels=True)
     @commands.bot_has_permissions(manage_channels=True)
-    async def allow(self, ctx, membro:discord.Member):
+    async def allow(self, ctx, membro: discord.Member):
         no = ''
         allow = True
         erro = Embed(ctx, error=True)
@@ -247,9 +263,10 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         # Adicionar
         else:
             await ctx.channel.set_permissions(membro, reason=ctx.t('reason'), send_messages=allow, read_messages=allow)
-        
+
         embed = Embed(ctx, title=ctx.t('emb_title'))
-        embed.description = ctx.t('emb_desc', member_mention=membro.mention, no=no)
+        embed.description = ctx.t(
+            'emb_desc', member_mention=membro.mention, no=no)
         await ctx.send(embed=embed)
 
     # Nem veja esse comando, ele é muito mal programado / dificil de entender.
@@ -264,8 +281,9 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
                     json = await self.bot.session.get(ctx.message.attachments[0].url)
                     json = await json.read()
                     json = json.decode('utf-8')
-            else: # Caso não tenha nada
-                raise commands.MissingRequiredArgument(Parameter(name='json', kind=Parameter.POSITIONAL_OR_KEYWORD))
+            else:  # Caso não tenha nada
+                raise commands.MissingRequiredArgument(
+                    Parameter(name='json', kind=Parameter.POSITIONAL_OR_KEYWORD))
         try:
             jsn = loads(json)
         except Exception as e:
@@ -274,6 +292,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         msg = jsn.get('content', None)
 
         invalid = []
+
         class EmbError(Exception):
             pass
 
@@ -282,7 +301,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         except:
             error = Embed(ctx, description=ctx.t('err_noemb'), error=True)
             return await ctx.send(embed=error)
-    
+
         # Daqui pra baixo, ele vai verificar tudo que é possivel no embed, e retirar do dicionario caso esteja errado
         # Todos esses invalid.append é pra mostrar oq está errado
 
@@ -309,7 +328,8 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         if jsn_emb.get('timestamp'):
             try:
-                datetime.strptime(jsn_emb['timestamp'][:-4], '%Y-%m-%dT%H:%M:%S')
+                datetime.strptime(jsn_emb['timestamp']
+                                  [:-4], '%Y-%m-%dT%H:%M:%S')
             except:
                 del(jsn_emb['timestamp'])
                 invalid.append('embed.timestamp')
@@ -336,7 +356,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
                 del(jsn_emb['image'])
                 invalid.append('embed.thumbnail')
 
-        try: # Author      
+        try:  # Author
             if jsn_emb.get('author'):
                 if not jsn_emb['author'].get('name'):
                     del(jsn_emb['author'])
@@ -368,26 +388,26 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             await ctx.message.delete()
         except:
             pass
-        
+
         try:
             await ctx.send(embed=discord.Embed.from_dict(jsn_emb), content=msg)
         except Exception as e:
-            error = True # Isso pq alguns valores do field não sei arrumar.
+            error = True  # Isso pq alguns valores do field não sei arrumar.
             await ctx.send(ctx.t('err_fail', error=e))
-        
+
         if invalid:
             await ctx.send(ctx.t('invalid', invalids="; ".join(invalid), delete_after=10))
 
     @commands.command(aliases=['vote'])
     @commands.has_permissions(manage_messages=True)
-    async def poll(self, ctx, emojis: commands.Greedy[EmojiConverter], channel:typing.Optional[discord.TextChannel], *, message):
+    async def poll(self, ctx, emojis: commands.Greedy[EmojiConverter], channel: typing.Optional[discord.TextChannel], *, message):
         channel = channel if channel else ctx.channel
 
         # PartialEmojis não podem ser adicionados pelo bot, por isso essa verificaçao
         emojis = set(filter(lambda e: type(e) != discord.PartialEmoji, emojis))
         if not emojis:
             emojis = {'✅', '❎'}
-        
+
         if len(emojis) == 1:
             emojis.add('❎')
 
@@ -400,13 +420,14 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         mentions = [c for c in mentions if c]
 
         embed = Embed(ctx, title=ctx.t('title'), description=message.strip(r'\ ')
-)
+                      )
         if mentions:
             mentions = [f'<@{c[0]}{c[1]}>' for c in mentions]
 
         if '@everyone' in message:
             mentions.append('@everyone')
-        elif '@here' in message: # Everyone vale mais que o here, por isso o elif.
+        # Everyone vale mais que o here, por isso o elif.
+        elif '@here' in message:
             mentions.append('@here')
 
         msg = await channel.send(embed=embed, content=' '.join(mentions))
@@ -418,7 +439,8 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         if channel != ctx.channel:
             embed = Embed(ctx, color=self.bot.neutral)
-            embed.description = ctx.t('sended', channel_mention=channel.mention, msg_link=msg.jump_url)
+            embed.description = ctx.t(
+                'sended', channel_mention=channel.mention, msg_link=msg.jump_url)
             await ctx.send(embed=embed)
 
     @commands.group(invoke_without_command=True, case_insensitive=True)
@@ -428,15 +450,15 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             _guild = await self.bot.db.guilds.find(ctx.guild.id)
 
             embed = Embed(ctx)
-            embed.set_author(name=ctx.t('emb_title', guild_name=ctx.guild.name), icon_url=ctx.guild.icon_url)
+            embed.set_author(name=ctx.t(
+                'emb_title', guild_name=ctx.guild.name), icon_url=ctx.guild.icon_url)
 
-
-            embed.add_field(name=ctx.t('emb_lang', lang=_guild["lang"]), value=ctx.t('lang_value'))
-
+            embed.add_field(name=ctx.t(
+                'emb_lang', lang=_guild["lang"]), value=ctx.t('lang_value'))
 
             prx_em = self.bot.emotes['sora_on'] if _guild['prefix'] else self.bot.emotes['sora_off']
-            embed.add_field(name=ctx.t('emb_prefix', emote=prx_em, prefix=str(_guild['prefix']).replace('None', ctx.t('none'))), value=ctx.t('prefix_value'), inline=False)
-            
+            embed.add_field(name=ctx.t('emb_prefix', emote=prx_em, prefix=str(_guild['prefix']).replace(
+                'None', ctx.t('none'))), value=ctx.t('prefix_value'), inline=False)
 
             rep_em = self.bot.emotes['sora_off']
             rep_channel = ctx.t('none')
@@ -450,8 +472,9 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
                 else:
                     rep_em = self.bot.emotes['sora_on']
                     rep_channel = f'#{rep_channel.name}'
-            
-            embed.add_field(name=ctx.t('emb_report', emote=rep_em, channel=rep_channel), value=ctx.t('report_value'), inline=False)
+
+            embed.add_field(name=ctx.t('emb_report', emote=rep_em, channel=rep_channel), value=ctx.t(
+                'report_value'), inline=False)
 
             await ctx.send(embed=embed)
 
@@ -464,7 +487,7 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         if not lang:
             langs = [f'`{c}`\n' for c in langs]
             embed = Embed(
-                ctx, 
+                ctx,
                 title=ctx.t('emb_def_title'),
                 description=ctx.t('emb_def_desc', langs="".join(langs))
             )
@@ -479,18 +502,18 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
         actual = ctx.lang
         if lang == actual:
             embed = Embed(
-                ctx, 
-                title=ctx.t('err_invalid'), 
-                description=ctx.t('actual_desc'), 
+                ctx,
+                title=ctx.t('err_invalid'),
+                description=ctx.t('actual_desc'),
                 error=True
             )
 
         g = await self.bot.db.guilds.update({'_id': ctx.guild.id, 'lang': lang.strip()})
         embed = Embed(
-            ctx, 
-            title=ctx.t('emb_def_title'), 
-            description=ctx.t('emb_success', 
-            lang=lang)
+            ctx,
+            title=ctx.t('emb_def_title'),
+            description=ctx.t('emb_success',
+                              lang=lang)
         )
         return await ctx.send(embed=embed)
 
@@ -498,10 +521,10 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @config.command()
     async def prefix(self, ctx, prefix):
         _prefix = await ctx.guild_prefix()
-        if _prefix and prefix.lower() == _prefix.lower(): 
+        if _prefix and prefix.lower() == _prefix.lower():
             embed = Embed(
-                ctx, 
-                title=ctx.t('err_invalid'), 
+                ctx,
+                title=ctx.t('err_invalid'),
                 description=ctx.t('err_equal'),
                 error=True
             )
@@ -509,19 +532,19 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         if len(prefix) > 5 and not prefix in ('reset', self.bot.config['prefix']):
             embed = Embed(
-                ctx, 
+                ctx,
                 title=ctx.t('err_invalid'),
                 description=ctx.t('err_five'),
-                error = True
+                error=True
             )
             return await ctx.send(embed=embed)
 
         if prefix in ('reset', self.bot.config['prefix']):
             prefix = None
-        
-        await self.bot.db.guilds.update({'_id': ctx.guild.id, 'prefix': prefix}) 
 
-        embed = Embed(ctx, ctx.t('emb_success'))
+        await self.bot.db.guilds.update({'_id': ctx.guild.id, 'prefix': prefix})
+
+        embed = Embed(ctx, description=ctx.t('emb_success'))
         if prefix == None:
             prefix = ctx.t('none')
         embed.description = ctx.t('emb_prefix', prefix=prefix)
@@ -531,11 +554,12 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
     @config.command()
     async def reports(self, ctx, channel):
         _guild = await self.bot.db.guilds.find(ctx.guild.id)
-        
+
         if channel == 'reset':
             if _guild.get('report'):
                 await self.bot.db.guilds.update({'_id': ctx.guild.id, 'report': None})
-            embed = Embed(ctx, title=ctx.t('emb_disabled'), description=ctx.t('disabled_desc'))
+            embed = Embed(ctx, title=ctx.t('emb_disabled'),
+                          description=ctx.t('disabled_desc'))
             return await ctx.send(embed=embed)
 
         try:
@@ -551,8 +575,8 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
 
         if _channel.id == _guild.get('report'):
             embed = Embed(
-                ctx, 
-                title=ctx.t('err_invalid'), 
+                ctx,
+                title=ctx.t('err_invalid'),
                 description=ctx.t('err_equal'),
                 error=True
             )
@@ -563,17 +587,19 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             await m.delete()
         except discord.HTTPException:
             embed = Embed(
-                ctx, 
-                title=ctx.t('err_invalid'), 
-                description=ctx.t('err_forbidden'), 
+                ctx,
+                title=ctx.t('err_invalid'),
+                description=ctx.t('err_forbidden'),
                 error=True
             )
             return await ctx.send(embed=embed)
 
         await self.bot.db.guilds.update({'_id': ctx.guild.id, 'report': _channel.id})
 
-        embed = Embed(ctx, description=ctx.t('emb_title', channel=_channel.mention))
+        embed = Embed(ctx, description=ctx.t(
+            'emb_title', channel=_channel.mention))
         return await ctx.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(ServerAdmin(bot))
