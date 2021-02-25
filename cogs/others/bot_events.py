@@ -1,4 +1,4 @@
-from datetime import datetime 
+from datetime import datetime
 import discord
 from discord.ext import commands
 
@@ -36,6 +36,39 @@ class BotEvents(commands.Cog):
     async def on_zuraaa_vote(self, user):
         print(f'{user} votou no Sora!')
         print(f'Atualmente com {self.bot.zuraaa_vote_streak}')
+
+    @commands.Cog.listener()
+    async def on_command(self, ctx):
+        channel = self.bot.get_guild(675889958262931488).get_channel(814340967674019880)
+
+        embed = discord.Embed(
+            title=f'Comando "{ctx.command.qualified_name}" executado.',
+            color=self.bot.color
+        )
+
+        embed.set_author(name=f'{ctx.author} ({ctx.author.id})', icon_url=ctx.author.avatar_url)
+
+        embed.add_field(name='Servidor', inline=False, value=(
+            f'\> Nome: {ctx.guild.name}\n'
+            f'\> ID: {ctx.guild.id}\n'
+            f'\> Dono: {ctx.guild.owner} ({ctx.guild.owner.id})'
+        ))
+
+        embed.add_field(name='Canal', inline=False, value=(
+            f'\> Nome: {ctx.channel.name}\n'
+            f'\> ID: {ctx.channel.id}\n'
+            f'\> NSFW: {ctx.channel.nsfw}'
+        ))
+
+        embed.add_field(name='Mensagem', inline=False, value=(
+            f'\> Conteúdo: "{discord.utils.escape_markdown(ctx.message.content)}"\n'
+            f'\> ID: {ctx.message.id}\n'
+            f'\> URL: [Link]({ctx.message.jump_url})'
+        ))
+
+        embed.timestamp = ctx.message.created_at
+        await channel.send(embed=embed)
+
 
 def setup(bot):
     bot.add_cog(BotEvents(bot))
