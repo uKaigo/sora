@@ -19,12 +19,12 @@
         "emb_desc": "Eu preciso da{s} permiss{oes} `{perms}` para executar esse comando"
     },
 
-    "BadArgument": {
-        "memberNotFound": {
-            "emb_title": "Membro inválido!",
-            "emb_desc": "O membro `{member}` não foi encontrado.\nVerifique as maiúsculas, minúsculas e se você digitou corretamente!"
-        },
+    "MemberNotFound": {
+        "emb_title": "Membro inválido!",
+        "emb_desc": "O membro `{member}` não foi encontrado.\nVerifique as maiúsculas, minúsculas e se você digitou corretamente!"
+    },
 
+    "BadArgument": {
         "invalid": "Argumento inválido:\n`{arg}`"
     },
 

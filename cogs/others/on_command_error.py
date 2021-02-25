@@ -1,10 +1,11 @@
 import traceback
-from time import time 
+from time import time
 from hashlib import shake_256
 import discord
 from discord.ext import commands
 from utils.custom import Embed
 from utils import menus
+
 
 class CommandError(commands.Cog):
     def __init__(self, bot):
@@ -19,14 +20,14 @@ class CommandError(commands.Cog):
         aliases = {'UnexpectedQuoteError': 'ExpectedCLosingQuoteError'}
 
         name = aliases.get(error.__class__.__name__, error.__class__.__name__)
-        original = error.__cause__ 
+        original = error.__cause__
         original_name = original.__class__.__name__
 
-        if isinstance(original, discord.Forbidden): # pylint: disable=no-else-return
+        if isinstance(original, discord.Forbidden):  # pylint: disable=no-else-return
             perms = ctx.me.permissions_in(ctx.channel)
             if perms.embed_links:
                 return await ctx.send(ctx.t('no_perm', _e=original_name))
-            if not perms.embed_links: 
+            if not perms.embed_links:
                 return await ctx.send(ctx.t('no_embed', _e=original_name))
             return
 
@@ -50,24 +51,24 @@ class CommandError(commands.Cog):
         elif isinstance(error, commands.MissingPermissions):
             perms = [ctx.t(c, _f='perms').title().replace('_', '') for c in error.missing_perms]
             embed = Embed(ctx, error=True, title=ctx.t('emb_title', _e=name))
-            embed.description = ctx.t('emb_desc', _e=name, perms=', '.join(perms), s='s' if len(perms) > 1 else '', oes='ões' if len(perms) > 1 else 'ão')
+            embed.description = ctx.t('emb_desc', _e=name, perms=', '.join(perms), s='s' if len(perms)
+                                      > 1 else '', oes='ões' if len(perms) > 1 else 'ão')
             await ctx.send(embed=embed)
 
         elif isinstance(error, commands.BotMissingPermissions):
             perms = [ctx.t(c, _f='perms').title().replace('_', '') for c in error.missing_perms]
 
             embed = Embed(ctx, error=True, title=ctx.t('emb_title', _e=name))
-            embed.description = ctx.t('emb_desc', _e=name, perms=', '.join(perms), s='s' if len(perms) > 1 else '', oes='ões' if len(perms) > 1 else 'ão')
+            embed.description = ctx.t('emb_desc', _e=name, perms=', '.join(perms), s='s' if len(perms)
+                                      > 1 else '', oes='ões' if len(perms) > 1 else 'ão')
             await ctx.send(embed=embed)
 
-        elif isinstance(error, commands.BadArgument):
-            if 'Member' in error.args[0]:
-                trn = ctx.t('memberNotFound.emb_title', _e=name)
-                member = error.args[0].split('"')[1]
+        elif isinstance(error, commands.MemberNotFound):
+            embed = Embed(ctx, error=True, title=ctx.t('emb_title', _e=name))
+            embed.description = ctx.t('emb_desc', _e=name, member=error.argument)
+            return await ctx.send(embed=embed)
 
-                embed = Embed(ctx, error=True, title=ctx.t('memberNotFound.emb_title', _e=name))
-                embed.description = ctx.t('memberNotFound.emb_desc', _e=name, member=member)
-                return await ctx.send(embed=embed)
+        elif isinstance(error, commands.BadArgument):
 
             embed = Embed(ctx, error=True, description=ctx.t('invalid', _e=name, arg=error.args[0]))
             embed.title = discord.Embed.Empty
@@ -80,11 +81,11 @@ class CommandError(commands.Cog):
         elif isinstance(error, commands.CheckFailure):
             return
 
-        else:    
+        else:
             lines = traceback.format_exception(type(error), error, error.__traceback__, 1)
             trace_txt = ''.join(lines)
 
-            code = shake_256(str(time()).replace('.', '').encode()).hexdigest(13) #pylint: disable=too-many-function-args
+            code = shake_256(str(time()).replace('.', '').encode()).hexdigest(13)  # pylint: disable=too-many-function-args
 
             embed = Embed(ctx, error=True)
             embed.description = ctx.t('emb_desc', code=code, error=error, _e='noError')
@@ -99,7 +100,7 @@ class CommandError(commands.Cog):
             embed.description += f'```{"".join(lines)}```'
 
             await ch.send(embed=embed)
-            
+
 
 def setup(bot):
     bot.add_cog(CommandError(bot))

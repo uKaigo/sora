@@ -19,11 +19,12 @@
         "emb_desc": "I need the `{perms}` permission{s} to run this command!"
     },
 
+    "MemberNotFound": {
+        "emb_title": "Invalid member!",
+        "emb_desc": "Member `{member}` hasn't been found.\nCheck lowercase, uppercase, and if you typed correctly!"
+    },
+
     "BadArgument": {
-        "memberNotFound": {
-            "emb_title": "Invalid member!",
-            "emb_desc": "Member `{member}` hasn't been found.\nCheck lowercase, uppercase, and if you typed correctly!"
-        },
 
         "invalid": "Invalid argument:\n`{arg}`"
     },
