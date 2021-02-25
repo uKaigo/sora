@@ -3,7 +3,7 @@ ksoftapi==0.3.3a0
 pyfiglet==0.8.post1
 psutil==5.8.0
 validators==0.18.2
-motor==2.3.0
+motor==2.3.1
 dnspython==2.0.0
 pytz==2020.5
 beautifulsoup4==4.9.3
