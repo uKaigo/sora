@@ -69,13 +69,8 @@ class ServerAdmin(commands.Cog, name='_mod_cog'):
             of_member=f'{ctx.t("of") if membro else ""}{membro.mention if membro else ""}'
         )
 
-        await msg.edit(embed=embed)
-        await sleep(10)
-        try:
-            await msg.delete()
-            await ctx.message.delete()
-        except:
-            pass
+        await msg.edit(embed=embed, delete_after=3)
+        await ctx.message.delete(delay=3)
 
     @clear.command()
     @commands.has_permissions(manage_messages=True)
