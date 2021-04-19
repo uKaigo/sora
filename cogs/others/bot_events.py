@@ -13,6 +13,7 @@ class BotEvents(commands.Cog):
         embed = discord.Embed(color=self.bot.color)
         embed.title = 'Novo servidor!'
         embed.description = f'Nome: `{guild.name}`\nId: `{guild.id}`\nDono: `{guild.owner}`\nRegiao: `{guild.region}`'
+        embed.description += f'\nUnavailable: {guild.unavailable}'
         await log.send(embed=embed)
         await self.bot.db.guilds.new(guild.id)
         if guild.region.value == 'brazil':
