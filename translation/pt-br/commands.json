@@ -463,8 +463,7 @@
         "usage": "{}reddit [subreddit]",
         "description": "Envia uma imagem aleatória do subreddit.",
         "texts": {
-            "err_notfound": "Subreddit não encontrado.",
-            "err_noimage": "Nenhuma imagem encontrada.",
+            "err_notfound": "Nada encontrado.",
             "maybe_nsfw": "Talvez seja porque você está usando o comando fora de um canal nsfw.",
             "title": "{author} em {sub}"    
         }
